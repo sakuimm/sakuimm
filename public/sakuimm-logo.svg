@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="100%" height="100%">
+  <!-- Icon Badge -->
+  <rect x="20" y="20" width="120" height="120" rx="32" fill="#2D3748"/>
+  <path d="M80 40 L115 56 V95 C115 120 80 135 80 135 C80 135 45 120 45 95 V56 Z" fill="none" stroke="#81B29A" stroke-width="8" stroke-linejoin="round"/>
+  <rect x="64" y="72" width="32" height="24" rx="5" fill="#F4A261"/>
+  <circle cx="84" cy="84" r="3.5" fill="#2D3748"/>
+  
+  <!-- Text Brand SAKUIMM -->
+  <text x="165" y="95" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="64" fill="#2D3748" letter-spacing="-1">
+    SAKU<tspan fill="#81B29A">IMM</tspan>
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="168" y="125" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="18" fill="#F4A261" letter-spacing="3">
+    SISTEM KEUANGAN ORGANISASI
+  </text>
+</svg>
