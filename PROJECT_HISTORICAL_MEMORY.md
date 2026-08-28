@@ -229,3 +229,14 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Memastikan setiap kali pengguna mengakses `http://localhost:5173/`, aplikasi secara konsisten menampilkan **Halaman Login SAKUIMM 2-Grid** terlebih dahulu.
   - Proses login mengarahkan ke Dashboard dengan hak akses role yang dipilih, dan tombol Logout mengembalikan pengguna ke Halaman Login.
 - **Dampak Arsitektur / Catatan:** Alur otentikasi aplikasi kini 100% realistis dan sesuai standar sistem produksi.
+
+### [2026-08-28 T10:35] - Konfigurasi Git Global Identity & Publikasi Repositori GitHub (`sakuimm/sakuimm`)
+- **Kategori:** DEPLOYMENT / REPOSITORY
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `.gitignore`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - Mengubah konfigurasi global Git user ke `user.name = "sakuimm"` dan `user.email = "sakuimmofficial@gmail.com"`.
+  - Membuat file `.gitignore` komprehensif (mengabaikan `node_modules`, `dist`, `.env`, `.DS_Store`, log debug, dan berkas ekstraksi temporer).
+  - Menginisialisasi repositori Git lokal (`branch main`) dan membuat commit awal.
+  - Membuat repositori GitHub publik resmi [https://github.com/sakuimm/sakuimm](https://github.com/sakuimm/sakuimm) via GitHub CLI (`gh repo create`) dan berhasil mempublikasikan (*git push*) seluruh kodebase serta dokumen proyek.
+- **Dampak Arsitektur / Catatan:** Kodebase aplikasi SAKUIMM MVP & seluruh dokumentasinya kini tersimpan aman dan terkelola secara publik di GitHub.
