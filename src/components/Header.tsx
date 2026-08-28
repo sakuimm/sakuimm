@@ -72,6 +72,15 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         )}
 
+        {/* Official BCA Syariah Co-Branding Badge */}
+        <div className="flex items-center gap-2 px-3 py-1 bg-[#F8F9FA] border border-slate-200 rounded-lg text-xs font-bold shadow-2xs">
+          <span className="text-[#7A0C1E] font-black">SAKU IMM</span>
+          <span className="text-slate-400 font-normal">x</span>
+          <span className="text-[#0097A7] flex items-center gap-1 font-black">
+            <Building2 className="w-3.5 h-3.5 text-[#0097A7]" /> BCA syariah
+          </span>
+        </div>
+
         {/* Date Filter */}
         <div className="flex items-center gap-2 text-xs font-medium bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-slate-600">
           <Filter className="w-3.5 h-3.5 text-slate-400" />

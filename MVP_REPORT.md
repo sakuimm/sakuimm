@@ -88,12 +88,12 @@ Seluruh 22 nama Bidang Resmi IMM hasil wawancara pengguna diselaraskan 100% pada
 ## 4. KEPATUHAN STANDAR VISUAL UI/UX (`STYLE_GUIDE.md`)
 
 > [!TIP]
-> **SPESIFIKASI 3 WARNA FLAT PASTEL (ZERO GRADIENT)**  
-> 1. **Warna Primer (`#2D3748` Soft Dark Slate):** Teks utama, judul, tombol primer, dan item sidebar aktif.
-> 2. **Warna Sekunder (`#81B29A` Pastel Sage Green):** Indikator positif (Pemasukan, Surplus), status *Verified/Approved*, tren naik.
-> 3. **Warna Aksen (`#F4A261` Pastel Warm Peach):** Indikator Pengeluaran, status *Pending/Warning*, badge sorotan, aksen grafik.
+> **SPESIFIKASI PALET WARNA RESMI (SAKU IMM x BCA SYARIAH MOCKUP)**  
+> 1. **Primary Maroon (`#7A0C1E` Deep Crimson IMM):** Background Sidebar Navigasi, Tombol Login CTA, dan header aksen utama.
+> 2. **BCA Syariah Cyan (`#0097A7` Accent Cyan):** Badge Co-Branding resmi `SAKU IMM x BCA Syariah` dan indikator perbankan syariah.
+> 3. **Financial Metric Accents:** Saldo Kas/Akhir (`#1D4ED8` Saldo Blue), Pemasukan Kas (`#2E7D32` Hijau Positif), dan Pengeluaran Kas (`#C05621` Warm Red).
 > 
-> Seluruh tampilan menggunakan *Card-based layout* (`border-slate-200`, `rounded-xl`), font modern `Plus Jakarta Sans`, **Logo Resmi SAKU IMM (`/public/sakuimmlogo.jpg`)**, serta **Halaman Login 2-Grid Split-Screen dengan Interactive 3-Slide Feature Carousel Slider** berorientasi 3 Warna Flat Pastel.
+> Seluruh antarmuka menggunakan *Card-based layout* (`border-slate-200`, `rounded-xl`), font modern `Plus Jakarta Sans`, **Logo Resmi SAKU IMM (`/public/sakuimmlogo.jpg`)**, Badge Co-Branding `SAKU IMM x BCA Syariah`, serta **Halaman Login 2-Grid Split-Screen dengan Interactive 3-Slide Feature Carousel Slider**.
 
 ---
 

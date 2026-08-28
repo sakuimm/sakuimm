@@ -259,3 +259,15 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Mengganti seluruh referensi logo aplikasi pada `Sidebar.tsx` dan `LoginPage.tsx` secara langsung ke file `/sakuimmlogo.jpg`.
   - Mengganti seluruh referensi site icon (favicon) browser pada `index.html` dan `public/favicon.ico` / `public/favicon.png` menggunakan file `/sakuimmlogo.jpg`.
 - **Dampak Arsitektur / Catatan:** Seluruh titik identitas visual aplikasi kini 100% konsisten mengacu pada file aset utama `/public/sakuimmlogo.jpg`.
+
+### [2026-08-28 T14:15] - Pembaruan Palet Warna Resmi & Co-Branding SAKU IMM x BCA Syariah
+- **Kategori:** UI/UX ENHANCEMENT / BRANDING
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `STYLE_GUIDE.md`, `tailwind.config.js`, `src/components/Sidebar.tsx`, `src/components/Header.tsx`, `src/components/LoginPage.tsx`, `src/components/DashboardView.tsx`, `MVP_REPORT.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - Menyesuaikan skema warna antarmuka pengguna berdasarkan acuan mockup kerjasama resmi **SAKU IMM x BCA Syariah**.
+  - Mengubah latar belakang Sidebar ke **IMM Deep Crimson Maroon (`#7A0C1E`)** dengan *rounded pill* item aktif (`bg-white/20 text-white font-bold`).
+  - Mengubah warna tombol utama Login ke Crimson Maroon (`bg-[#7A0C1E] hover:bg-[#600917]`).
+  - Menambahkan badge co-branding resmi `SAKU IMM x BCA Syariah` pada Header aplikasi dan Halaman Login.
+  - Memperbarui aksen metrik kartu saldo kas (`#1D4ED8` Saldo Blue), pemasukan (`#2E7D32` Hijau Positif), dan pengeluaran (`#C05621` Warm Red).
+- **Dampak Arsitektur / Catatan:** Antarmuka aplikasi kini 100% presisi dan identik dengan desain acuan mockup sinergi perbankan syariah resmi SAKU IMM x BCA Syariah.

@@ -86,19 +86,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     <div className="space-y-6">
       {/* Banner Status Agregat */}
       {isAggregateMode && (
-        <div className="bg-[#2D3748] text-white p-4 rounded-card flex items-center justify-between shadow-sm">
+        <div className="bg-[#7A0C1E] text-white p-4 rounded-card flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[#81B29A] text-[#2D3748]">
+            <div className="p-2 rounded-lg bg-white/20 text-white">
               <TrendingUp className="w-5 h-5" />
             </div>
             <div>
               <h4 className="font-bold text-sm">Mode Roll-up Agregat Nasional/Wilayah Aktif</h4>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-slate-200">
                 Menampilkan kalkulasi otomatis akumulasi data dari seluruh {currentLevel === 'DPP' ? '34 DPD, Cabang & Komisariat se-Indonesia' : 'Cabang & Komisariat turunan'}.
               </p>
             </div>
           </div>
-          <span className="px-3 py-1 bg-[#F4A261] text-[#2D3748] font-bold text-xs rounded-full">
+          <span className="px-3 py-1 bg-[#0097A7] text-white font-bold text-xs rounded-full">
             Simulasi Multi-Level
           </span>
         </div>
@@ -112,15 +112,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
               Saldo Periode Berjalan
             </span>
-            <div className="p-2 rounded-full bg-[#2D3748]/10 text-[#2D3748]">
+            <div className="p-2 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8]">
               <Wallet className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-[#2D3748] tracking-tight mb-2">
+          <div className="text-2xl font-black text-[#1D4ED8] tracking-tight mb-2">
             Rp {displaySaldo.toLocaleString('id-ID')}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#81B29A]/15 text-[#2D5A44]">
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[#1D4ED8]/10 text-[#1D4ED8]">
               Kas Akumulatif
             </span>
             <span>Real-time DB</span>
@@ -133,15 +133,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
               Total Pemasukan
             </span>
-            <div className="p-2 rounded-full bg-[#81B29A]/15 text-[#81B29A]">
+            <div className="p-2 rounded-full bg-[#2E7D32]/10 text-[#2E7D32]">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-[#2D3748] tracking-tight mb-2">
+          <div className="text-2xl font-black text-[#2E7D32] tracking-tight mb-2">
             Rp {displayPemasukan.toLocaleString('id-ID')}
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#81B29A]/15 text-[#2D5A44]">
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[#2E7D32]/10 text-[#2E7D32]">
               ↑ 15%
             </span>
             <span className="text-slate-500">vs bulan lalu</span>
@@ -154,15 +154,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
               Total Pengeluaran
             </span>
-            <div className="p-2 rounded-full bg-[#F4A261]/15 text-[#F4A261]">
+            <div className="p-2 rounded-full bg-[#C05621]/10 text-[#C05621]">
               <ArrowDownLeft className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-extrabold text-[#2D3748] tracking-tight mb-2">
+          <div className="text-2xl font-black text-[#C05621] tracking-tight mb-2">
             Rp {displayPengeluaran.toLocaleString('id-ID')}
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#F4A261]/15 text-[#9C5217]">
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[#C05621]/10 text-[#C05621]">
               ↓ 5%
             </span>
             <span className="text-slate-500">vs target anggaran</span>

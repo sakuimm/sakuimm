@@ -35,15 +35,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         
         {/* LAYOUT KIRI: Clean Form Panel (6 Cols on Desktop) */}
         <div className="lg:col-span-6 bg-white p-8 md:p-12 flex flex-col justify-between">
-          {/* Top Brand Logo */}
-          <div className="flex items-center gap-3">
+          {/* Top Brand Logo & Co-Branding Badge */}
+          <div className="flex items-center justify-between">
             <img src="/sakuimmlogo.jpg" alt="SAKU IMM Logo" className="h-12 object-contain" />
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-[#F8F9FA] border border-slate-200 rounded-lg text-xs font-bold shadow-2xs">
+              <span className="text-[#7A0C1E] font-black">SAKU IMM</span>
+              <span className="text-slate-400 font-normal">x</span>
+              <span className="text-[#0097A7] font-black">BCA syariah</span>
+            </div>
           </div>
 
           {/* Middle Form Area */}
           <div className="my-auto py-6 max-w-md w-full mx-auto space-y-6">
             <div className="text-center space-y-1.5">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[#2D3748] tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[#7A0C1E] tracking-tight">
                 Selamat Datang Kembali
               </h1>
               <p className="text-xs md:text-sm text-slate-500 font-medium">
@@ -65,7 +70,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                       onClick={() => setLevel(lvl)}
                       className={`py-2 text-xs font-bold rounded-lg transition-all ${
                         level === lvl
-                          ? 'bg-[#2D3748] text-white shadow-sm'
+                          ? 'bg-[#7A0C1E] text-white shadow-sm'
                           : 'text-slate-600 hover:bg-slate-200/70'
                       }`}
                     >
@@ -83,7 +88,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value as UserRole)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748] transition-all"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
                 >
                   <option value="bendahara_umum">Bendahara Umum (Full Access Input & Edit)</option>
                   <option value="tim_verifikasi_internal">Tim Verifikasi Internal (Read-Only Mode)</option>
@@ -103,7 +108,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748] transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
                     placeholder="nama@imm.or.id"
                   />
                 </div>
@@ -121,7 +126,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748] transition-all"
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
                     placeholder="••••••••"
                   />
                   <button
@@ -137,7 +142,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               {/* Primary Action Button */}
               <button
                 type="submit"
-                className="w-full py-3 bg-[#2D3748] hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 mt-2 shadow-md hover:shadow-lg active:scale-[0.99]"
+                className="w-full py-3.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mt-2 shadow-md hover:shadow-lg active:scale-[0.99]"
               >
                 <span>Masuk ke Dashboard IMM</span>
                 <ArrowRight className="w-4 h-4 text-[#81B29A]" />
