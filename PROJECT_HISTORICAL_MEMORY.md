@@ -280,3 +280,12 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Mengganti seluruh referensi logo aplikasi pada `Sidebar.tsx` dan `LoginPage.tsx` secara langsung ke file `/logosakuimmnew.png`.
   - Mengganti seluruh referensi site icon (favicon) browser pada `index.html` dan `public/favicon.ico` / `public/favicon.png` menggunakan berkas `/logosakuimmnew.png`.
 - **Dampak Arsitektur / Catatan:** Identitas visual logo aplikasi kini 100% menggunakan aset terbaru `/public/logosakuimmnew.png`.
+
+### [2026-08-28 T14:38] - Optimasi Layout Header Sidebar Logo (Pembersihan White Card Wrapper)
+- **Kategori:** UI/UX ENHANCEMENT
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/Sidebar.tsx`, `MVP_REPORT.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - Menghapus pembungkus kartu putih (`bg-white rounded-xl shadow-md`) pada header logo Sidebar.
+  - Menampilkan logo `logosakuimmnew.png` secara langsung dengan dimensi yang lebih besar dan jelas (`h-12 md:h-14`) berlatar belakang maroon murni dengan batas pembatas halus `border-white/15`.
+- **Dampak Arsitektur / Catatan:** Tampilan logo pada Sidebar terlihat jauh lebih bersih, profesional, dan menonjol tanpa penyempitan visual.
