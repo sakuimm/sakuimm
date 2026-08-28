@@ -37,7 +37,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="lg:col-span-6 bg-white p-8 md:p-12 flex flex-col justify-between">
           {/* Top Brand Logo */}
           <div className="flex items-center gap-3">
-            <img src="/sakuimm-logo.png" alt="SAKU IMM Logo" className="h-12 object-contain" />
+            <img src="/sakuimmlogo.jpg" alt="SAKU IMM Logo" className="h-12 object-contain" />
           </div>
 
           {/* Middle Form Area */}

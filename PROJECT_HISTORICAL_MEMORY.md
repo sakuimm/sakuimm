@@ -250,3 +250,12 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Menjadikan `public/sakuimm-logo.png` sebagai logo utama pada `Sidebar.tsx` dan `LoginPage.tsx`.
   - Memperbarui `public/favicon.png` dan `public/favicon.svg` (vektor pocket emblem) pada `index.html` untuk icon tab browser.
 - **Dampak Arsitektur / Catatan:** Branding visual aplikasi kini 100% otentik dengan logo acuan resmi dari pengguna.
+
+### [2026-08-28 T11:25] - Penyelarasan Seluruh Logo & SiteIcon ke File `/public/sakuimmlogo.jpg`
+- **Kategori:** BRANDING / ASSETS UPDATE
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `index.html`, `src/components/Sidebar.tsx`, `src/components/LoginPage.tsx`, `public/favicon.ico`, `public/favicon.png`, `MVP_REPORT.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - Mengganti seluruh referensi logo aplikasi pada `Sidebar.tsx` dan `LoginPage.tsx` secara langsung ke file `/sakuimmlogo.jpg`.
+  - Mengganti seluruh referensi site icon (favicon) browser pada `index.html` dan `public/favicon.ico` / `public/favicon.png` menggunakan file `/sakuimmlogo.jpg`.
+- **Dampak Arsitektur / Catatan:** Seluruh titik identitas visual aplikasi kini 100% konsisten mengacu pada file aset utama `/public/sakuimmlogo.jpg`.

@@ -41,7 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div>
         {/* Brand */}
         <div className="p-4 border-b border-slate-100 flex items-center gap-3">
-          <img src="/sakuimm-logo.png" alt="SAKU IMM Logo" className="h-10 object-contain" />
+          <img src="/sakuimmlogo.jpg" alt="SAKU IMM Logo" className="h-10 object-contain" />
         </div>
 
         {/* Navigation items */}

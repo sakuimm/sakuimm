@@ -93,7 +93,7 @@ Seluruh 22 nama Bidang Resmi IMM hasil wawancara pengguna diselaraskan 100% pada
 > 2. **Warna Sekunder (`#81B29A` Pastel Sage Green):** Indikator positif (Pemasukan, Surplus), status *Verified/Approved*, tren naik.
 > 3. **Warna Aksen (`#F4A261` Pastel Warm Peach):** Indikator Pengeluaran, status *Pending/Warning*, badge sorotan, aksen grafik.
 > 
-> Seluruh tampilan menggunakan *Card-based layout* (`border-slate-200`, `rounded-xl`), font modern `Plus Jakarta Sans`, **Logo Resmi SAKU IMM** (Pocket Emblem dengan tulisan *Sistem Administrasi Keuangan Ikatan Mahasiswa Muhammadiyah*), serta **Halaman Login 2-Grid Split-Screen dengan Interactive 3-Slide Feature Carousel Slider** berorientasi 3 Warna Flat Pastel.
+> Seluruh tampilan menggunakan *Card-based layout* (`border-slate-200`, `rounded-xl`), font modern `Plus Jakarta Sans`, **Logo Resmi SAKU IMM (`/public/sakuimmlogo.jpg`)**, serta **Halaman Login 2-Grid Split-Screen dengan Interactive 3-Slide Feature Carousel Slider** berorientasi 3 Warna Flat Pastel.
 
 ---
 
