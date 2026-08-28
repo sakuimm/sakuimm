@@ -162,9 +162,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         </div>
 
         {/* LAYOUT KANAN: Feature Showcase & Interactive 3-Slide Slider (6 Cols on Desktop) */}
-        <div className="lg:col-span-6 bg-[#2D3748] text-white p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
+        <div className="lg:col-span-6 bg-gradient-to-br from-[#7A0C1E] via-[#600917] to-[#4A0712] text-white p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
           {/* Subtle Grid Pattern Overlay */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#81B29A_1px,transparent_1px)] [background-size:16px_16px]" />
+          <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#0097A7_1px,transparent_1px)] [background-size:16px_16px]" />
           
           {/* SLIDE CONTENT DISPLAY */}
           <div className="relative z-10 space-y-4 my-auto py-4 min-h-[380px] flex flex-col justify-between transition-all duration-500">
@@ -176,45 +176,45 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <div className="space-y-3">
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl max-w-xs transform -rotate-1 transition-all">
                     <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                      <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Ringkasan Saldo Kas</span>
-                      <span className="text-[10px] font-extrabold text-[#81B29A] bg-[#81B29A]/20 px-2 py-0.5 rounded-full">Bulan Ini</span>
+                      <span className="text-[10px] font-bold text-slate-200 uppercase tracking-wider">Ringkasan Saldo Kas</span>
+                      <span className="text-[10px] font-extrabold text-[#0097A7] bg-[#0097A7]/20 px-2 py-0.5 rounded-full">Bulan Ini</span>
                     </div>
                     <div className="flex items-center gap-4 mt-3">
-                      <div className="w-11 h-11 rounded-full border-4 border-[#81B29A] border-t-[#F4A261] flex items-center justify-center font-bold text-xs">
+                      <div className="w-11 h-11 rounded-full border-4 border-[#0097A7] border-t-[#2E7D32] flex items-center justify-center font-bold text-xs">
                         78%
                       </div>
                       <div>
                         <div className="text-base font-extrabold text-white">Rp 28.450.000</div>
-                        <div className="text-[10px] text-slate-300 mt-0.5">Kas Utama • 22 Bidang IMM</div>
+                        <div className="text-[10px] text-slate-200 mt-0.5">Kas Utama • 22 Bidang IMM</div>
                       </div>
                     </div>
                   </div>
 
                   <div className="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-xl max-w-xs ml-auto transform rotate-2 transition-all">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-extrabold text-[#F4A261] uppercase tracking-wider">Target Proker</span>
-                      <span className="text-[10px] text-slate-300">25 Agu 2026</span>
+                      <span className="text-[10px] font-extrabold text-[#0097A7] uppercase tracking-wider">Target Proker</span>
+                      <span className="text-[10px] text-slate-200">25 Agu 2026</span>
                     </div>
                     <h4 className="text-xs font-bold text-white">Darul Arqam Dasar (DAD) XXVI</h4>
                     <div className="flex items-center justify-between text-[11px] text-slate-200 mt-2">
                       <span>Realisasi Dana</span>
-                      <span className="font-bold text-[#81B29A]">Rp 12.500.000 <span className="text-slate-400 font-normal">/ 15M</span></span>
+                      <span className="font-bold text-[#0097A7]">Rp 12.500.000 <span className="text-slate-300 font-normal">/ 15M</span></span>
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-1.5 mt-1.5 overflow-hidden">
-                      <div className="bg-[#81B29A] h-1.5 rounded-full" style={{ width: '83%' }} />
+                      <div className="bg-[#0097A7] h-1.5 rounded-full" style={{ width: '83%' }} />
                     </div>
                   </div>
                 </div>
 
                 {/* Text Description */}
                 <div className="pt-4 space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-[#81B29A] text-[#2D3748] flex items-center justify-center shadow-md mb-2">
+                  <div className="w-9 h-9 rounded-xl bg-[#0097A7] text-white flex items-center justify-center shadow-md mb-2">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight leading-snug">
                     Pusat Terpadu Pencatatan & Pelaporan Keuangan IMM Transparan
                   </h2>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-200 leading-relaxed">
                     Sistem manajemen keuangan otonom terintegrasi dari Komisariat (PK), Cabang (PC), Daerah (DPD), hingga Pusat (DPP) dengan visibilitas agregat 360 derajat.
                   </p>
                 </div>
@@ -229,22 +229,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl max-w-xs transform rotate-1 transition-all">
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-bold text-white flex items-center gap-1.5">
-                        <Camera className="w-3.5 h-3.5 text-[#F4A261]" /> Pencatatan Nota Digital
+                        <Camera className="w-3.5 h-3.5 text-[#0097A7]" /> Pencatatan Nota Digital
                       </span>
-                      <span className="text-[9px] font-bold text-[#81B29A] bg-[#81B29A]/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-[9px] font-bold text-[#0097A7] bg-[#0097A7]/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                         <CheckCircle2 className="w-2.5 h-2.5" /> Drive Ready
                       </span>
                     </div>
-                    <div className="text-base font-extrabold text-white mt-2">Rp 2.400.000 <span className="text-[10px] font-bold text-[#81B29A]">+12%</span></div>
-                    <div className="text-[10px] text-slate-300">Penjualan Merchandising IMM Batch 1</div>
+                    <div className="text-base font-extrabold text-white mt-2">Rp 2.400.000 <span className="text-[10px] font-bold text-[#0097A7]">+12%</span></div>
+                    <div className="text-[10px] text-slate-200">Penjualan Merchandising IMM Batch 1</div>
                   </div>
 
                   <div className="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-xl max-w-xs ml-auto transform -rotate-2 transition-all">
                     <div className="flex items-center justify-between mb-1 text-[10px]">
-                      <span className="font-extrabold text-[#81B29A] uppercase tracking-wider">Sharp Pipe Watermark</span>
-                      <span className="text-slate-300">Resmi IMM</span>
+                      <span className="font-extrabold text-[#0097A7] uppercase tracking-wider">Sharp Pipe Watermark</span>
+                      <span className="text-slate-200">Resmi IMM</span>
                     </div>
-                    <div className="p-2 bg-[#2D3748]/60 rounded-lg border border-white/10 text-[10px] font-mono text-slate-200">
+                    <div className="p-2 bg-[#600917]/80 rounded-lg border border-white/10 text-[10px] font-mono text-slate-100">
                       PROPERTI IMM - PK MESIN UI - 2026
                     </div>
                   </div>
@@ -252,13 +252,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
                 {/* Text Description */}
                 <div className="pt-4 space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-[#F4A261] text-[#2D3748] flex items-center justify-center shadow-md mb-2">
+                  <div className="w-9 h-9 rounded-xl bg-[#0097A7] text-white flex items-center justify-center shadow-md mb-2">
                     <Camera className="w-5 h-5" />
                   </div>
                   <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight leading-snug">
                     Pencatatan Nota Digital & Watermarking Otomatis
                   </h2>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-200 leading-relaxed">
                     Kemudahan foto bukti kwitansi langsung via smartphone dengan kompresi otomatis dan stempel watermark resmi yang tersinkronisasi ke Google Drive Queue.
                   </p>
                 </div>
@@ -272,26 +272,26 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <div className="space-y-3">
                   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl max-w-xs transform -rotate-1 transition-all">
                     <div className="flex items-center justify-between pb-1.5 border-b border-white/10 text-[10px]">
-                      <span className="font-extrabold text-[#F4A261] uppercase tracking-wider">Control Hak Akses RBAC</span>
-                      <span className="text-slate-300">Enforced</span>
+                      <span className="font-extrabold text-[#0097A7] uppercase tracking-wider">Control Hak Akses RBAC</span>
+                      <span className="text-slate-200">Enforced</span>
                     </div>
                     <div className="mt-2 space-y-1.5">
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-200">Bendahara Umum</span>
-                        <span className="font-bold text-[#81B29A] text-[10px]">Full Access</span>
+                        <span className="text-slate-100">Bendahara Umum</span>
+                        <span className="font-bold text-[#0097A7] text-[10px]">Full Access</span>
                       </div>
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-200">Tim Verifikasi</span>
-                        <span className="font-bold text-[#F4A261] text-[10px]">Read-Only</span>
+                        <span className="text-slate-100">Tim Verifikasi</span>
+                        <span className="font-bold text-[#C05621] text-[10px]">Read-Only</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-xl max-w-xs ml-auto transform rotate-1 transition-all">
                     <div className="flex items-center gap-2 text-xs font-bold text-white mb-1">
-                      <FileCheck className="w-3.5 h-3.5 text-[#81B29A]" /> Audit Trail JSONB Log
+                      <FileCheck className="w-3.5 h-3.5 text-[#0097A7]" /> Audit Trail JSONB Log
                     </div>
-                    <div className="p-2 bg-black/40 rounded-lg text-[9px] font-mono text-slate-300 truncate">
+                    <div className="p-2 bg-black/40 rounded-lg text-[9px] font-mono text-slate-200 truncate">
                       {`{ "data_before": {...}, "data_after": {...} }`}
                     </div>
                   </div>
@@ -299,13 +299,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
                 {/* Text Description */}
                 <div className="pt-4 space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-[#81B29A] text-[#2D3748] flex items-center justify-center shadow-md mb-2">
+                  <div className="w-9 h-9 rounded-xl bg-[#0097A7] text-white flex items-center justify-center shadow-md mb-2">
                     <FileCheck className="w-5 h-5" />
                   </div>
                   <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight leading-snug">
                     Transparansi Audit Trail & Kontrol Hak Akses Ketat
                   </h2>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-200 leading-relaxed">
                     Pencatatan riwayat perubahan data berbasis snapshot JSONB serta pemisahan wewenang yang tegas antara pengelola kas dan tim verifikator.
                   </p>
                 </div>
@@ -315,7 +315,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
 
           {/* INTERACTIVE 3-BAR SLIDER INDICATOR */}
-          <div className="relative z-10 pt-4 border-t border-white/10">
+          <div className="relative z-10 pt-4 border-t border-white/15">
             <div className="flex items-center gap-2">
               {[0, 1, 2].map((idx) => (
                 <button
@@ -323,7 +323,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   onClick={() => setActiveSlide(idx)}
                   className={`h-2 rounded-full flex-1 transition-all duration-500 cursor-pointer ${
                     activeSlide === idx
-                      ? 'bg-[#81B29A] shadow-sm'
+                      ? 'bg-[#0097A7] shadow-md'
                       : 'bg-white/20 hover:bg-white/40'
                   }`}
                   title={`Pergi ke Slide ${idx + 1}`}

@@ -289,3 +289,13 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Menghapus pembungkus kartu putih (`bg-white rounded-xl shadow-md`) pada header logo Sidebar.
   - Menampilkan logo `logosakuimmnew.png` secara langsung dengan dimensi yang lebih besar dan jelas (`h-12 md:h-14`) berlatar belakang maroon murni dengan batas pembatas halus `border-white/15`.
 - **Dampak Arsitektur / Catatan:** Tampilan logo pada Sidebar terlihat jauh lebih bersih, profesional, dan menonjol tanpa penyempitan visual.
+
+### [2026-08-28 T14:45] - Penyelarasan Penuh Visual & Skema Warna Baru (Sidebar Card, Recharts, & Login Right Panel)
+- **Kategori:** UI/UX ENHANCEMENT / COLOR HARMONY
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/Sidebar.tsx`, `src/components/DashboardView.tsx`, `src/components/LoginPage.tsx`, `MVP_REPORT.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Sidebar Logo Header:** Mengembalikan kontainer kartu putih (`bg-white p-3.5 rounded-2xl shadow-lg border border-white/20`) dengan ukuran logo `logosakuimmnew.png` yang diperbesar signifikan (`h-14 md:h-16`) sehingga logo & teks terlihat sangat jelas.
+  - **Recharts & Tables:** Menyelaraskan seluruh warna Donut Chart, Bar Chart (Tren Pemasukan `#2E7D32` Green vs Pengeluaran `#C05621` Red), dan badge status tabel dengan palet warna resmi SAKU IMM x BCA Syariah.
+  - **Login Showcase Right Panel:** Mengubah latar belakang panel kanan ke **Deep Crimson Maroon (`#7A0C1E`)** dengan indikator bar carousel & badge bertema **BCA Syariah Cyan (`#0097A7`)**.
+- **Dampak Arsitektur / Catatan:** Seluruh aplikasi kini 100% konsisten dalam satu tema warna terpadu (*unified brand identity*).

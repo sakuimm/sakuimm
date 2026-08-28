@@ -40,8 +40,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside className="w-64 bg-[#7A0C1E] text-white flex flex-col justify-between h-screen sticky top-0 shadow-xl border-r border-[#600917]">
       <div>
         {/* Brand Header */}
-        <div className="px-5 py-5 border-b border-white/15 flex items-center justify-center">
-          <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-12 md:h-14 w-auto object-contain brightness-110" />
+        <div className="p-4 border-b border-white/15 flex items-center justify-center">
+          <div className="bg-white p-3.5 rounded-2xl shadow-lg border border-white/20 w-full flex items-center justify-center">
+            <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-14 md:h-16 w-full object-contain" />
+          </div>
         </div>
 
         {/* Navigation items */}

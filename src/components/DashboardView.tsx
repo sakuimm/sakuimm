@@ -59,15 +59,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   // Chart 1 Data: Kategori Proker
   const dataKategori = [
-    { name: 'Kemahasiswaan', value: 3750000 * aggregateMultiplier, color: '#2D3748' },
-    { name: 'Keagamaan', value: 450000 * aggregateMultiplier, color: '#81B29A' },
-    { name: 'Kemasyarakatan', value: 1200000 * aggregateMultiplier, color: '#F4A261' },
+    { name: 'Kemahasiswaan', value: 3750000 * aggregateMultiplier, color: '#7A0C1E' },
+    { name: 'Keagamaan', value: 450000 * aggregateMultiplier, color: '#0097A7' },
+    { name: 'Kemasyarakatan', value: 1200000 * aggregateMultiplier, color: '#1D4ED8' },
   ];
 
   // Chart 2 Data: Jenis Transaksi (Operasional vs Inventaris)
   const dataJenisTrx = [
-    { name: 'Operasional', value: 6050000 * aggregateMultiplier, color: '#2D3748' },
-    { name: 'Inventaris', value: 1200000 * aggregateMultiplier, color: '#F4A261' },
+    { name: 'Operasional', value: 6050000 * aggregateMultiplier, color: '#7A0C1E' },
+    { name: 'Inventaris', value: 1200000 * aggregateMultiplier, color: '#0097A7' },
   ];
 
   // Chart 3 Data: Tren Bulanan
@@ -283,8 +283,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <XAxis dataKey="bulan" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(value: number) => `Rp ${value.toLocaleString('id-ID')}`} />
-                <Bar dataKey="pemasukan" fill="#81B29A" name="Pemasukan" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="pengeluaran" fill="#F4A261" name="Pengeluaran" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="pemasukan" fill="#2E7D32" name="Pemasukan" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="pengeluaran" fill="#C05621" name="Pengeluaran" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

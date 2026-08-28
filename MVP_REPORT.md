@@ -93,7 +93,7 @@ Seluruh 22 nama Bidang Resmi IMM hasil wawancara pengguna diselaraskan 100% pada
 > 2. **BCA Syariah Cyan (`#0097A7` Accent Cyan):** Badge Co-Branding resmi `SAKU IMM x BCA Syariah` dan indikator perbankan syariah.
 > 3. **Financial Metric Accents:** Saldo Kas/Akhir (`#1D4ED8` Saldo Blue), Pemasukan Kas (`#2E7D32` Hijau Positif), dan Pengeluaran Kas (`#C05621` Warm Red).
 > 
-> Seluruh antarmuka menggunakan *Card-based layout* (`border-slate-200`, `rounded-xl`), font modern `Plus Jakarta Sans`, **Logo Resmi SAKU IMM (`/public/logosakuimmnew.png`)** tanpa pembungkus kartu agar tampil menonjol dan jelas, Badge Co-Branding `SAKU IMM x BCA Syariah`, serta **Halaman Login 2-Grid Split-Screen dengan Interactive 3-Slide Feature Carousel Slider**.
+> Seluruh antarmuka menggunakan *Card-based layout* (`border-slate-200`, `rounded-xl`), font modern `Plus Jakarta Sans`, **Logo Resmi SAKU IMM (`/public/logosakuimmnew.png`)** dalam kontainer kartu putih yang bersih dan diperbesar (`h-14 md:h-16`), Badge Co-Branding `SAKU IMM x BCA Syariah`, serta **Halaman Login 2-Grid Split-Screen dengan Interactive 3-Slide Feature Carousel Slider (Crimson Maroon & Cyan Theme)**.
 
 ---
 
