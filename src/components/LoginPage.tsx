@@ -37,7 +37,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="lg:col-span-6 bg-white p-8 md:p-12 flex flex-col justify-between">
           {/* Top Brand Logo & Co-Branding Badge */}
           <div className="flex items-center justify-between">
-            <img src="/sakuimmlogo.jpg" alt="SAKU IMM Logo" className="h-12 object-contain" />
+            <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-12 object-contain" />
             <div className="flex items-center gap-1.5 px-3 py-1 bg-[#F8F9FA] border border-slate-200 rounded-lg text-xs font-bold shadow-2xs">
               <span className="text-[#7A0C1E] font-black">SAKU IMM</span>
               <span className="text-slate-400 font-normal">x</span>

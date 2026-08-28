@@ -271,3 +271,12 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Menambahkan badge co-branding resmi `SAKU IMM x BCA Syariah` pada Header aplikasi dan Halaman Login.
   - Memperbarui aksen metrik kartu saldo kas (`#1D4ED8` Saldo Blue), pemasukan (`#2E7D32` Hijau Positif), dan pengeluaran (`#C05621` Warm Red).
 - **Dampak Arsitektur / Catatan:** Antarmuka aplikasi kini 100% presisi dan identik dengan desain acuan mockup sinergi perbankan syariah resmi SAKU IMM x BCA Syariah.
+
+### [2026-08-28 T14:30] - Penyelarasan Seluruh Logo & SiteIcon ke File `/public/logosakuimmnew.png`
+- **Kategori:** BRANDING / ASSETS UPDATE
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `index.html`, `src/components/Sidebar.tsx`, `src/components/LoginPage.tsx`, `public/favicon.ico`, `public/favicon.png`, `MVP_REPORT.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - Mengganti seluruh referensi logo aplikasi pada `Sidebar.tsx` dan `LoginPage.tsx` secara langsung ke file `/logosakuimmnew.png`.
+  - Mengganti seluruh referensi site icon (favicon) browser pada `index.html` dan `public/favicon.ico` / `public/favicon.png` menggunakan berkas `/logosakuimmnew.png`.
+- **Dampak Arsitektur / Catatan:** Identitas visual logo aplikasi kini 100% menggunakan aset terbaru `/public/logosakuimmnew.png`.
