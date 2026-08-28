@@ -36,16 +36,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         {/* LAYOUT KIRI: Clean Form Panel (6 Cols on Desktop) */}
         <div className="lg:col-span-6 bg-white p-8 md:p-12 flex flex-col justify-between">
           {/* Top Brand Logo */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-[#2D3748] text-white flex items-center justify-center shadow-xs">
-              <ShieldCheck className="w-6 h-6 text-[#81B29A]" />
-            </div>
-            <div>
-              <span className="font-black text-[#2D3748] text-xl tracking-tight leading-none block">
-                SAKU<span className="text-[#81B29A]">IMM</span>
-              </span>
-              <span className="text-[10px] text-[#F4A261] font-bold tracking-wider uppercase block">Sistem Keuangan IMM</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <img src="/sakuimm-logo.png" alt="SAKU IMM Logo" className="h-12 object-contain" />
           </div>
 
           {/* Middle Form Area */}
