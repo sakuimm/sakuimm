@@ -1,4 +1,4 @@
-export type OrgLevel = 'PK' | 'PC' | 'DPD' | 'DPP';
+export type OrgLevel = 'PK' | 'KORKOM' | 'PC' | 'DPD' | 'DPP';
 
 export type UserRole = 'bendahara_umum' | 'tim_verifikasi_internal' | 'super_admin';
 

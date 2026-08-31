@@ -41,8 +41,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div>
         {/* Brand Header */}
         <div className="p-4 border-b border-white/15 flex items-center justify-center">
-          <div className="bg-white p-3.5 rounded-2xl shadow-lg border border-white/20 w-full flex items-center justify-center">
-            <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-14 md:h-16 w-full object-contain" />
+          <div className="bg-white px-4 py-3.5 rounded-2xl shadow-lg border border-white/20 w-full flex items-center justify-center min-h-[72px]">
+            <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-11 md:h-12 w-auto max-w-full object-contain" />
           </div>
         </div>
 

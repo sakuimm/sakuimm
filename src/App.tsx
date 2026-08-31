@@ -26,6 +26,7 @@ export function App() {
   const getOrgName = (lvl: OrgLevel) => {
     switch (lvl) {
       case 'PK': return 'PK IMM Teknik Mesin UI';
+      case 'KORKOM': return 'KORKOM IMM Universitas Indonesia';
       case 'PC': return 'PC IMM Jakarta Selatan';
       case 'DPD': return 'DPD IMM DKI Jakarta';
       case 'DPP': return 'DPP IMM (Pusat)';

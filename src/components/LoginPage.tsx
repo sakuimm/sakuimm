@@ -37,12 +37,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="lg:col-span-6 bg-white p-8 md:p-12 flex flex-col justify-between">
           {/* Top Brand Logo & Co-Branding Badge */}
           <div className="flex items-center justify-between">
-            <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-12 object-contain" />
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-[#F8F9FA] border border-slate-200 rounded-lg text-xs font-bold shadow-2xs">
-              <span className="text-[#7A0C1E] font-black">SAKU IMM</span>
-              <span className="text-slate-400 font-normal">x</span>
-              <span className="text-[#0097A7] font-black">BCA syariah</span>
-            </div>
+            <img src="/logosakuimmnew.png" alt="SAKU IMM Logo" className="h-10 md:h-11 object-contain" />
+            <img src="/bca-syariah-logo.png" alt="BCA Syariah Logo" className="h-7 md:h-8 object-contain" />
           </div>
 
           {/* Middle Form Area */}
@@ -62,13 +58,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                   Level Organisasi Pimpinan *
                 </label>
-                <div className="grid grid-cols-4 gap-1.5 p-1 bg-slate-100 rounded-xl">
-                  {(['PK', 'PC', 'DPD', 'DPP'] as OrgLevel[]).map((lvl) => (
+                <div className="grid grid-cols-5 gap-1 p-1 bg-slate-100 rounded-xl">
+                  {(['PK', 'KORKOM', 'PC', 'DPD', 'DPP'] as OrgLevel[]).map((lvl) => (
                     <button
                       key={lvl}
                       type="button"
                       onClick={() => setLevel(lvl)}
-                      className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                      className={`py-2 text-[11px] font-bold rounded-lg transition-all ${
                         level === lvl
                           ? 'bg-[#7A0C1E] text-white shadow-sm'
                           : 'text-slate-600 hover:bg-slate-200/70'

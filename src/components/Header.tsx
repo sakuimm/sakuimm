@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Level Switcher Demo Buttons */}
         <div className="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs">
           <span className="text-[11px] font-semibold text-slate-400 px-2">Switch Level:</span>
-          {(['PK', 'PC', 'DPD', 'DPP'] as OrgLevel[]).map((lvl) => (
+          {(['PK', 'KORKOM', 'PC', 'DPD', 'DPP'] as OrgLevel[]).map((lvl) => (
             <button
               key={lvl}
               onClick={() => setCurrentLevel(lvl)}
@@ -48,9 +48,9 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right: Aggregate Mode Toggle (DPD / DPP / PC) */}
+      {/* Right: Aggregate Mode Toggle (DPD / DPP / PC / KORKOM) */}
       <div className="flex items-center gap-4">
-        {(currentLevel === 'DPD' || currentLevel === 'DPP' || currentLevel === 'PC') && (
+        {(currentLevel === 'DPD' || currentLevel === 'DPP' || currentLevel === 'PC' || currentLevel === 'KORKOM') && (
           <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
             <Layers className="w-4 h-4 text-[#F4A261]" />
             <span className="text-xs font-semibold text-slate-600">Mode Agregat Turunan:</span>
@@ -73,12 +73,8 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {/* Official BCA Syariah Co-Branding Badge */}
-        <div className="flex items-center gap-2 px-3 py-1 bg-[#F8F9FA] border border-slate-200 rounded-lg text-xs font-bold shadow-2xs">
-          <span className="text-[#7A0C1E] font-black">SAKU IMM</span>
-          <span className="text-slate-400 font-normal">x</span>
-          <span className="text-[#0097A7] flex items-center gap-1 font-black">
-            <Building2 className="w-3.5 h-3.5 text-[#0097A7]" /> BCA syariah
-          </span>
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-lg shadow-2xs">
+          <img src="/bca-syariah-logo.png" alt="BCA Syariah Logo" className="h-6 md:h-7 object-contain" />
         </div>
 
         {/* Date Filter */}
