@@ -80,7 +80,7 @@ export function App() {
         />
 
         {/* Dynamic View Routing */}
-        <main className="p-6 max-w-7xl w-full mx-auto">
+        <main className="p-6 md:p-8 pt-6 md:pt-8 max-w-7xl w-full mx-auto">
           {activeTab === 'dashboard' && (
             <DashboardView
               transaksiList={transaksiList}

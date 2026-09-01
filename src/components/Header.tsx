@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentOrgName,
 }) => {
   return (
-    <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10 shadow-xs">
+    <header className="bg-white border-b border-slate-200 px-6 py-3.5 md:py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs mt-1">
       {/* Left: Organization Title & Badge */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-[#2D3748]/5 border border-slate-200 rounded-lg">
@@ -73,8 +73,8 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {/* Official BCA Syariah Co-Branding Badge */}
-        <div className="flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-lg shadow-2xs">
-          <img src="/bca-syariah-logo.png" alt="BCA Syariah Logo" className="h-6 md:h-7 object-contain" />
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl shadow-xs">
+          <img src="/bca-syariah-cobranding.png" alt="BCA Syariah x SAKU IMM" className="h-8 md:h-10 object-contain" />
         </div>
 
         {/* Date Filter */}
