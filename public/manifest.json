@@ -1,0 +1,18 @@
+{
+  "short_name": "SAKU IMM",
+  "name": "SAKU IMM - Sistem Keuangan Ikatan Mahasiswa Muhammadiyah",
+  "description": "Sistem Pencatatan & Pelaporan Keuangan IMM Transparan & Akuntabel",
+  "icons": [
+    {
+      "src": "/logosakuimmnew.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F8F9FA",
+  "theme_color": "#7A0C1E",
+  "display": "standalone",
+  "orientation": "portrait"
+}

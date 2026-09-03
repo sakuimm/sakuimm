@@ -26,7 +26,9 @@ export interface Organisasi {
   level: OrgLevel;
   parentId?: string;
   parentNama?: string;
+  indukNama?: string;
   status: 'verified' | 'pending' | 'rejected';
+  tanggalPendaftaran?: string;
 }
 
 export interface Bidang {
@@ -42,6 +44,8 @@ export interface ProgramKerja {
   bidangNama: string;
   namaProker: string;
   kategori: KategoriProker;
+  tanggalPelaksanaan?: string;
+  statusLaporan?: 'Belum' | 'Selesai';
 }
 
 export interface Transaksi {
@@ -65,9 +69,9 @@ export interface Transaksi {
 
 export interface AuditLog {
   id: string;
-  transaksiId: string;
+  transaksiId?: string;
   actorNama: string;
-  aksi: 'CREATE' | 'UPDATE' | 'SOFT_DELETE';
+  aksi: 'CREATE' | 'UPDATE' | 'SOFT_DELETE' | 'REGISTER_ORG' | 'VERIFY_ORG' | 'REJECT_ORG';
   waktu: string;
   keterangan: string;
 }

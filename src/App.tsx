@@ -1,27 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserRole, OrgLevel, Transaksi, ProgramKerja, Organisasi } from './types';
-import { OFFICIAL_IMM_BIDANG, MOCK_ORGANISASI, MOCK_PROKER, MOCK_TRANSAKSI } from './data/mockData';
+import { OFFICIAL_IMM_BIDANG } from './data/mockData';
+import { storageService } from './services/storageService';
+import { apiService } from './services/apiService';
 import { LoginPage } from './components/LoginPage';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardView } from './components/DashboardView';
-import { TransactionFormView } from './components/TransactionFormView';
+import { BuatLaporanKeuanganView } from './components/BuatLaporanKeuanganView';
 import { MasterDataView } from './components/MasterDataView';
 import { ReportsView } from './components/ReportsView';
+import { SettingsView } from './components/SettingsView';
 import { OrganizationVerificationView } from './components/OrganizationVerificationView';
 
 export function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Default false: show SAKUIMM Login Page first
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>('bendahara_umum');
   const [currentLevel, setCurrentLevel] = useState<OrgLevel>('PK');
   const [userName, setUserName] = useState('Immawan Ahmad');
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [userEmail, setUserEmail] = useState('bendahara@imm.or.id');
+  const [activeTab, setActiveTab] = useState('buat-laporan');
   const [isAggregateMode, setIsAggregateMode] = useState(false);
 
-  // Dynamic Data States
-  const [transaksiList, setTransaksiList] = useState<Transaksi[]>(MOCK_TRANSAKSI);
-  const [prokerList, setProkerList] = useState<ProgramKerja[]>(MOCK_PROKER);
-  const [organisasiList, setOrganisasiList] = useState<Organisasi[]>(MOCK_ORGANISASI);
+  // Dynamic Data States (Loaded & Saved via StorageService & ApiService)
+  const [transaksiList, setTransaksiList] = useState<Transaksi[]>([]);
+  const [prokerList, setProkerList] = useState<ProgramKerja[]>([]);
+  const [organisasiList, setOrganisasiList] = useState<Organisasi[]>([]);
+
+  // Restore Session & Persistent Data on Mount
+  useEffect(() => {
+    storageService.initData();
+
+    // Load data from persistent storage / API layer
+    setTransaksiList(storageService.getTransaksiList());
+    setProkerList(storageService.getProkerList());
+    setOrganisasiList(storageService.getOrganisasiList());
+
+    // Load saved user session
+    const session = storageService.getUserSession();
+    if (session && session.isLoggedIn) {
+      setIsLoggedIn(true);
+      setUserRole(session.userRole);
+      setCurrentLevel(session.currentLevel);
+      setUserName(session.userName);
+      setUserEmail(session.userEmail);
+    }
+  }, []);
 
   const getOrgName = (lvl: OrgLevel) => {
     switch (lvl) {
@@ -33,27 +57,85 @@ export function App() {
     }
   };
 
-  const handleLogin = (role: UserRole, level: OrgLevel, _email: string, name: string) => {
+  const handleLogin = (role: UserRole, level: OrgLevel, email: string, name: string) => {
+    const finalName = name || 'Immawan Ahmad';
+    const finalEmail = email || 'bendahara@imm.or.id';
+    
     setUserRole(role);
     setCurrentLevel(level);
-    setUserName(name);
+    setUserName(finalName);
+    setUserEmail(finalEmail);
     setIsLoggedIn(true);
+
+    // Save Persistent Session
+    storageService.saveUserSession({
+      isLoggedIn: true,
+      userRole: role,
+      currentLevel: level,
+      userName: finalName,
+      userEmail: finalEmail
+    });
   };
 
-  const handleVerifyOrg = (id: string) => {
-    setOrganisasiList(prev =>
-      prev.map(o => (o.id === id ? { ...o, status: 'verified' } : o))
-    );
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    storageService.clearUserSession();
   };
 
-  const handleRejectOrg = (id: string) => {
-    setOrganisasiList(prev =>
-      prev.map(o => (o.id === id ? { ...o, status: 'rejected' } : o))
-    );
+  const handleAddTransaksi = (trx: Transaksi) => {
+    const updated = storageService.addTransaksi(trx, userName);
+    setTransaksiList(updated);
+  };
+
+  const handleAddProker = (proker: ProgramKerja) => {
+    const updated = storageService.addProker(proker);
+    setProkerList(updated);
+  };
+
+  const handleToggleStatusProker = (prokerId: string) => {
+    const updated = storageService.toggleProkerStatus(prokerId);
+    setProkerList(updated);
+  };
+
+  const handleVerifyOrg = async (id: string) => {
+    const updated = await apiService.verifyOrganisasi(id, userName);
+    setOrganisasiList(updated);
+  };
+
+  const handleRejectOrg = async (id: string) => {
+    const updated = await apiService.rejectOrganisasi(id, userName);
+    setOrganisasiList(updated);
+  };
+
+  const handleRegisterOrgSuccess = async (namaOrg: string, level: OrgLevel, email: string, namaBendahara: string) => {
+    await apiService.registerOrganisasi({
+      namaOrganisasi: namaOrg,
+      level,
+      namaBendahara,
+      email,
+      password: 'password123'
+    });
+    setOrganisasiList(storageService.getOrganisasiList());
+  };
+
+  const handleUpdateUserName = (newName: string) => {
+    setUserName(newName);
+    storageService.saveUserSession({
+      isLoggedIn: true,
+      userRole,
+      currentLevel,
+      userName: newName,
+      userEmail
+    });
   };
 
   if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+    return (
+      <LoginPage
+        onLogin={handleLogin}
+        onRegisterOrgSuccess={handleRegisterOrgSuccess}
+      />
+    );
   }
 
   return (
@@ -65,7 +147,7 @@ export function App() {
         userRole={userRole}
         userLevel={currentLevel}
         userName={userName}
-        onLogout={() => setIsLoggedIn(false)}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
@@ -73,7 +155,16 @@ export function App() {
         {/* Top Header */}
         <Header
           currentLevel={currentLevel}
-          setCurrentLevel={setCurrentLevel}
+          setCurrentLevel={(lvl) => {
+            setCurrentLevel(lvl);
+            storageService.saveUserSession({
+              isLoggedIn: true,
+              userRole,
+              currentLevel: lvl,
+              userName,
+              userEmail
+            });
+          }}
           isAggregateMode={isAggregateMode}
           setIsAggregateMode={setIsAggregateMode}
           currentOrgName={getOrgName(currentLevel)}
@@ -81,6 +172,16 @@ export function App() {
 
         {/* Dynamic View Routing */}
         <main className="p-6 md:p-8 pt-6 md:pt-8 max-w-7xl w-full mx-auto">
+          {activeTab === 'buat-laporan' && (
+            <BuatLaporanKeuanganView
+              prokerList={prokerList}
+              bidangList={OFFICIAL_IMM_BIDANG}
+              transaksiList={transaksiList}
+              userRole={userRole}
+              onAddTransaksi={handleAddTransaksi}
+            />
+          )}
+
           {activeTab === 'dashboard' && (
             <DashboardView
               transaksiList={transaksiList}
@@ -88,17 +189,7 @@ export function App() {
               currentLevel={currentLevel}
               userRole={userRole}
               isAggregateMode={isAggregateMode}
-              onNavigateToTransaksi={() => setActiveTab('transaksi')}
-            />
-          )}
-
-          {activeTab === 'transaksi' && (
-            <TransactionFormView
-              transaksiList={transaksiList}
-              prokerList={prokerList}
-              bidangList={OFFICIAL_IMM_BIDANG}
-              userRole={userRole}
-              onAddTransaksi={(trx) => setTransaksiList([trx, ...transaksiList])}
+              onNavigateToTransaksi={() => setActiveTab('buat-laporan')}
             />
           )}
 
@@ -107,7 +198,8 @@ export function App() {
               bidangList={OFFICIAL_IMM_BIDANG}
               prokerList={prokerList}
               userRole={userRole}
-              onAddProker={(p) => setProkerList([...prokerList, p])}
+              onAddProker={handleAddProker}
+              onToggleStatusProker={handleToggleStatusProker}
             />
           )}
 
@@ -116,6 +208,15 @@ export function App() {
               transaksiList={transaksiList}
               currentLevel={currentLevel}
               isAggregateMode={isAggregateMode}
+            />
+          )}
+
+          {activeTab === 'pengaturan' && (
+            <SettingsView
+              userName={userName}
+              userRole={userRole}
+              userLevel={currentLevel}
+              onUpdateUser={handleUpdateUserName}
             />
           )}
 

@@ -36,11 +36,11 @@ export const MOCK_ORGANISASI: Organisasi[] = [
 ];
 
 export const MOCK_PROKER: ProgramKerja[] = [
-  { id: 'pr-1', bidangId: 'b2', bidangNama: 'Kader', namaProker: 'Darul Arqam Dasar (DAD) XXVI', kategori: 'Kemahasiswaan' },
-  { id: 'pr-2', bidangId: 'b11', bidangNama: 'Tabligh dan Kajian Keislaman', namaProker: 'Kajian Rutin Selasa Subuh', kategori: 'Keagamaan' },
-  { id: 'pr-3', bidangId: 'b8', bidangNama: 'Sosial dan Pemberdayaan Masyarakat', namaProker: 'Bakti Sosial & Pengobatan Gratis', kategori: 'Kemasyarakatan' },
-  { id: 'pr-4', bidangId: 'b9', bidangNama: 'Ekonomi dan Kewirausahaan', namaProker: 'Penjualan Merchandising IMM', kategori: 'Kemahasiswaan' },
-  { id: 'pr-5', bidangId: 'b12', bidangNama: 'Media dan Komunikasi', namaProker: 'Pelatihan Desain & Website', kategori: 'Kemahasiswaan' },
+  { id: 'pr-1', bidangId: 'b2', bidangNama: 'Kader', namaProker: 'Darul Arqam Dasar (DAD) XXVI', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '02 - 04 September 2026', statusLaporan: 'Selesai' },
+  { id: 'pr-2', bidangId: 'b11', bidangNama: 'Tabligh dan Kajian Keislaman', namaProker: 'Kajian Rutin Selasa Subuh', kategori: 'Keagamaan', tanggalPelaksanaan: '12 - 26 Agustus 2026', statusLaporan: 'Selesai' },
+  { id: 'pr-3', bidangId: 'b8', bidangNama: 'Sosial dan Pemberdayaan Masyarakat', namaProker: 'Bakti Sosial & Pengobatan Gratis', kategori: 'Kemasyarakatan', tanggalPelaksanaan: '15 - 17 September 2026', statusLaporan: 'Belum' },
+  { id: 'pr-4', bidangId: 'b9', bidangNama: 'Ekonomi dan Kewirausahaan', namaProker: 'Penjualan Merchandising IMM', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '01 - 30 Agustus 2026', statusLaporan: 'Selesai' },
+  { id: 'pr-5', bidangId: 'b12', bidangNama: 'Media dan Komunikasi', namaProker: 'Pelatihan Desain & Website', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '10 - 12 Oktober 2026', statusLaporan: 'Belum' },
 ];
 
 export const MOCK_TRANSAKSI: Transaksi[] = [

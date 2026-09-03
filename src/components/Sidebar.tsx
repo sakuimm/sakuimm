@@ -2,12 +2,11 @@ import React from 'react';
 import { UserRole, OrgLevel } from '../types';
 import {
   LayoutDashboard,
-  Receipt,
+  PlusCircle,
   FolderKanban,
   FileSpreadsheet,
-  Building2,
+  Settings,
   LogOut,
-  ShieldCheck,
   UserCheck
 } from 'lucide-react';
 
@@ -29,10 +28,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout
 }) => {
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard Utama', icon: LayoutDashboard },
-    { id: 'transaksi', label: 'Transaksi Harian', icon: Receipt },
-    { id: 'master-data', label: 'Master Data (22 Bidang)', icon: FolderKanban },
-    { id: 'laporan', label: 'Laporan & Ekspor', icon: FileSpreadsheet },
+    { id: 'buat-laporan', label: 'Buat Laporan Keuangan', icon: PlusCircle, isPrimaryFeature: true },
+    { id: 'dashboard', label: 'Beranda', icon: LayoutDashboard },
+    { id: 'laporan', label: 'Laporan Keuangan', icon: FileSpreadsheet },
+    { id: 'master-data', label: 'Program Kerja', icon: FolderKanban },
+    { id: 'pengaturan', label: 'Pengaturan', icon: Settings },
     { id: 'verifikasi', label: 'Verifikasi Organisasi', icon: UserCheck, showBadge: true },
   ];
 
@@ -61,14 +61,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-white/20 text-white font-bold shadow-xs'
+                    : item.isPrimaryFeature
+                    ? 'bg-white/10 text-white hover:bg-white/25 border border-white/20 font-bold'
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-white/60'}`} />
-                  <span>{item.label}</span>
+                  <Icon className={`w-4 h-4 ${isActive || item.isPrimaryFeature ? 'text-[#81B29A]' : 'text-white/60'}`} />
+                  <span className="truncate">{item.label}</span>
                 </div>
-                {item.showBadge && (
+                {item.isPrimaryFeature && (
+                  <span className="px-1.5 py-0.5 text-[9px] font-black rounded-full bg-[#81B29A] text-[#2D3748]">
+                    UTAMA
+                  </span>
+                )}
+                {item.showBadge && !item.isPrimaryFeature && (
                   <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-[#0097A7] text-white">
                     1
                   </span>

@@ -1,26 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Transaksi, ProgramKerja, OrgLevel, UserRole } from '../types';
+import { OFFICIAL_IMM_BIDANG } from '../data/mockData';
 import {
   ArrowUpRight,
   ArrowDownLeft,
   Wallet,
-  UploadCloud,
   PieChart as PieIcon,
-  BarChart3,
   TrendingUp,
-  FileCheck,
+  Filter,
   CheckCircle2,
-  Clock
+  Building2,
+  ShieldCheck,
+  Eye
 } from 'lucide-react';
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
   Tooltip,
   Legend
 } from 'recharts';
@@ -42,6 +39,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   isAggregateMode,
   onNavigateToTransaksi,
 }) => {
+  // Filter Subordinate Level Selector state for Pimpinan yang punya bawahan
+  const [selectedSubordinateLevel, setSelectedSubordinateLevel] = useState<string>('ALL');
+
   // Aggregate Calculations
   const totalPemasukan = transaksiList
     .filter((t) => t.jenisNominal === 'pemasukan')
@@ -52,64 +52,81 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     .reduce((sum, t) => sum + t.nominal, 0);
 
   // Multiplier for Aggregate mode simulation
-  const aggregateMultiplier = isAggregateMode ? (currentLevel === 'DPP' ? 15 : currentLevel === 'DPD' ? 5 : 2) : 1;
+  const aggregateMultiplier = isAggregateMode
+    ? (selectedSubordinateLevel === 'ALL'
+        ? (currentLevel === 'DPP' ? 15 : currentLevel === 'DPD' ? 5 : 2)
+        : selectedSubordinateLevel === 'PK' ? 1.5 : selectedSubordinateLevel === 'PC' ? 3 : 2)
+    : 1;
+
   const displayPemasukan = totalPemasukan * aggregateMultiplier;
   const displayPengeluaran = totalPengeluaran * aggregateMultiplier;
   const displaySaldo = displayPemasukan - displayPengeluaran;
 
-  // Chart 1 Data: Kategori Proker
+  // Chart 1 Data: Pie Chart Pengeluaran Per Kategori Proker
   const dataKategori = [
     { name: 'Kemahasiswaan', value: 3750000 * aggregateMultiplier, color: '#7A0C1E' },
     { name: 'Keagamaan', value: 450000 * aggregateMultiplier, color: '#0097A7' },
     { name: 'Kemasyarakatan', value: 1200000 * aggregateMultiplier, color: '#1D4ED8' },
   ];
 
-  // Chart 2 Data: Jenis Transaksi (Operasional vs Inventaris)
-  const dataJenisTrx = [
-    { name: 'Operasional', value: 6050000 * aggregateMultiplier, color: '#7A0C1E' },
-    { name: 'Inventaris', value: 1200000 * aggregateMultiplier, color: '#0097A7' },
+  // Chart 2 Data: Pie Chart Pengeluaran Per Bidang (Instruksi screenshot: Ganti bar chart tren dengan pie chart pengeluaran per bidang)
+  const dataPengeluaranBidang = [
+    { name: 'Kader (KDR)', value: 1850000 * aggregateMultiplier, color: '#7A0C1E' },
+    { name: 'Tabligh & Keislaman (TKK)', value: 450000 * aggregateMultiplier, color: '#0097A7' },
+    { name: 'Sosial & Pemas. (SPM)', value: 1200000 * aggregateMultiplier, color: '#1D4ED8' },
+    { name: 'Media & Komunikasi (MED)', value: 1200000 * aggregateMultiplier, color: '#F4A261' },
+    { name: 'Ekonomi & Kewirausahaan (EKW)', value: 750000 * aggregateMultiplier, color: '#2E7D32' },
   ];
 
-  // Chart 3 Data: Tren Bulanan
-  const dataTrenBulanan = [
-    { bulan: 'Jan', pemasukan: 4200000, pengeluaran: 3100000 },
-    { bulan: 'Feb', pemasukan: 3800000, pengeluaran: 2900000 },
-    { bulan: 'Mar', pemasukan: 5100000, pengeluaran: 4200000 },
-    { bulan: 'Apr', pemasukan: 4600000, pengeluaran: 3800000 },
-    { bulan: 'Mei', pemasukan: 6200000, pengeluaran: 4900000 },
-    { bulan: 'Jun', pemasukan: 5800000, pengeluaran: 4100000 },
-    { bulan: 'Jul', pemasukan: 4900000, pengeluaran: 3600000 },
-    { bulan: 'Agu', pemasukan: displayPemasukan, pengeluaran: displayPengeluaran },
-  ];
+  const hasSubordinates = currentLevel !== 'PK';
 
   return (
     <div className="space-y-6">
-      {/* Banner Status Agregat */}
-      {isAggregateMode && (
-        <div className="bg-[#7A0C1E] text-white p-4 rounded-card flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-white/20 text-white">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm">Mode Roll-up Agregat Nasional/Wilayah Aktif</h4>
-              <p className="text-xs text-slate-200">
-                Menampilkan kalkulasi otomatis akumulasi data dari seluruh {currentLevel === 'DPP' ? '34 DPD, Cabang & Komisariat se-Indonesia' : 'Cabang & Komisariat turunan'}.
-              </p>
-            </div>
+      {/* Banner Status Agregat & Privasi Pimpinan */}
+      <div className="bg-[#7A0C1E] text-white p-5 rounded-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-white/20 text-white">
+            <ShieldCheck className="w-6 h-6 text-[#81B29A]" />
           </div>
-          <span className="px-3 py-1 bg-[#0097A7] text-white font-bold text-xs rounded-full">
-            Simulasi Multi-Level
-          </span>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-extrabold text-base">Dashboard Ringkasan Beranda ({currentLevel})</h4>
+              <span className="px-2 py-0.5 bg-[#0097A7] text-white font-bold text-[10px] rounded-full">
+                Privasi Terjaga
+              </span>
+            </div>
+            <p className="text-xs text-slate-200 mt-0.5">
+              Pimpinan tingkat atas dapat memantau Total Pemasukan & Pengeluaran serta Pie Chart Pengeluaran Per Kategori/Bidang secara agregat tanpa mengekspos nota detail individu.
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* Top Stat Cards (4 Cards) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Filter Pimpinan yang punya bawahan */}
+        {hasSubordinates && (
+          <div className="bg-white/10 border border-white/20 p-2.5 rounded-xl flex items-center gap-2">
+            <Filter className="w-4 h-4 text-[#81B29A]" />
+            <span className="text-xs font-bold whitespace-nowrap">Filter Level Bawahan:</span>
+            <select
+              value={selectedSubordinateLevel}
+              onChange={(e) => setSelectedSubordinateLevel(e.target.value)}
+              className="px-2.5 py-1 bg-[#600917] border border-white/30 rounded-lg text-xs font-bold text-white focus:outline-none"
+            >
+              <option value="ALL">Keseluruhan Bawahan (Aggregated)</option>
+              {currentLevel === 'DPP' && <option value="DPD">Level DPD (Daerah)</option>}
+              {(currentLevel === 'DPP' || currentLevel === 'DPD') && <option value="PC">Level PC (Cabang)</option>}
+              {(currentLevel === 'DPP' || currentLevel === 'DPD' || currentLevel === 'PC') && <option value="KORKOM">Level KORKOM</option>}
+              <option value="PK">Level PK (Komisariat)</option>
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Top Stat Cards (3 Clean Cards: Total Saldo, Total Pemasukan, Total Pengeluaran) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: Total Saldo */}
         <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">
               Saldo Periode Berjalan
             </span>
             <div className="p-2 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8]">
@@ -123,14 +140,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="px-2 py-0.5 rounded-full font-bold bg-[#1D4ED8]/10 text-[#1D4ED8]">
               Kas Akumulatif
             </span>
-            <span>Real-time DB</span>
+            <span>Real-time Agregat</span>
           </div>
         </div>
 
         {/* Card 2: Total Pemasukan */}
         <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">
               Total Pemasukan
             </span>
             <div className="p-2 rounded-full bg-[#2E7D32]/10 text-[#2E7D32]">
@@ -151,7 +168,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Card 3: Total Pengeluaran */}
         <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">
               Total Pengeluaran
             </span>
             <div className="p-2 rounded-full bg-[#C05621]/10 text-[#C05621]">
@@ -168,237 +185,162 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-slate-500">vs target anggaran</span>
           </div>
         </div>
-
-        {/* Card 4: Google Drive Sync Status */}
-        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
-              Google Drive Queue
-            </span>
-            <div className="p-2 rounded-full bg-[#2D3748]/10 text-[#2D3748]">
-              <UploadCloud className="w-5 h-5" />
-            </div>
-          </div>
-          <div className="text-2xl font-extrabold text-[#2D3748] tracking-tight mb-2 flex items-center gap-2">
-            <span>4 / 5</span>
-            <span className="text-xs font-semibold text-slate-400">Bukti Synced</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#F4A261]/15 text-[#9C5217] flex items-center gap-1">
-              <Clock className="w-3 h-3" /> 1 Queue Pending
-            </span>
-          </div>
-        </div>
       </div>
 
-      {/* Middle Row: Charts & Visualizations */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart 1: Pie Chart Kategori Proker */}
-        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
+      {/* Middle Visualizations: 2 Pie Charts (Per Bidang & Per Kategori) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Chart 1: PIE CHART PENGELUARAN PER BIDANG (Instruksi screenshot!) */}
+        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
-              <PieIcon className="w-4 h-4 text-[#81B29A]" />
-              <span>Pengeluaran Kategori Proker</span>
+              <PieIcon className="w-5 h-5 text-[#7A0C1E]" />
+              <span>Pie Chart Pengeluaran Per Bidang</span>
             </h3>
+            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              22 Bidang IMM
+            </span>
           </div>
-          <div className="h-56">
+
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={dataPengeluaranBidang}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={85}
+                  paddingAngle={4}
+                  dataKey="value"
+                >
+                  {dataPengeluaranBidang.map((entry, index) => (
+                    <Cell key={`cell-bidang-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: number) => `Rp ${value.toLocaleString('id-ID')}`} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-center text-xs">
+            {dataPengeluaranBidang.map((b) => (
+              <div key={b.name} className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="w-2.5 h-2.5 rounded-full mx-auto mb-1" style={{ backgroundColor: b.color }} />
+                <span className="font-bold text-slate-700 block truncate">{b.name}</span>
+                <span className="text-[11px] font-extrabold text-[#7A0C1E]">
+                  Rp {(b.value / 1000).toLocaleString('id-ID')}k
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Chart 2: PIE CHART PENGELUARAN PER KATEGORI (Keagamaan, Kemahasiswaan, Kemasyarakatan) */}
+        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
+              <PieIcon className="w-5 h-5 text-[#0097A7]" />
+              <span>Pie Chart Pengeluaran Per Kategori</span>
+            </h3>
+            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#0097A7]/15 text-[#0097A7]">
+              Agregat Privasi
+            </span>
+          </div>
+
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={dataKategori}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={75}
+                  innerRadius={55}
+                  outerRadius={85}
                   paddingAngle={4}
                   dataKey="value"
                 >
                   {dataKategori.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-kat-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip formatter={(value: number) => `Rp ${value.toLocaleString('id-ID')}`} />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-2 grid grid-cols-3 gap-2 text-center text-xs">
+
+          <div className="grid grid-cols-3 gap-2 text-center text-xs">
             {dataKategori.map((k) => (
-              <div key={k.name} className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
+              <div key={k.name} className="p-2 rounded-xl bg-slate-50 border border-slate-100">
                 <div className="w-2.5 h-2.5 rounded-full mx-auto mb-1" style={{ backgroundColor: k.color }} />
-                <span className="font-semibold text-slate-600 block truncate">{k.name}</span>
+                <span className="font-bold text-slate-700 block truncate">{k.name}</span>
+                <span className="text-[11px] font-extrabold text-[#0097A7]">
+                  Rp {(k.value / 1000).toLocaleString('id-ID')}k
+                </span>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Chart 2: Donut Chart Jenis Transaksi */}
-        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
-              <FileCheck className="w-4 h-4 text-[#F4A261]" />
-              <span>Jenis Transaksi</span>
-            </h3>
-          </div>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={dataJenisTrx}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={75}
-                  paddingAngle={4}
-                  dataKey="value"
-                >
-                  {dataJenisTrx.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value: number) => `Rp ${value.toLocaleString('id-ID')}`} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-2 grid grid-cols-2 gap-2 text-center text-xs">
-            {dataJenisTrx.map((j) => (
-              <div key={j.name} className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
-                <div className="w-2.5 h-2.5 rounded-full mx-auto mb-1" style={{ backgroundColor: j.color }} />
-                <span className="font-semibold text-slate-600 block">{j.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Chart 3: Bar Chart Tren Bulanan */}
-        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-[#2D3748]" />
-              <span>Tren Pemasukan vs Pengeluaran</span>
-            </h3>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dataTrenBulanan}>
-                <XAxis dataKey="bulan" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip formatter={(value: number) => `Rp ${value.toLocaleString('id-ID')}`} />
-                <Bar dataKey="pemasukan" fill="#2E7D32" name="Pemasukan" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="pengeluaran" fill="#C05621" name="Pengeluaran" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Bottom Section: Tables */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Table 1: Ringkasan per Program Kerja (2 Cols) */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-card p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-[#2D3748] text-base">Ringkasan Per Program Kerja</h3>
-            <span className="text-xs text-slate-500 font-medium">Periode Agustus 2026</span>
+      {/* Bottom Section: Ringkasan per Program Kerja */}
+      <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="font-bold text-[#2D3748] text-base">Ringkasan Anggaran Program Kerja</h3>
+            <p className="text-xs text-slate-500">Rekapitulasi surplus/defisit kas per program kerja aktif</p>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
-                  <th className="py-2.5 px-3">Nama Program Kerja</th>
-                  <th className="py-2.5 px-3">Bidang</th>
-                  <th className="py-2.5 px-3">Pemasukan</th>
-                  <th className="py-2.5 px-3">Pengeluaran</th>
-                  <th className="py-2.5 px-3">Surplus / Defisit</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {prokerList.map((pr) => {
-                  const pem = pr.id === 'pr-1' ? 3750000 : pr.id === 'pr-4' ? 2400000 : 0;
-                  const peng = pr.id === 'pr-1' ? 1850000 : pr.id === 'pr-2' ? 450000 : pr.id === 'pr-5' ? 1200000 : 0;
-                  const diff = pem - peng;
-                  return (
-                    <tr key={pr.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-3 font-bold text-[#2D3748]">{pr.namaProker}</td>
-                      <td className="py-3 px-3 text-slate-500">{pr.bidangNama}</td>
-                      <td className="py-3 px-3 text-[#81B29A] font-semibold">
-                        Rp {pem.toLocaleString('id-ID')}
-                      </td>
-                      <td className="py-3 px-3 text-[#F4A261] font-semibold">
-                        Rp {peng.toLocaleString('id-ID')}
-                      </td>
-                      <td className="py-3 px-3">
-                        <span
-                          className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                            diff >= 0
-                              ? 'bg-[#81B29A]/15 text-[#2D5A44]'
-                              : 'bg-[#F4A261]/15 text-[#9C5217]'
-                          }`}
-                        >
-                          {diff >= 0 ? `Surplus (+Rp ${diff.toLocaleString('id-ID')})` : `Defisit (-Rp ${Math.abs(diff).toLocaleString('id-ID')})`}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <button
+            onClick={onNavigateToTransaksi}
+            className="px-3.5 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+          >
+            + Buat Laporan Keuangan
+          </button>
         </div>
 
-        {/* Table 2: 10 Transaksi Terbaru */}
-        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-[#2D3748] text-base">Transaksi Terbaru</h3>
-              <button
-                onClick={onNavigateToTransaksi}
-                className="text-xs font-bold text-[#2D3748] hover:underline"
-              >
-                Lihat Semua →
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              {transaksiList.slice(0, 4).map((trx) => (
-                <div
-                  key={trx.id}
-                  className="p-3 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-between"
-                >
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-bold text-[#2D3748] line-clamp-1">{trx.keterangan}</p>
-                    <p className="text-[10px] text-slate-400">{trx.tanggal} • {trx.bidangNama.split(' ')[1]}</p>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className={`text-xs font-extrabold ${
-                        trx.jenisNominal === 'pemasukan' ? 'text-[#81B29A]' : 'text-[#F4A261]'
-                      }`}
-                    >
-                      {trx.jenisNominal === 'pemasukan' ? '+' : '-'}Rp {trx.nominal.toLocaleString('id-ID')}
-                    </p>
-                    {trx.uploadStatus === 'COMPLETED' ? (
-                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-[#2D5A44] bg-[#81B29A]/15 px-1.5 py-0.2 rounded-full mt-0.5">
-                        <CheckCircle2 className="w-2.5 h-2.5" /> GDrive Sync
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
+                <th className="py-3 px-3">Nama Program Kerja</th>
+                <th className="py-3 px-3">Bidang Naungan</th>
+                <th className="py-3 px-3">Jadwal Pelaksanaan</th>
+                <th className="py-3 px-3">Pemasukan</th>
+                <th className="py-3 px-3">Pengeluaran</th>
+                <th className="py-3 px-3">Surplus / Defisit</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {prokerList.map((pr) => {
+                const pem = pr.id === 'pr-1' ? 3750000 : pr.id === 'pr-4' ? 2400000 : 0;
+                const peng = pr.id === 'pr-1' ? 1850000 : pr.id === 'pr-2' ? 450000 : pr.id === 'pr-5' ? 1200000 : 0;
+                const diff = pem - peng;
+                return (
+                  <tr key={pr.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-3 font-extrabold text-[#2D3748]">{pr.namaProker}</td>
+                    <td className="py-3 px-3 text-slate-600 font-medium">{pr.bidangNama}</td>
+                    <td className="py-3 px-3 text-slate-500">{pr.tanggalPelaksanaan || '02 - 04 Sept 2026'}</td>
+                    <td className="py-3 px-3 text-[#2E7D32] font-bold">
+                      Rp {pem.toLocaleString('id-ID')}
+                    </td>
+                    <td className="py-3 px-3 text-[#C05621] font-bold">
+                      Rp {peng.toLocaleString('id-ID')}
+                    </td>
+                    <td className="py-3 px-3">
+                      <span
+                        className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                          diff >= 0
+                            ? 'bg-[#81B29A]/20 text-[#2D5A44]'
+                            : 'bg-[#F4A261]/20 text-[#9C5217]'
+                        }`}
+                      >
+                        {diff >= 0 ? `Surplus (+Rp ${diff.toLocaleString('id-ID')})` : `Defisit (-Rp ${Math.abs(diff).toLocaleString('id-ID')})`}
                       </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-[#9C5217] bg-[#F4A261]/15 px-1.5 py-0.2 rounded-full mt-0.5">
-                        <Clock className="w-2.5 h-2.5" /> Queue Pending
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {userRole !== 'tim_verifikasi_internal' && (
-            <button
-              onClick={onNavigateToTransaksi}
-              className="w-full mt-4 py-2 bg-[#2D3748] hover:bg-slate-700 text-white font-bold text-xs rounded-lg transition-all"
-            >
-              + Input Transaksi Nota Baru
-            </button>
-          )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
