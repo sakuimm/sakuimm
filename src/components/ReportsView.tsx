@@ -3,8 +3,9 @@ import { Transaksi, ProgramKerja, OrgLevel } from '../types';
 import { MOCK_PROKER } from '../data/mockData';
 import { PrintableProkerReportModal } from './PrintableProkerReportModal';
 import { PrintableCashFlowReportModal } from './PrintableCashFlowReportModal';
+import { DetailLaporanProkerView } from './DetailLaporanProkerView';
 import { exportService } from '../services/exportService';
-import { FileSpreadsheet, Download, FileText, CheckCircle2, Printer, Calendar } from 'lucide-react';
+import { FileSpreadsheet, Download, FileText, CheckCircle2, Printer, Calendar, Eye, ExternalLink } from 'lucide-react';
 
 interface ReportsViewProps {
   transaksiList: Transaksi[];
@@ -19,6 +20,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
 }) => {
   const [reportTab, setReportTab] = useState<'proker' | 'arus-kas'>('proker');
   const [selectedProkerForPrint, setSelectedProkerForPrint] = useState<ProgramKerja | null>(null);
+  const [selectedProkerForDetail, setSelectedProkerForDetail] = useState<ProgramKerja | null>(null);
   const [showPrintCashFlowModal, setShowPrintCashFlowModal] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
@@ -55,6 +57,33 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
       case 'DPP': return 'DPP IMM (Pusat)';
     }
   };
+
+  // If a proker is selected for full detail view, render the dedicated DetailLaporanProkerView (matches screenshot!)
+  if (selectedProkerForDetail) {
+    return (
+      <>
+        <DetailLaporanProkerView
+          proker={selectedProkerForDetail}
+          transaksiList={transaksiList}
+          currentLevel={currentLevel}
+          currentOrgName={getOrgName(currentLevel)}
+          onBack={() => setSelectedProkerForDetail(null)}
+          onOpenPrintModal={(p) => setSelectedProkerForPrint(p)}
+          onExportExcel={handleExportExcel}
+        />
+
+        {selectedProkerForPrint && (
+          <PrintableProkerReportModal
+            proker={selectedProkerForPrint}
+            transaksiList={transaksiList}
+            currentLevel={currentLevel}
+            currentOrgName={getOrgName(currentLevel)}
+            onClose={() => setSelectedProkerForPrint(null)}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -102,10 +131,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           
           {reportTab === 'proker' ? (
             <button
-              onClick={() => setSelectedProkerForPrint(MOCK_PROKER[0])}
+              onClick={() => setSelectedProkerForDetail(MOCK_PROKER[0])}
               className="px-3.5 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs active:scale-95"
             >
-              <Printer className="w-4 h-4 text-[#81B29A]" /> Preview Cetak PDF Proker
+              <Eye className="w-4 h-4 text-[#81B29A]" /> Lihat Detail Laporan Kegiatan
             </button>
           ) : (
             <button
@@ -192,22 +221,31 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
                           Jadwal: <span className="font-semibold text-slate-700">{proker.tanggalPelaksanaan || '02 - 04 Sept 2026'}</span> • Kategori: <span className="font-semibold text-slate-700">{proker.kategori}</span>
                         </p>
                       </div>
-                      <div className="flex items-center gap-3 text-xs">
-                        <div className="text-right">
+                      <div className="flex items-center gap-2 text-xs">
+                        <div className="text-right mr-2">
                           <span className="text-[10px] text-slate-400 block uppercase">Surplus / Defisit</span>
                           <span className={`font-black text-sm ${diff >= 0 ? 'text-[#2D5A44]' : 'text-[#9C5217]'}`}>
                             Rp {diff.toLocaleString('id-ID')}
                           </span>
                         </div>
 
+                        {/* Open Detail View Button */}
+                        <button
+                          onClick={() => setSelectedProkerForDetail(proker)}
+                          className="px-3 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-lg transition-all flex items-center gap-1.5 shadow-xs"
+                          title="Buka Detail Laporan Kegiatan"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 text-[#81B29A]" />
+                          <span>Lihat Detail Laporan</span>
+                        </button>
+
                         {/* Print Button Per Proker */}
                         <button
                           onClick={() => setSelectedProkerForPrint(proker)}
-                          className="px-3 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-lg transition-all flex items-center gap-1.5 shadow-xs"
-                          title="Cetak Laporan Per Proker Ini"
+                          className="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition-all flex items-center gap-1 shadow-xs"
+                          title="Cetak PDF Laporan Per Proker Ini"
                         >
-                          <Printer className="w-3.5 h-3.5 text-[#81B29A]" />
-                          <span>Cetak Laporan</span>
+                          <Printer className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
