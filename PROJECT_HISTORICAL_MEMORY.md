@@ -325,4 +325,139 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
   - Melakukan commit dan push seluruh perubahan fitur & dokumentasi ke repositori GitHub `sakuimm/sakuimm`.
 - **Dampak Arsitektur / Catatan:** Kodebase SAKU IMM versi 1.0 full-stack beserta skema PostgreSQL & dokumentasinya telah terpublikasi secara aman di GitHub.
 
+### [2026-09-11 T09:45] - Penyelarasan Penuh Antarmuka Sesuai Feedback Pengguna, Penegakan 5 Menu Baku, & Privasi Agregat
+- **Kategori:** UI/UX ENHANCEMENT / RBAC & PRIVACY
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/LoginPage.tsx`, `src/components/Sidebar.tsx`, `src/components/DashboardView.tsx`, `src/components/SettingsView.tsx`, `src/App.tsx`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Login Screen:** Menyederhanakan formulir `Sign In` agar murni hanya meminta Email dan Kata Sandi. Membersihkan panel kanan USP Slider sehingga murni berfokus menampilkan 3 pilar USP SAKU IMM (*Transparan, Akuntabel, Berkelanjutan*) dengan indikator 3 bar interaktif dan tipografi elegan.
+  - **Sidebar 5 Menu Baku:** Menyelaraskan struktur navigasi Sidebar menjadi tepat 5 menu utama (*Buat Laporan Keuangan [UTAMA]*, *Beranda*, *Laporan Keuangan*, *Program Kerja*, dan *Pengaturan*).
+  - **Integrasi Verifikasi Organisasi ke Pengaturan:** Menyatukan panel verifikasi organisasi ke dalam tab *Pengaturan > Verifikasi Akun*, dilengkapi badge antrean pending review di sidebar.
+  - **Penegakan Privasi Finansial Beranda:** Menerapkan protokol privasi berkeadilan di mana pimpinan tingkat atas hanya dapat melihat data bawahan secara agregat (*Total Saldo, Pemasukan, Pengeluaran*, serta *Pie Chart Pengeluaran Per Bidang & Per Kategori*), sedangkan tabel rincian individu proker/kwitansi disembunyikan untuk menjaga otonomi keuangan lokal komisariat.
+- **Dampak Arsitektur / Catatan:** Seluruh aplikasi telah terverifikasi melalui subagent browser lokal (`npm run build` dan `npm run dev`) 100% responsif, rapi, dan bebas error.
+
+### [2026-09-11 T10:10] - Restrukturisasi Urutan Menu Utama: Beranda Sebagai Default Menu Utama & Landing View
+- **Kategori:** UI/UX ENHANCEMENT / NAVIGATION
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/Sidebar.tsx`, `src/App.tsx`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Reorder Sidebar:** Memindahkan menu **Beranda** ke urutan pertama pada `menuItems`, diikuti oleh *Buat Laporan Keuangan*, *Laporan Keuangan*, *Program Kerja*, dan *Pengaturan*.
+  - **Default Landing Page:** Mengubah state default `activeTab` di `App.tsx` ke `'dashboard'`, sehingga setelah login pengguna langsung diarahkan ke Beranda.
+- **Dampak Arsitektur / Catatan:** Hierarki navigasi kini selaras dengan ekspektasi alur kerja tipikal aplikasi keuangan, di mana dashboard ringkasan menjadi titik awal pengguna sebelum mengeksekusi sub-modul lainnya.
+
+### [2026-09-11 T10:25] - Penghapusan Badge "UTAMA" pada Menu Buat Laporan Keuangan
+- **Kategori:** UI/UX POLISH
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/Sidebar.tsx`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Penyelarasan Tampilan Sidebar:** Menghapus properti `isPrimaryFeature` dan elemen badge `UTAMA` pada menu *Buat Laporan Keuangan*, sehingga tampilan seluruh 5 menu utama terlihat seragam, bersih (*clean aesthetic*), dan seimbang tanpa ornamen berlebih.
+- **Dampak Arsitektur / Catatan:** Antarmuka Sidebar kini 100% konsisten, proporsional, dan terbebas dari label ganda.
+
+### [2026-09-11 T10:45] - Implementasi & Penyempurnaan Fitur Laporan Keuangan Per Program Kerja (Kegiatan)
+- **Kategori:** FEATURE IMPLEMENTATION / UI FIDELITY
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/types/index.ts`, `src/data/mockData.ts`, `src/services/storageService.ts`, `src/components/DetailLaporanProkerView.tsx`, `src/components/ReportsView.tsx`, `src/components/BuatLaporanKeuanganView.tsx`, `public/sample-receipt-*.svg`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Replikasi 100% Desain Mockup Acuan:** Mengimplementasikan halaman detail *Laporan Keuangan Kegiatan* (contoh: *Rapat Koordinasi Nasional IMM*) mencakup:
+    - Header breadcrumbs, judul, link kembali, serta 3 tombol aksi (*Preview PDF*, *Export Excel*, *Cetak* maroon).
+    - Hero Card dengan status badge *Selesai*, counter *24 transaksi tercatat*, *24 bukti tersedia*, dan metadata lengkap.
+    - 3 KPI Ringkasan Keuangan: Total Pemasukan Rp 20.000.000, Total Pengeluaran Rp 18.500.000, Surplus Rp 1.500.000.
+    - Tabel 2 (Rincian Pemasukan) & Tabel 3 (Rincian Pengeluaran) dengan pill kategori alokasi serta tombol thumbnail nota mini ber-kaca pembesar.
+    - Seksi 4 (Lampiran Bukti Pendukung) dengan 5 visual nota kasir otentik (SVG) berstempel verifikasi, badge zoom, dan kartu upload *Tambah Bukti Lain*.
+    - Sidebar Kanan: Card *Informasi Program Kerja* dan Card *Catatan*.
+  - **Akses Fleksibel Multi-Menu:** View laporan detail dapat dibuka baik dari tab daftar di menu *Laporan Keuangan* maupun dari kartu proker di menu *Buat Laporan Keuangan*.
+  - **Aset Bukti Nota Realistis:** Menghasilkan 5 berkas SVG bertekstur kertas kasir otentik di direktori `public/` dengan stempel digital watermark Sharp Pipe IMM.
+- **Dampak Arsitektur / Catatan:** Fitur telah terverifikasi melalui build TypeScript Vite (`exit code 0`, 1.41s) dan pengujian langsung via browser subagent. Seluruh interaksi (navigasi, modal zoom, upload file) berfungsi mulus.
+
+### [2026-09-11 T10:55] - Implementasi Hasil Export Siap Cetak (A4 / PDF) Laporan Keuangan Per Program Kerja
+- **Kategori:** FEATURE IMPLEMENTATION / PRINT & EXPORT
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/PrintableProkerReportModal.tsx`, `src/components/DetailLaporanProkerView.tsx`, `public/sample-receipt-*.svg`, `walkthrough.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Replikasi 100% Format Kop Surat & Dokumen Resmi DPP IMM:** Mengembangkan modal pratinjau cetak A4 / PDF (`PrintableProkerReportModal.tsx`) yang terintegrasi dengan tombol *Preview PDF* dan *Cetak* pada halaman detail Laporan Keuangan Program Kerja.
+  - **Struktur Dokumen Sesuai Mockup Acuan:**
+    1. **Kop Surat:** Logo resmi IMM kiri atas, teks instansi terpusat (*DEWAN PIMPINAN PUSAT IKATAN MAHASISWA MUHAMMADIYAH*, alamat Kramat Raya No. 49 Jakarta Pusat, kontak resmi).
+    2. **Garis Pembatas Ganda:** Garis atas tebal Crimson Maroon IMM (`#7A0C1E`) dan garis tipis bawah (`#2D3748`).
+    3. **Metadata Proker:** Teks rapi tanpa kotak bingkai bergaris dengan titik dua sejajar (*Nama Program Kerja*, *Bidang*, *Kategori*, *Pelaksanaan*).
+    4. **Seksi 1 (Ringkasan Keuangan):** Tabel 2 kolom dengan baris Surplus/Defisit bersorotan hijau lembut (`#EBF7EE`).
+    5. **Seksi 2 (Rincian Pemasukan):** Tabel 3 kolom (*Tanggal*, *Sumber / Keterangan*, *Jumlah*) dengan sorotan total hijau lembut.
+    6. **Seksi 3 (Rincian Pengeluaran):** Tabel 4 kolom (*Tanggal*, *Keterangan*, *Jenis*, *Jumlah*) dengan sorotan total merah lembut (`#FDEAEA`).
+    7. **Seksi 4 (Bukti Transaksi):** Grid 5 kolom berisi nota thermal paper kasir fisik (*Indomaret*, *Bluebird*, *Mitra Jaya*, *TOKO CAHAYA*, *BUKTI TERIMA UANG*) lengkap dengan caption tanggal dan peruntukan.
+    8. **Blok Tanda Tangan:** Rata kanan bertanggal (*Jakarta, 13 Agustus 2026 / Bendahara Umum DPP IMM / garis tanda tangan*).
+  - **Kepatuhan Cetak Cetak Kertas (Print CSS):** Menyematkan styling `@media print` (`print:p-6`, `print:shadow-none`, `page-break-inside-avoid`) sehingga ketika tombol *Cetak Sekarang (A4 / PDF)* ditekan, sistem otomatis menyembunyikan modal chrome dan menghasilkan dokumen 1 halaman A4 portrait yang bersih.
+  - **Penyelarasan Aset Bukti Nota:** Memperbarui 5 file SVG nota kasir di folder `public/` dengan entitas XML yang aman (`&amp;`) serta merek merchant yang tepat.
+- **Dampak Arsitektur / Catatan:** Hasil cetak terverifikasi melalui build TypeScript Vite (`exit code 0`) dan browser subagent dengan hasil screenshot `export_cetak_laporan_proker_verified_1789098999941.png` yang 100% presisi dengan desain acuan.
+
+### [2026-09-11 T11:05] - Implementasi Fitur Laporan Arus Kas (Cash Flow Statement) Sesuai Mockup Resmi DPP IMM
+- **Kategori:** FEATURE IMPLEMENTATION / PRINT & EXPORT
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `public/imm-shield-logo.svg`, `src/components/PrintableCashFlowReportModal.tsx`, `src/components/ReportsView.tsx`, `src/services/exportService.ts`, `walkthrough.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Replikasi 100% Desain Mockup Acuan Laporan Arus Kas:**
+    1. **Logo Resmi IMM:** Membuat aset vektor SVG otentik `public/imm-shield-logo.svg` lambang perisai IMM untuk kop surat dinas.
+    2. **Kop Surat & Pembatas Ganda:** Mengimplementasikan kop surat DPP IMM dengan logo perisai di kiri, teks instansi terpusat (*IKATAN MAHASISWA MUHAMMADIYAH / DEWAN PIMPINAN PUSAT IMM*, alamat Kramat Raya 49, kontak resmi), badge verifikasi kanan (*IMM Dicatat melalui SAKU IMM - 13 Agustus 2026 | 14:30 WIB*), serta garis ganda maroon tebal (3.5px) + hitam tipis (1px).
+    3. **1. Metrik Keuangan:** Grid 3 box berbingkai solid mencakup *Total Putaran Keuangan Rp900.000.000* (Pemasukan Rp510.000.000 + Pengeluaran Rp390.000.000), *Rata-Rata Pengeluaran / Bulan Rp48.750.000*, dan *Pengeluaran Terbesar Organisasi Rp85.000.000 (21,79%)*.
+    4. **2. Ringkasan Arus Kas:** Tabel 2 kolom (*Saldo Awal*, *Total Pemasukan*, *Total Pengeluaran*, *Kenaikan/Penurunan Kas*, *Saldo Akhir*) dengan baris net & saldo berarsir hijau lembut (`#EBF7EE`).
+    5. **3. Arus Kas Per Bulan:** Tabel 6 kolom untuk 8 bulan (Januari s.d. Agustus 2026) dengan baris `TOTAL` (`–` | `510.000.000` | `390.000.000` | `120.000.000` | `220.000.000`) berarsir hijau lembut (`#EBF7EE`).
+    6. **Catatan Sistem & Blok Pengesahan:** Catatan sistem di kiri bawah dan blok pengesahan Bendahara Umum DPP IMM bertanggal `Jakarta, 13 Agustus 2026` dengan garis tanda tangan resmi `(_______________________)`.
+  - **Peningkatan Tab On-Screen Laporan Keuangan:** Memperkaya tab *Laporan Arus Kas* di `ReportsView.tsx` sehingga pengguna dapat meninjau metrik keuangan dan tabel bulanan langsung di layar web sebelum mencetak.
+  - **Ekspor Spreadsheet Excel (.xlsx / .csv):** Menambahkan method `exportCashFlowStatementToExcel(...)` pada `exportService.ts` untuk mengunduh laporan arus kas dalam format CSV kompatibel Excel dengan UTF-8 BOM.
+- **Dampak Arsitektur / Catatan:** Terverifikasi bebas error melalui `npm run build` (`exit code 0`, 1.60s) dan pengujian browser otomatis yang menangkap visual modal preview 100% presisi.
+
+### [2026-09-11 T11:35] - Restrukturisasi Navigasi & Pembuatan Menu Mandiri "Input Transaksi"
+- **Kategori:** UI/UX REFACTOR / NAVIGATION
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/Sidebar.tsx`, `src/App.tsx`, `src/components/DashboardView.tsx`, `src/components/TransactionFormView.tsx`, `walkthrough.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Penyelarasan 5 Menu Utama SAKU IMM:**
+    - Mengganti menu kedua *Buat Laporan Keuangan* di sidebar menjadi menu mandiri **`Input Transaksi`** (ikon `ReceiptText`), sehingga susunan menu menjadi sangat logis dan berurutan: *Beranda*, *Input Transaksi*, *Laporan Keuangan*, *Program Kerja*, dan *Pengaturan*.
+  - **Membangun Tampilan Mandiri Input Transaksi (`TransactionFormView.tsx`):**
+    - **Kolom Kiri (Formulir Cepat):** Dropdown Program Kerja sasaran (otomatis menampilkan bidang dan kategori), input tanggal, toggle eksklusif Pemasukan (+ hijau sage) vs Pengeluaran (- maroon), nominal berformat Rupiah otomatis, kategori alokasi anggaran, deskripsi belanja, serta upload/kamera foto bukti nota dengan status watermark Sharp IMM.
+    - **Kolom Kanan (Riwayat & Audit Trail):** 3 kartu metrik ringkas (Total Transaksi, Total Masuk, Total Keluar), tabel riwayat 10 transaksi terakhir real-time dengan tab filter (*Semua, Masuk, Keluar*), kolom pencarian instan, tombol zoom nota fisik, serta tombol inspeksi snapshot *Audit Trail JSONB*.
+    - **Proteksi Role RBAC:** Jika diakses oleh `tim_verifikasi_internal`, formulir terkunci dalam mode *Read-Only (Pantau & Audit Log)*.
+  - **Integrasi Tombol Pintasan:** Memperbarui tombol pada halaman Beranda menjadi `+ Input Transaksi` yang langsung mengarahkan ke formulir pencatatan.
+- **Dampak Arsitektur / Catatan:** Kompilasi TypeScript dan bundle Vite berhasil 100% bebas error (`npm run build`, `exit code 0`, 1.40s). Alur kerja pengguna kini terpisah rapi antara pencatatan transaksi kas harian dan pengunduhan/pencetakan laporan pertanggungjawaban.
+
+### [2026-09-11 T11:50] - Pengelompokan Menu Induk "Input" dengan Submenu "Input Transaksi" & "Input Program Kerja"
+- **Kategori:** UI/UX REFACTOR / HIERARCHICAL NAVIGATION
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/components/Sidebar.tsx`, `src/App.tsx`, `src/components/MasterDataView.tsx`, `src/components/TransactionFormView.tsx`, `walkthrough.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **Membangun Komponen Sidebar Bertingkat (Expandable Submenu Accordion):**
+    - Mengelompokkan aktivitas input data ke dalam menu induk **`Input`** (ikon `PlusCircle` + indikator `ChevronDown`/`ChevronRight`).
+    - Membuat dua submenu terpadu di bawah *Input*:
+      1. ↳ **`Input Transaksi`** (ikon `ReceiptText`): Mengakses formulir pencatatan nota dan riwayat transaksi kas harian.
+      2. ↳ **`Input Program Kerja`** (ikon `FolderPlus`): Mengakses formulir penambahan program kerja baru dan master 22 bidang IMM.
+    - Menambahkan state `isInputOpen` dengan auto-expand saat salah satu submenu aktif, serta efek highlight pill putih berteks maroon kontras (`#7A0C1E`) untuk submenu yang sedang dipilih.
+  - **Harmonisasi Routing & Breadcrumb:**
+    - Memperbarui routing di `App.tsx` agar `activeTab === 'input-proker'` mengarahkan ke `MasterDataView`.
+    - Menyelaraskan breadcrumb pada kedua halaman: `Input > Input Transaksi` dan `Input > Input Program Kerja`.
+- **Dampak Arsitektur / Catatan:** Struktur navigasi menjadi jauh lebih rapi, teratur, dan memenuhi prinsip *single responsibility* per modul. Verifikasi `npm run build` dan pengetesan browser subagent sukses tanpa error (`sidebar_input_submenus_1789102220403.png`).
+
+### [2026-09-11 T13:25] - Pemisahan Mandiri Formulir "Input Program Kerja" dan Menu "Program Kerja" (Full-Width Monitoring)
+- **Kategori:** ARCHITECTURE REFACTOR / MODULAR WORKFLOW SEPARATION
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `src/types/index.ts`, `src/components/InputProkerView.tsx` [NEW], `src/components/MasterDataView.tsx` [MODIFY], `src/components/Sidebar.tsx` [MODIFY], `src/App.tsx` [MODIFY], `walkthrough.md`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **1. Pembuatan Halaman Mandiri Formulir Pendaftaran Proker (`InputProkerView.tsx`):**
+    - Terpisah penuh dari tabel, berfokus 100% pada pengalaman pengisian agenda kegiatan baru tanpa kesempitan layout.
+    - Dilengkapi bidang masukan lengkap: Dropdown 22 Bidang Tanfidz Resmi IMM, Nama Program Kerja, Tanggal Pelaksanaan, Kategori Kegiatan (Kemahasiswaan/Keagamaan/Kemasyarakatan), Penanggung Jawab (PIC), Estimasi/Target Anggaran, dan Deskripsi Kegiatan.
+    - Menghadirkan **Live Preview Card** interaktif di sisi kanan yang memperbarui pratinjau kartu proker secara real-time saat pengguna mengetik.
+    - Dilengkapi kotak panduan struktural Tanfidz IMM dan notifikasi banner sukses pendaftaran dengan tombol aksi instan *"Lihat di Tabel Proker"*.
+    - Proteksi RBAC untuk `tim_verifikasi_internal` (akses dibatasi ke mode baca).
+  - **2. Refaktorisasi Halaman Manajemen Program Kerja Menjadi Full-Width Table (`MasterDataView.tsx`):**
+    - Menghapus formulir sempit di kolom kiri, mengubah tabel daftar proker menjadi tampilan lebar penuh (*full-width*) yang lega dan modern.
+    - Dilengkapi 3 *Summary Metric Cards* (Total Proker, LPJ Selesai, Belum LPJ).
+    - Menambahkan fitur pencarian instan (*live search*), filter kategori, filter status LPJ, tombol alih status (*switch status*), serta tombol aksi sudut kanan atas `+ Input Program Kerja Baru`.
+  - **3. Penyelarasan Hierarki Menu Navigasi Sidebar (`Sidebar.tsx`):**
+    - Menu Induk **`Input`**: Membawahi sub-menu `Input Transaksi` dan `Input Program Kerja` (`input-proker`).
+    - Menu Mandiri **`Program Kerja`**: Berada di tingkat utama (`program-kerja` / `master-data`, ikon `FolderKanban`) khusus untuk monitoring, pencarian, dan pengelolaan status proker.
+  - **4. Integrasi Routing Aplikasi (`App.tsx`):**
+    - Mendukung routing terpisah: `input-proker` memuat `InputProkerView`, sedangkan `program-kerja` memuat `MasterDataView`.
+- **Dampak Arsitektur / Catatan:** Kompilasi TypeScript (`npm run build`) sukses tanpa error (exit code 0, 1.62s). Pengujian browser end-to-end terverifikasi penuh (`input_program_kerja_form_1789107825728.png`, `program_kerja_table_1789107970680.png`, `search_filtered_table_1789108014942.png`).
+
+
+
+
+
 

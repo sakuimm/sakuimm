@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { UserRole, OrgLevel, AuditLog } from '../types';
+import { UserRole, OrgLevel, AuditLog, Organisasi } from '../types';
 import { storageService } from '../services/storageService';
-import { User, ShieldCheck, History, Settings, Key, Mail, Building2, CheckCircle2, Lock, Save, Bell, Database } from 'lucide-react';
+import { User, ShieldCheck, History, Settings, Key, Mail, Building2, CheckCircle2, Lock, Save, Bell, Database, Clock, XCircle } from 'lucide-react';
 
 interface SettingsViewProps {
   userName: string;
   userRole: UserRole;
   userLevel: OrgLevel;
+  organisasiList?: Organisasi[];
+  onVerifyOrg?: (id: string) => void;
+  onRejectOrg?: (id: string) => void;
   onUpdateUser?: (name: string) => void;
 }
 
@@ -14,6 +17,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   userName,
   userRole,
   userLevel,
+  organisasiList = [],
+  onVerifyOrg,
+  onRejectOrg,
   onUpdateUser,
 }) => {
   const [activeTab, setActiveTab] = useState<'profil' | 'verifikasi' | 'log-activity' | 'keamanan'>('profil');
@@ -219,46 +225,120 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       )}
 
-      {/* TAB 2: VERIFIKASI AKUN */}
+      {/* TAB 2: VERIFIKASI AKUN & ORGANISASI */}
       {activeTab === 'verifikasi' && (
-        <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-base text-[#2D3748] flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-[#81B29A]" />
-              <span>Status Verifikasi Akun Organisasi</span>
-            </h3>
-            <span className="px-3 py-1 bg-[#81B29A]/20 text-[#2D5A44] font-extrabold text-xs rounded-full">
-              STATUS: TERVERIFIKASI RESMI
-            </span>
+        <div className="space-y-6">
+          {/* Sub-Card 1: Status Verifikasi Akun Pengguna Saat Ini */}
+          <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-base text-[#2D3748] flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[#81B29A]" />
+                <span>Status Verifikasi Akun Organisasi Anda</span>
+              </h3>
+              <span className="px-3 py-1 bg-[#81B29A]/20 text-[#2D5A44] font-extrabold text-xs rounded-full">
+                STATUS: TERVERIFIKASI RESMI
+              </span>
+            </div>
+
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-[#81B29A]/20 rounded-full text-[#2D5A44]">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-[#2D3748]">Akun Pengelola Keuangan Terdaftar</h4>
+                  <p className="text-xs text-slate-500">
+                    Akun ini telah mendapatkan pengesahan wewenang dari Pimpinan Induk (<span className="font-bold">KORKOM IMM Universitas Indonesia</span>).
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-slate-200 text-xs">
+                <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-[10px] text-slate-400 block uppercase">No. SK Pengesahan</span>
+                  <span className="font-extrabold text-[#2D3748]">SK-IMM/PK-TMUI/2026/042</span>
+                </div>
+                <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-[10px] text-slate-400 block uppercase">Tanggal Pengesahan</span>
+                  <span className="font-extrabold text-[#2D3748]">15 Januari 2026</span>
+                </div>
+                <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-[10px] text-slate-400 block uppercase">Pemeriksa Wewenang</span>
+                  <span className="font-extrabold text-[#2D3748]">Ketua Umum KORKOM UI</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-[#81B29A]/20 rounded-full text-[#2D5A44]">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
+          {/* Sub-Card 2: Antrean Verifikasi Organisasi Bawahan */}
+          <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h4 className="font-bold text-sm text-[#2D3748]">Akun Pengelola Keuangan Terdaftar</h4>
+                <h3 className="font-bold text-base text-[#2D3748] flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-[#F4A261]" />
+                  <span>Permohonan Verifikasi Organisasi Baru</span>
+                </h3>
                 <p className="text-xs text-slate-500">
-                  Akun ini telah mendapatkan pengesahan wewenang dari Pimpinan Induk (<span className="font-bold">KORKOM IMM Universitas Indonesia</span>).
+                  Panel pengesahan pendaftaran organisasi dari pengajuan pimpinan komisariat/cabang
                 </p>
               </div>
+              <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-[#F4A261]/15 text-[#9C5217]">
+                {organisasiList.filter((o) => o.status === 'pending').length} Menunggu
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-slate-200 text-xs">
-              <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                <span className="text-[10px] text-slate-400 block uppercase">No. SK Pengesahan</span>
-                <span className="font-extrabold text-[#2D3748]">SK-IMM/PK-TMUI/2026/042</span>
+            {organisasiList.filter((o) => o.status === 'pending').length > 0 ? (
+              <div className="space-y-3">
+                {organisasiList
+                  .filter((o) => o.status === 'pending')
+                  .map((org) => (
+                    <div
+                      key={org.id}
+                      className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-[#7A0C1E] text-white">
+                            Level {org.level}
+                          </span>
+                          <h4 className="font-bold text-[#2D3748] text-sm">{org.nama}</h4>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          Organisasi Induk: <span className="font-semibold text-slate-700">{org.indukNama || org.parentNama || 'PIMPINAN INDUK'}</span>
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          Tanggal Pendaftaran: {org.tanggalPendaftaran || '2026-09-01'}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {onVerifyOrg && (
+                          <button
+                            type="button"
+                            onClick={() => onVerifyOrg(org.id)}
+                            className="px-3.5 py-2 bg-[#81B29A] hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1 shadow-xs"
+                          >
+                            <CheckCircle2 className="w-4 h-4" /> Setujui Verifikasi
+                          </button>
+                        )}
+                        {onRejectOrg && (
+                          <button
+                            type="button"
+                            onClick={() => onRejectOrg(org.id)}
+                            className="px-3.5 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1"
+                          >
+                            <XCircle className="w-4 h-4" /> Tolak
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
               </div>
-              <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                <span className="text-[10px] text-slate-400 block uppercase">Tanggal Pengesahan</span>
-                <span className="font-extrabold text-[#2D3748]">15 Januari 2026</span>
+            ) : (
+              <div className="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                Tidak ada permohonan pendaftaran organisasi yang menunggu verifikasi saat ini.
               </div>
-              <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                <span className="text-[10px] text-slate-400 block uppercase">Pemeriksa Wewenang</span>
-                <span className="font-extrabold text-[#2D3748]">Ketua Umum KORKOM UI</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       )}

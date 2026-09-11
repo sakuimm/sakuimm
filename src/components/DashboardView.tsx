@@ -282,67 +282,91 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
-      {/* Bottom Section: Ringkasan per Program Kerja */}
-      <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div>
-            <h3 className="font-bold text-[#2D3748] text-base">Ringkasan Anggaran Program Kerja</h3>
-            <p className="text-xs text-slate-500">Rekapitulasi surplus/defisit kas per program kerja aktif</p>
+      {/* Bottom Section: Ringkasan per Program Kerja (Hanya untuk Komisariat/Level Sendiri; Mode Pimpinan Bawahan Terproteksi Privasi) */}
+      {hasSubordinates ? (
+        <div className="p-6 bg-white border border-slate-200 rounded-card shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="p-3.5 bg-[#0097A7]/10 text-[#0097A7] rounded-2xl flex-shrink-0">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-bold text-sm text-[#2D3748]">Protokol Privasi Finansial Otonom Aktif</h4>
+                <span className="px-2 py-0.5 bg-[#81B29A]/20 text-[#2D5A44] text-[10px] font-extrabold rounded-full">
+                  Privasi Otonom
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Sesuai prinsip transparansi berkeadilan IMM, Pimpinan tingkat <span className="font-bold text-[#7A0C1E]">{currentLevel}</span> memantau perputaran dana bawahan ({selectedSubordinateLevel === 'ALL' ? 'Seluruh Level Bawahan' : `Level ${selectedSubordinateLevel}`}) secara agregat (Total Saldo, Pemasukan, Pengeluaran, serta Pie Chart Pengeluaran Kategori & Bidang). Rincian transaksi dan kwitansi internal tetap menjadi hak otonomi komisariat pelaksana.
+              </p>
+            </div>
           </div>
-          <button
-            onClick={onNavigateToTransaksi}
-            className="px-3.5 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-          >
-            + Buat Laporan Keuangan
-          </button>
+          <span className="hidden lg:inline-flex px-3.5 py-1.5 bg-slate-100 border border-slate-200 text-slate-700 font-extrabold text-xs rounded-xl whitespace-nowrap">
+            Agregat {selectedSubordinateLevel === 'ALL' ? 'Semua Bawahan' : `Level ${selectedSubordinateLevel}`}
+          </span>
         </div>
+      ) : (
+        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 className="font-bold text-[#2D3748] text-base">Ringkasan Anggaran Program Kerja</h3>
+              <p className="text-xs text-slate-500">Rekapitulasi surplus/defisit kas per program kerja aktif</p>
+            </div>
+            <button
+              onClick={onNavigateToTransaksi}
+              className="px-3.5 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5"
+            >
+              <span>+ Input Transaksi</span>
+            </button>
+          </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
-                <th className="py-3 px-3">Nama Program Kerja</th>
-                <th className="py-3 px-3">Bidang Naungan</th>
-                <th className="py-3 px-3">Jadwal Pelaksanaan</th>
-                <th className="py-3 px-3">Pemasukan</th>
-                <th className="py-3 px-3">Pengeluaran</th>
-                <th className="py-3 px-3">Surplus / Defisit</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {prokerList.map((pr) => {
-                const pem = pr.id === 'pr-1' ? 3750000 : pr.id === 'pr-4' ? 2400000 : 0;
-                const peng = pr.id === 'pr-1' ? 1850000 : pr.id === 'pr-2' ? 450000 : pr.id === 'pr-5' ? 1200000 : 0;
-                const diff = pem - peng;
-                return (
-                  <tr key={pr.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-extrabold text-[#2D3748]">{pr.namaProker}</td>
-                    <td className="py-3 px-3 text-slate-600 font-medium">{pr.bidangNama}</td>
-                    <td className="py-3 px-3 text-slate-500">{pr.tanggalPelaksanaan || '02 - 04 Sept 2026'}</td>
-                    <td className="py-3 px-3 text-[#2E7D32] font-bold">
-                      Rp {pem.toLocaleString('id-ID')}
-                    </td>
-                    <td className="py-3 px-3 text-[#C05621] font-bold">
-                      Rp {peng.toLocaleString('id-ID')}
-                    </td>
-                    <td className="py-3 px-3">
-                      <span
-                        className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                          diff >= 0
-                            ? 'bg-[#81B29A]/20 text-[#2D5A44]'
-                            : 'bg-[#F4A261]/20 text-[#9C5217]'
-                        }`}
-                      >
-                        {diff >= 0 ? `Surplus (+Rp ${diff.toLocaleString('id-ID')})` : `Defisit (-Rp ${Math.abs(diff).toLocaleString('id-ID')})`}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
+                  <th className="py-3 px-3">Nama Program Kerja</th>
+                  <th className="py-3 px-3">Bidang Naungan</th>
+                  <th className="py-3 px-3">Jadwal Pelaksanaan</th>
+                  <th className="py-3 px-3">Pemasukan</th>
+                  <th className="py-3 px-3">Pengeluaran</th>
+                  <th className="py-3 px-3">Surplus / Defisit</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {prokerList.map((pr) => {
+                  const pem = pr.id === 'pr-1' ? 3750000 : pr.id === 'pr-4' ? 2400000 : 0;
+                  const peng = pr.id === 'pr-1' ? 1850000 : pr.id === 'pr-2' ? 450000 : pr.id === 'pr-5' ? 1200000 : 0;
+                  const diff = pem - peng;
+                  return (
+                    <tr key={pr.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-3 px-3 font-extrabold text-[#2D3748]">{pr.namaProker}</td>
+                      <td className="py-3 px-3 text-slate-600 font-medium">{pr.bidangNama}</td>
+                      <td className="py-3 px-3 text-slate-500">{pr.tanggalPelaksanaan || '02 - 04 Sept 2026'}</td>
+                      <td className="py-3 px-3 text-[#2E7D32] font-bold">
+                        Rp {pem.toLocaleString('id-ID')}
+                      </td>
+                      <td className="py-3 px-3 text-[#C05621] font-bold">
+                        Rp {peng.toLocaleString('id-ID')}
+                      </td>
+                      <td className="py-3 px-3">
+                        <span
+                          className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                            diff >= 0
+                              ? 'bg-[#81B29A]/20 text-[#2D5A44]'
+                              : 'bg-[#F4A261]/20 text-[#9C5217]'
+                          }`}
+                        >
+                          {diff >= 0 ? `Surplus (+Rp ${diff.toLocaleString('id-ID')})` : `Defisit (-Rp ${Math.abs(diff).toLocaleString('id-ID')})`}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

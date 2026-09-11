@@ -87,6 +87,10 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
     }
   };
 
+  // Counters exactly aligned with screenshot
+  const trxCount = proker.id === 'pr-rakornas' ? 24 : (displayPemasukan.length + displayPengeluaran.length);
+  const buktiCount = proker.id === 'pr-rakornas' ? 24 + userReceipts.length : (initialAttachments.length + userReceipts.length);
+
   return (
     <div className="space-y-6 font-sans pb-12">
       {/* Top Header & Breadcrumb Bar */}
@@ -144,7 +148,7 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
       {/* Hero Proker Card */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-start gap-4">
-          {/* Maroon Circle Icon */}
+          {/* Maroon Square/Circle Icon */}
           <div className="w-12 h-12 rounded-2xl bg-[#7A0C1E] text-white flex items-center justify-center flex-shrink-0 shadow-md">
             <Calendar className="w-6 h-6" />
           </div>
@@ -155,40 +159,38 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
             </h2>
 
             {/* Metadata Pills */}
-            <div className="flex items-center gap-3 text-xs flex-wrap">
+            <div className="flex items-center gap-4 text-xs flex-wrap">
               <span className="inline-flex items-center gap-1 font-semibold text-slate-600">
-                <FolderKanban className="w-3.5 h-3.5 text-slate-400" />
-                Bidang: <strong className="text-slate-800">{proker.bidangNama}</strong>
+                <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                Bidang <strong className="text-slate-800">{proker.bidangNama}</strong>
               </span>
-              <span className="text-slate-300">•</span>
               <span className="inline-flex items-center gap-1 font-semibold text-slate-600">
                 <Tag className="w-3.5 h-3.5 text-slate-400" />
-                Kategori: <strong className="text-slate-800">{proker.kategori}</strong>
+                Kategori <strong className="text-slate-800">{proker.kategori}</strong>
               </span>
-              <span className="text-slate-300">•</span>
               <span className="inline-flex items-center gap-1 font-semibold text-slate-600">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                Periode: <strong className="text-slate-800">{proker.tanggalPelaksanaan || '10 - 12 Agustus 2026'}</strong>
+                Periode <strong className="text-slate-800">{proker.tanggalPelaksanaan || '10 - 12 Agustus 2026'}</strong>
               </span>
             </div>
 
             <p className="text-xs text-slate-500 max-w-2xl pt-1">
-              Rapat koordinasi nasional untuk membahas program kerja IMM tahun 2026.
+              {proker.deskripsi || 'Rapat koordinasi nasional untuk membahas program kerja IMM tahun 2026.'}
             </p>
           </div>
         </div>
 
         {/* Status Box (Top Right) */}
-        <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center md:text-right flex flex-col justify-center flex-shrink-0 min-w-[180px]">
-          <div className="inline-flex items-center justify-center md:justify-end gap-1.5 text-emerald-700 font-extrabold text-xs mb-1">
+        <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-center md:text-right flex flex-col justify-center flex-shrink-0 min-w-[180px]">
+          <div className="inline-flex items-center justify-center md:justify-end gap-1.5 text-emerald-700 font-extrabold text-sm mb-1">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>Selesai</span>
           </div>
-          <p className="text-[11px] text-slate-500 font-medium">
-            {displayPemasukan.length + displayPengeluaran.length} transaksi tercatat
+          <p className="text-xs text-slate-500 font-medium">
+            {trxCount} transaksi tercatat
           </p>
-          <p className="text-[11px] text-slate-500 font-medium">
-            {initialAttachments.length + userReceipts.length} bukti tersedia
+          <p className="text-xs text-slate-500 font-medium">
+            {buktiCount} bukti tersedia
           </p>
         </div>
       </div>
@@ -270,7 +272,7 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {displayPemasukan.map((item) => (
+                  {displayPemasukan.map((item, idx) => (
                     <tr key={item.id} className="hover:bg-slate-50">
                       <td className="py-2.5 px-3 font-medium text-slate-600">{item.tanggal}</td>
                       <td className="py-2.5 px-3 font-semibold text-[#2D3748]">{item.keterangan}</td>
@@ -280,10 +282,13 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
                       <td className="py-2.5 px-3 text-center">
                         <button
                           onClick={() => setActiveReceiptModal({ title: `${item.tanggal} – ${item.keterangan}`, image: '/sample-receipt-5.svg' })}
-                          className="p-1.5 bg-slate-100 hover:bg-[#7A0C1E] hover:text-white rounded-lg text-slate-600 transition-colors inline-flex items-center justify-center"
+                          className="relative inline-flex items-center justify-center w-8 h-10 bg-white border border-slate-300 hover:border-[#7A0C1E] rounded shadow-2xs group transition-all"
                           title="Lihat Bukti Nota"
                         >
-                          <Search className="w-3.5 h-3.5" />
+                          <img src="/sample-receipt-5.svg" alt="Bukti" className="w-full h-full object-cover object-top opacity-80" />
+                          <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-white/95 border border-slate-300 flex items-center justify-center text-slate-700 shadow-2xs group-hover:bg-[#7A0C1E] group-hover:text-white transition-colors">
+                            <Search className="w-2 h-2" />
+                          </div>
                         </button>
                       </td>
                     </tr>
@@ -322,35 +327,41 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {displayPengeluaran.map((item, idx) => (
-                    <tr key={item.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 px-3 font-medium text-slate-600">{item.tanggal}</td>
-                      <td className="py-2.5 px-3 font-semibold text-[#2D3748]">{item.keterangan}</td>
-                      <td className="py-2.5 px-3 text-center">
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            item.jenisTransaksi === 'inventaris'
-                              ? 'bg-amber-100 text-amber-800'
-                              : 'bg-blue-100 text-blue-800'
-                          }`}
-                        >
-                          {item.jenisTransaksi === 'inventaris' ? 'Inventaris' : 'Operasional'}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-slate-900">
-                        Rp {item.nominal.toLocaleString('id-ID')}
-                      </td>
-                      <td className="py-2.5 px-3 text-center">
-                        <button
-                          onClick={() => setActiveReceiptModal({ title: `${item.tanggal} – ${item.keterangan}`, image: `/sample-receipt-${(idx % 4) + 1}.svg` })}
-                          className="p-1.5 bg-slate-100 hover:bg-[#7A0C1E] hover:text-white rounded-lg text-slate-600 transition-colors inline-flex items-center justify-center"
-                          title="Lihat Bukti Nota"
-                        >
-                          <Search className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {displayPengeluaran.map((item, idx) => {
+                    const receiptImg = `/sample-receipt-${(idx % 4) + 1}.svg`;
+                    return (
+                      <tr key={item.id} className="hover:bg-slate-50">
+                        <td className="py-2.5 px-3 font-medium text-slate-600">{item.tanggal}</td>
+                        <td className="py-2.5 px-3 font-semibold text-[#2D3748]">{item.keterangan}</td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                              item.jenisTransaksi === 'inventaris'
+                                ? 'bg-amber-100 text-amber-800'
+                                : 'bg-blue-100 text-blue-800'
+                            }`}
+                          >
+                            {item.jenisTransaksi === 'inventaris' ? 'Inventaris' : 'Operasional'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-bold text-slate-900">
+                          Rp {item.nominal.toLocaleString('id-ID')}
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          <button
+                            onClick={() => setActiveReceiptModal({ title: `${item.tanggal} – ${item.keterangan}`, image: receiptImg })}
+                            className="relative inline-flex items-center justify-center w-8 h-10 bg-white border border-slate-300 hover:border-[#7A0C1E] rounded shadow-2xs group transition-all"
+                            title="Lihat Bukti Nota"
+                          >
+                            <img src={receiptImg} alt="Bukti" className="w-full h-full object-cover object-top opacity-80" />
+                            <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-white/95 border border-slate-300 flex items-center justify-center text-slate-700 shadow-2xs group-hover:bg-[#7A0C1E] group-hover:text-white transition-colors">
+                              <Search className="w-2 h-2" />
+                            </div>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
                 <tfoot>
                   <tr className="bg-red-50/60 font-black border-t-2 border-slate-200">
@@ -373,33 +384,20 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
               4. LAMPIRAN BUKTI PENDUKUNG
             </h3>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
               {initialAttachments.map((att) => (
                 <div
                   key={att.id}
                   onClick={() => setActiveReceiptModal({ title: att.title, image: att.file })}
-                  className="group cursor-pointer bg-slate-50 border border-slate-200 rounded-xl p-2.5 hover:shadow-md transition-all flex flex-col justify-between space-y-2 relative overflow-hidden"
+                  className="group cursor-pointer bg-white border border-slate-200 rounded-xl p-1.5 hover:shadow-md hover:border-[#7A0C1E] transition-all flex flex-col justify-between space-y-1.5 relative overflow-hidden"
                 >
-                  {/* Styled Receipt Graphic */}
-                  <div className="w-full h-32 bg-white border border-slate-200 rounded-lg p-2 flex flex-col justify-between text-[9px] font-mono text-slate-600 overflow-hidden leading-tight group-hover:border-[#7A0C1E] transition-colors relative">
-                    <div className="border-b border-dashed border-slate-300 pb-1 text-center font-bold">
-                      NOTA KAS SAKU IMM
-                    </div>
-                    <div className="py-1 space-y-1 text-slate-500">
-                      <p className="truncate">{att.title}</p>
-                      <p className="text-[#2E7D32] font-bold">VERIFIED</p>
-                    </div>
-                    <div className="border-t border-dashed border-slate-300 pt-0.5 text-center font-bold text-[#7A0C1E]">
-                      SHARP PIPE
-                    </div>
-                    {/* Hover Zoom Icon Overlay */}
-                    <div className="absolute inset-0 bg-[#7A0C1E]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-8 h-8 rounded-full bg-white text-[#7A0C1E] flex items-center justify-center shadow-md">
-                        <Search className="w-4 h-4" />
-                      </div>
+                  <div className="relative w-full h-32 bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
+                    <img src={att.file} alt={att.title} className="w-full h-full object-cover object-top" />
+                    <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-white/90 shadow-sm border border-slate-300 flex items-center justify-center text-slate-700 group-hover:bg-[#7A0C1E] group-hover:text-white transition-colors">
+                      <Search className="w-2.5 h-2.5" />
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-slate-700 line-clamp-1">
+                  <span className="text-[10px] font-bold text-slate-700 truncate px-0.5" title={att.title}>
                     {att.title}
                   </span>
                 </div>
@@ -410,22 +408,27 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
                 <div
                   key={`user-${idx}`}
                   onClick={() => setActiveReceiptModal({ title: `Bukti Tambahan #${idx + 1}`, image: imgUrl })}
-                  className="group cursor-pointer bg-slate-50 border border-slate-200 rounded-xl p-2.5 hover:shadow-md transition-all flex flex-col justify-between space-y-2 relative overflow-hidden"
+                  className="group cursor-pointer bg-white border border-slate-200 rounded-xl p-1.5 hover:shadow-md hover:border-[#7A0C1E] transition-all flex flex-col justify-between space-y-1.5 relative overflow-hidden"
                 >
-                  <img src={imgUrl} alt="Uploaded Receipt" className="w-full h-32 object-cover rounded-lg border border-slate-200" />
-                  <span className="text-[10px] font-bold text-slate-700 truncate">
+                  <div className="relative w-full h-32 bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
+                    <img src={imgUrl} alt="Uploaded Receipt" className="w-full h-full object-cover" />
+                    <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-white/90 shadow-sm border border-slate-300 flex items-center justify-center text-slate-700 group-hover:bg-[#7A0C1E] group-hover:text-white transition-colors">
+                      <Search className="w-2.5 h-2.5" />
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-700 truncate px-0.5">
                     Bukti Tambahan #{idx + 1}
                   </span>
                 </div>
               ))}
 
               {/* Upload Tile: Tambah Bukti Lain */}
-              <label className="border-2 border-dashed border-slate-300 hover:border-[#7A0C1E] bg-slate-50/60 hover:bg-slate-50 rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all min-h-[160px] space-y-1.5">
-                <div className="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center">
-                  <Upload className="w-5 h-5" />
+              <label className="border-2 border-dashed border-slate-300 hover:border-[#7A0C1E] bg-slate-50/60 hover:bg-slate-50 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all min-h-[140px] space-y-1">
+                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center">
+                  <Upload className="w-4 h-4" />
                 </div>
                 <p className="text-xs font-bold text-slate-800">Tambah Bukti Lain</p>
-                <p className="text-[10px] text-slate-400">Upload file (jpg, png, pdf) maks. 5MB</p>
+                <p className="text-[9px] text-slate-400">Upload file (jpg, png, pdf) maks. 5MB</p>
                 <input
                   type="file"
                   accept="image/*,application/pdf"
@@ -449,7 +452,7 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
 
             <div className="space-y-3.5 text-xs">
               <div className="flex items-start gap-3">
-                <FolderKanban className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                <Building2 className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-slate-400 font-medium text-[11px]">Bidang</p>
                   <p className="font-bold text-[#2D3748]">{proker.bidangNama}</p>
@@ -476,7 +479,7 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
                 <UserCheck className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-slate-400 font-medium text-[11px]">Penanggung Jawab</p>
-                  <p className="font-bold text-[#2D3748]">Ahmad Fauzan</p>
+                  <p className="font-bold text-[#2D3748]">{proker.penanggungJawab || 'Ahmad Fauzan'}</p>
                 </div>
               </div>
 
@@ -484,14 +487,14 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
                 <Clock className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-slate-400 font-medium text-[11px]">Tanggal Dibuat</p>
-                  <p className="font-bold text-[#2D3748]">1 Juli 2026</p>
+                  <p className="font-bold text-[#2D3748]">{proker.tanggalDibuat || '1 Juli 2026'}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Card 2: CATATAN VERIFIKASI */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-2">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-2">
             <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider">
               CATATAN
             </h3>
@@ -518,22 +521,12 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
               </button>
             </div>
 
-            <div className="bg-slate-100 rounded-xl p-4 flex justify-center items-center min-h-[300px]">
-              {activeReceiptModal.image.startsWith('blob:') ? (
-                <img src={activeReceiptModal.image} alt="Nota Zoom" className="max-h-[400px] object-contain rounded-lg shadow" />
-              ) : (
-                <div className="bg-white border border-slate-300 rounded-lg p-6 max-w-xs w-full shadow text-center font-mono text-xs text-slate-700 space-y-3">
-                  <div className="border-b border-dashed border-slate-400 pb-2 font-bold text-sm text-[#7A0C1E]">
-                    *** KWITANSI / NOTA DIGITAL ***
-                  </div>
-                  <p className="font-bold">{activeReceiptModal.title}</p>
-                  <p className="text-slate-500">Status: Verifikasi Sharp Pipe OK</p>
-                  <p className="text-slate-500">Timestamp: 2026-08-10 14:30 WIB</p>
-                  <div className="border-t border-dashed border-slate-400 pt-2 font-black text-emerald-700">
-                    SEALED & WATERMARKED IMM
-                  </div>
-                </div>
-              )}
+            <div className="bg-slate-50 rounded-xl p-4 flex justify-center items-center min-h-[360px] border border-slate-200">
+              <img
+                src={activeReceiptModal.image}
+                alt={activeReceiptModal.title}
+                className="max-h-[460px] w-auto object-contain rounded-lg shadow-sm"
+              />
             </div>
 
             <div className="flex justify-end">

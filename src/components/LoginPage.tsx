@@ -259,66 +259,102 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
           {/* Subtle Grid Pattern Overlay */}
           <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#0097A7_1px,transparent_1px)] [background-size:16px_16px]" />
           
-          {/* SLIDE CONTENT DISPLAY */}
-          <div className="relative z-10 space-y-4 my-auto py-4 min-h-[380px] flex flex-col justify-between transition-all duration-500">
+          {/* SLIDE CONTENT DISPLAY - Murni Fokus pada 3 USP SAKU IMM */}
+          <div className="relative z-10 space-y-6 my-auto py-4 min-h-[380px] flex flex-col justify-center transition-all duration-500">
             {uspSlides.map((slide, idx) => {
               if (activeSlide !== idx) return null;
               const SlideIcon = slide.icon;
               return (
-                <div key={idx} className="space-y-4 animate-fadeIn">
+                <div key={idx} className="space-y-5 animate-fadeIn">
                   {/* USP Badge Header */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-bold text-[#0097A7]">
-                    <span>USP #{idx + 1}</span>
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-bold text-[#0097A7] backdrop-blur-sm">
+                    <span className="text-[#81B29A] font-extrabold">USP #{idx + 1}</span>
                     <span>•</span>
-                    <span className="text-white">{slide.title}</span>
+                    <span className="text-white tracking-wide">{slide.title}</span>
                   </div>
 
-                  {/* Floating Card Stack */}
-                  <div className="space-y-3 pt-2">
-                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl max-w-xs transform -rotate-1 transition-all">
-                      <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                        <span className="text-[10px] font-bold text-slate-200 uppercase tracking-wider">{slide.cardTitle}</span>
-                        <span className="text-[10px] font-extrabold text-[#0097A7] bg-[#0097A7]/20 px-2 py-0.5 rounded-full">SAKU IMM</span>
-                      </div>
-                      <div className="flex items-center gap-4 mt-3">
-                        <div className="w-11 h-11 rounded-full border-4 border-[#0097A7] border-t-[#2E7D32] flex items-center justify-center font-bold text-xs">
-                          <SlideIcon className="w-5 h-5 text-[#0097A7]" />
-                        </div>
-                        <div>
-                          <div className="text-base font-extrabold text-white">{slide.cardValue}</div>
-                          <div className="text-[10px] text-slate-200 mt-0.5">{slide.cardSub}</div>
-                        </div>
-                      </div>
+                  {/* Prominent USP Icon with Glow */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/25 flex items-center justify-center shadow-lg backdrop-blur-md">
+                      <SlideIcon className="w-8 h-8 text-[#0097A7]" />
+                    </div>
+                    <div>
+                      <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                        {slide.title}
+                      </h2>
+                      <p className="text-xs font-bold text-[#0097A7] tracking-wide mt-0.5">
+                        {slide.tagline}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Text Description */}
-                  <div className="pt-4 space-y-2">
-                    <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-snug">
-                      {slide.title} — <span className="text-[#0097A7]">{slide.tagline}</span>
-                    </h2>
-                    <p className="text-xs text-slate-200 leading-relaxed">
-                      {slide.desc}
-                    </p>
+                  {/* Detailed Description */}
+                  <p className="text-xs md:text-sm text-slate-200 leading-relaxed max-w-lg">
+                    {slide.desc}
+                  </p>
+
+                  {/* Bullet Highlights */}
+                  <div className="space-y-2 pt-2 border-t border-white/15">
+                    {idx === 0 && (
+                      <>
+                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
+                          <span>Visibilitas keuangan berjenjang (PK, KORKOM, PC, DPD, DPP)</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
+                          <span>Privasi terjaga dengan pemisahan akses data agregat & detail</span>
+                        </div>
+                      </>
+                    )}
+                    {idx === 1 && (
+                      <>
+                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
+                          <span>Verifikasi kuitansi dan nota digital tersertifikasi</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
+                          <span>Audit Trail log sistem untuk setiap perubahan transaksi</span>
+                        </div>
+                      </>
+                    )}
+                    {idx === 2 && (
+                      <>
+                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
+                          <span>Standarisasi 22 Bidang Resmi IMM seluruh Indonesia</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
+                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
+                          <span>Pewarisan arsip keuangan rapi antar-generasi kepengurusan</span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* INTERACTIVE 3-BAR SLIDER INDICATOR */}
+          {/* INTERACTIVE 3-BAR SLIDER INDICATOR (Transparan, Akuntabel, Berkelanjutan) */}
           <div className="relative z-10 pt-4 border-t border-white/15">
+            <div className="text-[10px] uppercase font-bold tracking-wider text-slate-300 mb-2 flex items-center justify-between">
+              <span>3 Nilai Utama (USP) SAKU IMM</span>
+              <span className="text-[#0097A7]">Slide {activeSlide + 1} dari 3</span>
+            </div>
             <div className="flex items-center gap-2">
               {uspSlides.map((slide, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => setActiveSlide(idx)}
-                  className={`h-2.5 rounded-full flex-1 transition-all duration-500 cursor-pointer flex items-center justify-center text-[10px] font-bold ${
+                  className={`h-3 rounded-full flex-1 transition-all duration-300 cursor-pointer flex items-center justify-center text-[11px] font-extrabold ${
                     activeSlide === idx
-                      ? 'bg-[#0097A7] shadow-md text-white'
+                      ? 'bg-[#0097A7] shadow-md text-white ring-2 ring-white/30'
                       : 'bg-white/20 hover:bg-white/40 text-slate-300'
                   }`}
-                  title={`USP: ${slide.title}`}
+                  title={`Lihat USP: ${slide.title}`}
                 >
                   {slide.title}
                 </button>

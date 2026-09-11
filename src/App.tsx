@@ -8,6 +8,8 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardView } from './components/DashboardView';
 import { BuatLaporanKeuanganView } from './components/BuatLaporanKeuanganView';
+import { TransactionFormView } from './components/TransactionFormView';
+import { InputProkerView } from './components/InputProkerView';
 import { MasterDataView } from './components/MasterDataView';
 import { ReportsView } from './components/ReportsView';
 import { SettingsView } from './components/SettingsView';
@@ -19,7 +21,7 @@ export function App() {
   const [currentLevel, setCurrentLevel] = useState<OrgLevel>('PK');
   const [userName, setUserName] = useState('Immawan Ahmad');
   const [userEmail, setUserEmail] = useState('bendahara@imm.or.id');
-  const [activeTab, setActiveTab] = useState('buat-laporan');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [isAggregateMode, setIsAggregateMode] = useState(false);
 
   // Dynamic Data States (Loaded & Saved via StorageService & ApiService)
@@ -65,6 +67,7 @@ export function App() {
     setCurrentLevel(level);
     setUserName(finalName);
     setUserEmail(finalEmail);
+    setActiveTab('dashboard');
     setIsLoggedIn(true);
 
     // Save Persistent Session
@@ -79,6 +82,7 @@ export function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setActiveTab('dashboard');
     storageService.clearUserSession();
   };
 
@@ -140,13 +144,14 @@ export function App() {
 
   return (
     <div className="flex min-h-screen bg-[#F8F9FA]">
-      {/* Sidebar Navigation */}
+      {/* Sidebar Navigation (5 Menu Utama SAKU IMM) */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         userRole={userRole}
         userLevel={currentLevel}
         userName={userName}
+        pendingVerificationCount={organisasiList.filter((o) => o.status === 'pending').length}
         onLogout={handleLogout}
       />
 
@@ -172,6 +177,16 @@ export function App() {
 
         {/* Dynamic View Routing */}
         <main className="p-6 md:p-8 pt-6 md:pt-8 max-w-7xl w-full mx-auto">
+          {activeTab === 'input-transaksi' && (
+            <TransactionFormView
+              transaksiList={transaksiList}
+              prokerList={prokerList}
+              bidangList={OFFICIAL_IMM_BIDANG}
+              userRole={userRole}
+              onAddTransaksi={handleAddTransaksi}
+            />
+          )}
+
           {activeTab === 'buat-laporan' && (
             <BuatLaporanKeuanganView
               prokerList={prokerList}
@@ -189,16 +204,26 @@ export function App() {
               currentLevel={currentLevel}
               userRole={userRole}
               isAggregateMode={isAggregateMode}
-              onNavigateToTransaksi={() => setActiveTab('buat-laporan')}
+              onNavigateToTransaksi={() => setActiveTab('input-transaksi')}
             />
           )}
 
-          {activeTab === 'master-data' && (
+          {activeTab === 'input-proker' && (
+            <InputProkerView
+              bidangList={OFFICIAL_IMM_BIDANG}
+              onAddProker={handleAddProker}
+              onNavigateToList={() => setActiveTab('program-kerja')}
+              userRole={userRole}
+            />
+          )}
+
+          {(activeTab === 'program-kerja' || activeTab === 'master-data') && (
             <MasterDataView
               bidangList={OFFICIAL_IMM_BIDANG}
               prokerList={prokerList}
               userRole={userRole}
               onAddProker={handleAddProker}
+              onNavigateToInput={() => setActiveTab('input-proker')}
               onToggleStatusProker={handleToggleStatusProker}
             />
           )}
@@ -211,20 +236,15 @@ export function App() {
             />
           )}
 
-          {activeTab === 'pengaturan' && (
+          {(activeTab === 'pengaturan' || activeTab === 'verifikasi') && (
             <SettingsView
               userName={userName}
               userRole={userRole}
               userLevel={currentLevel}
-              onUpdateUser={handleUpdateUserName}
-            />
-          )}
-
-          {activeTab === 'verifikasi' && (
-            <OrganizationVerificationView
               organisasiList={organisasiList}
-              onVerify={handleVerifyOrg}
-              onReject={handleRejectOrg}
+              onVerifyOrg={handleVerifyOrg}
+              onRejectOrg={handleRejectOrg}
+              onUpdateUser={handleUpdateUserName}
             />
           )}
         </main>

@@ -19,14 +19,40 @@ export interface UserSession {
 
 // Storage Service Wrapper for Local Persistence
 export const storageService = {
-  // Initialize default data if empty
+  // Initialize default data if empty or merge essential proker
   initData(): void {
     if (!localStorage.getItem(KEYS.TRANSAKSI)) {
       localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify(MOCK_TRANSAKSI));
+    } else {
+      try {
+        const trxs = JSON.parse(localStorage.getItem(KEYS.TRANSAKSI) || '[]');
+        const hasRakornas = trxs.some((t: Transaksi) => t.programKerjaId === 'pr-rakornas');
+        if (!hasRakornas) {
+          const rakornasTrx = MOCK_TRANSAKSI.filter((t) => t.programKerjaId === 'pr-rakornas');
+          localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify([...rakornasTrx, ...trxs]));
+        }
+      } catch (e) {
+        localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify(MOCK_TRANSAKSI));
+      }
     }
+
     if (!localStorage.getItem(KEYS.PROKER)) {
       localStorage.setItem(KEYS.PROKER, JSON.stringify(MOCK_PROKER));
+    } else {
+      try {
+        const prokers = JSON.parse(localStorage.getItem(KEYS.PROKER) || '[]');
+        const hasRakornas = prokers.some((p: ProgramKerja) => p.id === 'pr-rakornas');
+        if (!hasRakornas) {
+          const rakornas = MOCK_PROKER.find((p) => p.id === 'pr-rakornas');
+          if (rakornas) {
+            localStorage.setItem(KEYS.PROKER, JSON.stringify([rakornas, ...prokers]));
+          }
+        }
+      } catch (e) {
+        localStorage.setItem(KEYS.PROKER, JSON.stringify(MOCK_PROKER));
+      }
     }
+
     if (!localStorage.getItem(KEYS.ORGANISASI)) {
       localStorage.setItem(KEYS.ORGANISASI, JSON.stringify(MOCK_ORGANISASI));
     }

@@ -46,6 +46,10 @@ export interface ProgramKerja {
   kategori: KategoriProker;
   tanggalPelaksanaan?: string;
   statusLaporan?: 'Belum' | 'Selesai';
+  penanggungJawab?: string;
+  tanggalDibuat?: string;
+  deskripsi?: string;
+  targetAnggaran?: number;
 }
 
 export interface Transaksi {

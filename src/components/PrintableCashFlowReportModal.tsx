@@ -1,6 +1,6 @@
 import React from 'react';
 import { OrgLevel } from '../types';
-import { Printer, X, FileText, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Printer, X, FileText } from 'lucide-react';
 
 interface PrintableCashFlowReportModalProps {
   currentLevel: OrgLevel;
@@ -13,25 +13,17 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
   currentOrgName,
   onClose,
 }) => {
-  // Monthly cash flow data (Januari - Agustus 2026)
+  // Monthly cash flow data (Januari - Agustus 2026) matching the reference mockup 100%
   const monthlyData = [
-    { bulan: 'Januari', saldoAwal: 100000000, pemasukan: 45000000, pengeluaran: 32000000, net: 13000000, saldoAkhir: 113000000 },
-    { bulan: 'Februari', saldoAwal: 113000000, pemasukan: 60000000, pengeluaran: 42000000, net: 18000000, saldoAkhir: 131000000 },
-    { bulan: 'Maret', saldoAwal: 131000000, pemasukan: 38000000, pengeluaran: 35000000, net: 3000000, saldoAkhir: 134000000 },
-    { bulan: 'April', saldoAwal: 134000000, pemasukan: 72000000, pengeluaran: 50000000, net: 22000000, saldoAkhir: 156000000 },
-    { bulan: 'Mei', saldoAwal: 156000000, pemasukan: 55000000, pengeluaran: 48000000, net: 7000000, saldoAkhir: 163000000 },
-    { bulan: 'Juni', saldoAwal: 163000000, pemasukan: 80000000, pengeluaran: 61000000, net: 19000000, saldoAkhir: 182000000 },
-    { bulan: 'Juli', saldoAwal: 182000000, pemasukan: 65000000, pengeluaran: 52000000, net: 13000000, saldoAkhir: 195000000 },
-    { bulan: 'Agustus', saldoAwal: 195000000, pemasukan: 95000000, pengeluaran: 70000000, net: 25000000, saldoAkhir: 220000000 },
+    { bulan: 'Januari', saldoAwal: '100.000.000', pemasukan: '45.000.000', pengeluaran: '32.000.000', net: '13.000.000', saldoAkhir: '113.000.000' },
+    { bulan: 'Februari', saldoAwal: '113.000.000', pemasukan: '60.000.000', pengeluaran: '42.000.000', net: '18.000.000', saldoAkhir: '131.000.000' },
+    { bulan: 'Maret', saldoAwal: '131.000.000', pemasukan: '38.000.000', pengeluaran: '35.000.000', net: '3.000.000', saldoAkhir: '134.000.000' },
+    { bulan: 'April', saldoAwal: '134.000.000', pemasukan: '72.000.000', pengeluaran: '50.000.000', net: '22.000.000', saldoAkhir: '156.000.000' },
+    { bulan: 'Mei', saldoAwal: '156.000.000', pemasukan: '55.000.000', pengeluaran: '48.000.000', net: '7.000.000', saldoAkhir: '163.000.000' },
+    { bulan: 'Juni', saldoAwal: '163.000.000', pemasukan: '80.000.000', pengeluaran: '61.000.000', net: '19.000.000', saldoAkhir: '182.000.000' },
+    { bulan: 'Juli', saldoAwal: '182.000.000', pemasukan: '65.000.000', pengeluaran: '52.000.000', net: '13.000.000', saldoAkhir: '195.000.000' },
+    { bulan: 'Agustus', saldoAwal: '195.000.000', pemasukan: '95.000.000', pengeluaran: '70.000.000', net: '25.000.000', saldoAkhir: '220.000.000' },
   ];
-
-  const totalPemasukan = monthlyData.reduce((sum, item) => sum + item.pemasukan, 0);
-  const totalPengeluaran = monthlyData.reduce((sum, item) => sum + item.pengeluaran, 0);
-  const totalNetKas = totalPemasukan - totalPengeluaran;
-  const initialSaldoAwal = monthlyData[0].saldoAwal;
-  const finalSaldoAkhir = monthlyData[monthlyData.length - 1].saldoAkhir;
-  const totalPutaran = totalPemasukan + totalPengeluaran;
-  const avgPengeluaranBulan = totalPengeluaran / monthlyData.length;
 
   const getLevelHeaderTitle = (lvl: OrgLevel) => {
     switch (lvl) {
@@ -60,9 +52,9 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
           <div className="flex items-center gap-3">
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#81B29A] hover:bg-emerald-600 text-[#2D3748] font-black text-xs rounded-xl transition-all flex items-center gap-2 shadow-md active:scale-95"
+              className="px-4 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-2 shadow-md active:scale-95"
             >
-              <Printer className="w-4 h-4" /> Cetak Dokumen / Simpan PDF
+              <Printer className="w-4 h-4 text-[#81B29A]" /> Cetak Sekarang (A4 / PDF)
             </button>
             <button
               onClick={onClose}
@@ -75,235 +67,209 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
         </div>
 
         {/* PRINTABLE A4 CASH FLOW DOCUMENT SHEET */}
-        <div className="p-8 md:p-12 text-[#1A202C] font-serif leading-relaxed bg-white print:p-8" id="printable-cashflow-area">
+        <div className="p-8 md:p-12 text-[#1A202C] font-sans leading-relaxed bg-white print:p-6" id="printable-cashflow-area">
           
           {/* 1. KOP SURAT RESMI ORGANISASI IMM */}
-          <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3 mb-1">
+          <div className="flex items-center justify-between pb-3 mb-1">
             {/* Logo Left */}
-            <div className="w-20 flex items-center justify-center">
-              <img src="/logosakuimmnew.png" alt="IMM Logo" className="h-16 object-contain" />
+            <div className="w-20 flex-shrink-0 flex items-center justify-center">
+              <img src="/imm-shield-logo.svg" alt="IMM Logo" className="h-20 object-contain" />
             </div>
 
             {/* Header Text Center */}
-            <div className="text-center font-sans flex-1 px-4">
-              <h1 className="text-lg md:text-xl font-black tracking-wider uppercase text-slate-900">
+            <div className="text-center flex-1 px-4">
+              <h1 className="text-lg md:text-xl font-black tracking-wide uppercase text-[#1A202C]">
                 IKATAN MAHASISWA MUHAMMADIYAH
               </h1>
               <h2 className="text-base md:text-lg font-black uppercase text-[#7A0C1E] tracking-wide mt-0.5">
-                {getLevelHeaderTitle(currentLevel)}
+                {currentLevel === 'DPP' ? 'DEWAN PIMPINAN PUSAT IMM' : getLevelHeaderTitle(currentLevel)}
               </h2>
-              <p className="text-[11px] text-slate-600 font-medium mt-1">
-                Jl. Kramat Raya No. 49, Jakarta Pusat 10450
+              <p className="text-xs text-slate-700 font-medium mt-1">
+                Jl. Kramat Raya No.49, Jakarta Pusat 10450
               </p>
-              <p className="text-[10px] text-slate-500 font-medium">
+              <p className="text-xs text-slate-700 font-medium">
                 Telp. (021) 3903021 | Email: dpp@imm.or.id
               </p>
             </div>
 
             {/* Badge Right (SAKU IMM Record Verification Stamp) */}
-            <div className="w-40 text-right font-sans space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#7A0C1E] text-white rounded text-[10px] font-bold">
+            <div className="w-48 text-right space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#7A0C1E] text-white rounded text-[10px] font-bold">
                 <span className="bg-white text-[#7A0C1E] px-1 rounded font-black text-[9px]">IMM</span>
                 <span>Dicatat melalui SAKU IMM</span>
               </div>
-              <p className="text-[10px] text-slate-600 font-semibold">
-                13 Agustus 2026 | 14:30 WIB
+              <p className="text-[11px] text-slate-600 font-semibold">
+                13 Agustus 2026 &nbsp;|&nbsp; 14:30 WIB
               </p>
             </div>
           </div>
 
-          {/* Double Horizontal Divider Bar */}
-          <div className="border-b-4 border-slate-900 mb-6" />
+          {/* Double Horizontal Divider Bar (Top Maroon Thick, Bottom Black Thin) */}
+          <div className="space-y-0.5 mb-6">
+            <div className="h-[3.5px] bg-[#7A0C1E] w-full" />
+            <div className="h-[1px] bg-slate-900 w-full" />
+          </div>
 
           {/* 2. TITLE SECTION */}
-          <div className="text-center font-sans space-y-0.5 mb-6">
-            <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">
+          <div className="text-center space-y-0.5 mb-6">
+            <h2 className="text-xl md:text-2xl font-black text-[#1A202C] uppercase tracking-wide">
               LAPORAN ARUS KAS
             </h2>
-            <p className="text-sm font-extrabold text-slate-700">
+            <p className="text-sm md:text-base font-bold text-slate-800">
               Periode Januari – Agustus 2026
             </p>
-            <p className="text-xs text-slate-500 italic">
+            <p className="text-xs text-slate-500">
               (Disajikan dalam Rupiah)
             </p>
           </div>
 
-          {/* 3. SEKSI 1: METRIK KEUANGAN (3 BOX GRID) */}
-          <div className="space-y-2 mb-6 font-sans">
-            <h3 className="font-black text-xs text-slate-900 uppercase tracking-wider">
+          {/* 3. SEKSI 1: METRIK KEUANGAN (3 BOX BORDERED CONTAINER) */}
+          <div className="space-y-2 mb-6">
+            <h3 className="font-black text-xs text-[#1A202C] uppercase tracking-wider">
               1. METRIK KEUANGAN
             </h3>
             
-            <div className="grid grid-cols-3 gap-3">
+            <div className="border border-slate-300 rounded-lg overflow-hidden grid grid-cols-3 divide-x divide-slate-300 bg-white">
               {/* Box 1: Total Putaran Keuangan */}
-              <div className="border border-slate-300 rounded-lg p-3 text-center bg-slate-50/50 space-y-1">
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+              <div className="p-4 text-center space-y-1.5 flex flex-col justify-center">
+                <span className="text-[10px] font-extrabold text-slate-700 uppercase tracking-wider block">
                   TOTAL PUTARAN KEUANGAN
                 </span>
-                <p className="text-base font-black text-slate-900">
-                  Rp{totalPutaran.toLocaleString('id-ID')}
+                <p className="text-lg md:text-xl font-black text-[#1A202C]">
+                  Rp900.000.000
                 </p>
-                <p className="text-[10px] text-slate-500 font-medium">
-                  Pemasukan Rp{totalPemasukan.toLocaleString('id-ID')}
-                  <br />+ Pengeluaran Rp{totalPengeluaran.toLocaleString('id-ID')}
+                <p className="text-[11px] text-slate-600 font-medium">
+                  Pemasukan Rp510.000.000
+                  <br />+ Pengeluaran Rp390.000.000
                 </p>
               </div>
 
               {/* Box 2: Rata-Rata Pengeluaran / Bulan */}
-              <div className="border border-slate-300 rounded-lg p-3 text-center bg-slate-50/50 flex flex-col justify-center space-y-1">
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+              <div className="p-4 text-center space-y-1.5 flex flex-col justify-center">
+                <span className="text-[10px] font-extrabold text-slate-700 uppercase tracking-wider block">
                   RATA-RATA PENGELUARAN / BULAN
                 </span>
-                <p className="text-base font-black text-slate-900">
-                  Rp{Math.round(avgPengeluaranBulan).toLocaleString('id-ID')}
+                <p className="text-lg md:text-xl font-black text-[#1A202C]">
+                  Rp48.750.000
                 </p>
               </div>
 
               {/* Box 3: Pengeluaran Terbesar */}
-              <div className="border border-slate-300 rounded-lg p-3 text-center bg-slate-50/50 flex flex-col justify-center space-y-1">
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+              <div className="p-4 text-center space-y-1 flex flex-col justify-center">
+                <span className="text-[10px] font-extrabold text-slate-700 uppercase tracking-wider block">
                   PENGELUARAN TERBESAR
                 </span>
-                <p className="text-xs font-bold text-slate-700">Organisasi</p>
-                <p className="text-base font-black text-slate-900">
+                <p className="text-xs font-semibold text-slate-800">Organisasi</p>
+                <p className="text-base md:text-lg font-black text-[#1A202C]">
                   Rp85.000.000
                 </p>
-                <p className="text-[10px] text-slate-500 font-semibold">(21,79%)</p>
+                <p className="text-[11px] text-slate-600 font-semibold">(21,79%)</p>
               </div>
             </div>
           </div>
 
           {/* 4. SEKSI 2: RINGKASAN ARUS KAS */}
-          <div className="space-y-2 mb-6 font-sans">
-            <h3 className="font-black text-xs text-slate-900 uppercase tracking-wider">
+          <div className="space-y-2 mb-6">
+            <h3 className="font-black text-xs text-[#1A202C] uppercase tracking-wider">
               2. RINGKASAN ARUS KAS
             </h3>
-            <table className="w-full text-xs border border-slate-400 border-collapse">
+            <table className="w-full text-xs border border-slate-300 border-collapse">
               <thead>
-                <tr className="bg-slate-100 text-slate-800 font-bold border-b border-slate-400">
-                  <th className="py-2 px-4 text-left border-r border-slate-400 w-2/3">Keterangan</th>
-                  <th className="py-2 px-4 text-right">Jumlah</th>
+                <tr className="bg-[#F1F5F9] text-slate-800 font-bold border-b border-slate-300">
+                  <th className="py-2.5 px-4 text-center border-r border-slate-300 w-1/2">Keterangan</th>
+                  <th className="py-2.5 px-4 text-center w-1/2">Jumlah</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-300">
+              <tbody className="divide-y divide-slate-300 text-slate-800">
                 <tr>
                   <td className="py-2 px-4 border-r border-slate-300 font-medium">Saldo Awal</td>
-                  <td className="py-2 px-4 text-right font-bold text-slate-900">
-                    Rp{initialSaldoAwal.toLocaleString('id-ID')}
-                  </td>
+                  <td className="py-2 px-4 text-right font-medium text-[#1A202C]">Rp100.000.000</td>
                 </tr>
                 <tr>
                   <td className="py-2 px-4 border-r border-slate-300 font-medium">Total Pemasukan</td>
-                  <td className="py-2 px-4 text-right font-bold text-slate-900">
-                    Rp{totalPemasukan.toLocaleString('id-ID')}
-                  </td>
+                  <td className="py-2 px-4 text-right font-medium text-[#1A202C]">Rp510.000.000</td>
                 </tr>
                 <tr>
                   <td className="py-2 px-4 border-r border-slate-300 font-medium">Total Pengeluaran</td>
-                  <td className="py-2 px-4 text-right font-bold text-slate-900">
-                    Rp{totalPengeluaran.toLocaleString('id-ID')}
-                  </td>
+                  <td className="py-2 px-4 text-right font-medium text-[#1A202C]">Rp390.000.000</td>
                 </tr>
-                <tr className="bg-slate-50 font-bold">
-                  <td className="py-2 px-4 border-r border-slate-300">Kenaikan / Penurunan Kas</td>
-                  <td className="py-2 px-4 text-right text-slate-900 font-black">
-                    Rp{totalNetKas.toLocaleString('id-ID')}
-                  </td>
+                {/* Highlighted Rows */}
+                <tr className="bg-[#EBF7EE] font-bold">
+                  <td className="py-2 px-4 border-r border-slate-300 text-[#1A202C]">Kenaikan / Penurunan Kas</td>
+                  <td className="py-2 px-4 text-right font-black text-[#1A202C]">Rp120.000.000</td>
                 </tr>
-                <tr className="bg-slate-100 font-black">
-                  <td className="py-2.5 px-4 border-r border-slate-300 uppercase">Saldo Akhir</td>
-                  <td className="py-2.5 px-4 text-right text-slate-900 text-sm">
-                    Rp{finalSaldoAkhir.toLocaleString('id-ID')}
-                  </td>
+                <tr className="bg-[#EBF7EE] font-black">
+                  <td className="py-2.5 px-4 border-r border-slate-300 text-[#1A202C]">Saldo Akhir</td>
+                  <td className="py-2.5 px-4 text-right font-black text-[#1A202C]">Rp220.000.000</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* 5. SEKSI 3: ARUS KAS PER BULAN */}
-          <div className="space-y-2 mb-8 font-sans page-break-inside-avoid">
-            <h3 className="font-black text-xs text-slate-900 uppercase tracking-wider">
+          <div className="space-y-2 mb-6 page-break-inside-avoid">
+            <h3 className="font-black text-xs text-[#1A202C] uppercase tracking-wider">
               3. ARUS KAS PER BULAN
             </h3>
-            <table className="w-full text-xs border border-slate-400 border-collapse">
+            <table className="w-full text-xs border border-slate-300 border-collapse">
               <thead>
-                <tr className="bg-slate-100 text-slate-800 font-bold border-b border-slate-400 text-center">
-                  <th className="py-2 px-3 text-left border-r border-slate-400">Bulan</th>
-                  <th className="py-2 px-3 text-right border-r border-slate-400">Saldo Awal (Rp)</th>
-                  <th className="py-2 px-3 text-right border-r border-slate-400">Pemasukan (Rp)</th>
-                  <th className="py-2 px-3 text-right border-r border-slate-400">Pengeluaran (Rp)</th>
-                  <th className="py-2 px-3 text-right border-r border-slate-400">Kenaikan / Penurunan Kas (Rp)</th>
-                  <th className="py-2 px-3 text-right">Saldo Akhir (Rp)</th>
+                <tr className="bg-[#F1F5F9] text-slate-800 font-bold border-b border-slate-300 text-center">
+                  <th className="py-2 px-3 border-r border-slate-300">Bulan</th>
+                  <th className="py-2 px-3 border-r border-slate-300">Saldo Awal (Rp)</th>
+                  <th className="py-2 px-3 border-r border-slate-300">Pemasukan (Rp)</th>
+                  <th className="py-2 px-3 border-r border-slate-300">Pengeluaran (Rp)</th>
+                  <th className="py-2 px-3 border-r border-slate-300">Kenaikan / Penurunan Kas (Rp)</th>
+                  <th className="py-2 px-3">Saldo Akhir (Rp)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-300">
+              <tbody className="divide-y divide-slate-300 text-slate-800">
                 {monthlyData.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50">
-                    <td className="py-2 px-3 font-semibold border-r border-slate-300">{row.bulan}</td>
-                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">
-                      {row.saldoAwal.toLocaleString('id-ID')}
-                    </td>
-                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">
-                      {row.pemasukan.toLocaleString('id-ID')}
-                    </td>
-                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">
-                      {row.pengeluaran.toLocaleString('id-ID')}
-                    </td>
-                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">
-                      {row.net.toLocaleString('id-ID')}
-                    </td>
-                    <td className="py-2 px-3 text-right font-bold text-slate-900">
-                      {row.saldoAkhir.toLocaleString('id-ID')}
-                    </td>
+                  <tr key={idx} className="hover:bg-slate-50/70">
+                    <td className="py-2 px-3 font-medium border-r border-slate-300 text-left">{row.bulan}</td>
+                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">{row.saldoAwal}</td>
+                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">{row.pemasukan}</td>
+                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">{row.pengeluaran}</td>
+                    <td className="py-2 px-3 text-right border-r border-slate-300 font-medium">{row.net}</td>
+                    <td className="py-2 px-3 text-right font-medium text-[#1A202C]">{row.saldoAkhir}</td>
                   </tr>
                 ))}
-                <tr className="bg-slate-100 font-black border-t-2 border-slate-400">
-                  <td className="py-2.5 px-3 border-r border-slate-300 uppercase text-center">TOTAL</td>
+                {/* Total Row */}
+                <tr className="bg-[#EBF7EE] font-black border-t-2 border-slate-300">
+                  <td className="py-2.5 px-3 border-r border-slate-300 uppercase text-left">TOTAL</td>
                   <td className="py-2.5 px-3 text-center border-r border-slate-300 text-slate-400">–</td>
-                  <td className="py-2.5 px-3 text-right border-r border-slate-300">
-                    {totalPemasukan.toLocaleString('id-ID')}
-                  </td>
-                  <td className="py-2.5 px-3 text-right border-r border-slate-300">
-                    {totalPengeluaran.toLocaleString('id-ID')}
-                  </td>
-                  <td className="py-2.5 px-3 text-right border-r border-slate-300">
-                    {totalNetKas.toLocaleString('id-ID')}
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-slate-900">
-                    {finalSaldoAkhir.toLocaleString('id-ID')}
-                  </td>
+                  <td className="py-2.5 px-3 text-right border-r border-slate-300">510.000.000</td>
+                  <td className="py-2.5 px-3 text-right border-r border-slate-300">390.000.000</td>
+                  <td className="py-2.5 px-3 text-right border-r border-slate-300">120.000.000</td>
+                  <td className="py-2.5 px-3 text-right text-[#1A202C]">220.000.000</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* 6. CATATAN SISTEM & BLOK TANDA TANGAN LEGALISASI */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-4 font-sans page-break-inside-avoid">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-4 page-break-inside-avoid">
             {/* Notes Left */}
-            <div className="text-xs text-slate-600 space-y-1 max-w-xs">
-              <p className="font-bold text-slate-800">Catatan:</p>
-              <p className="text-[11px] leading-snug">
+            <div className="text-xs text-slate-700 space-y-1 max-w-sm">
+              <p className="font-bold text-[#1A202C]">Catatan:</p>
+              <p className="text-[11px] leading-relaxed text-slate-700">
                 1. Laporan ini disusun berdasarkan data yang ada dalam sistem SAKU IMM.
               </p>
             </div>
 
             {/* Signature Right */}
-            <div className="text-center w-64 space-y-12">
+            <div className="text-center w-64 space-y-16">
               <div>
                 <p className="text-xs font-semibold text-slate-800">
                   Jakarta, 13 Agustus 2026
                 </p>
-                <p className="text-xs font-bold text-slate-900 mt-0.5">
+                <p className="text-xs font-bold text-[#1A202C] mt-0.5">
                   Bendahara Umum {currentLevel === 'DPP' ? 'DPP IMM' : currentOrgName}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-extrabold text-slate-900">
-                  ( Immawan Ahmad )
-                </p>
-                <p className="text-[10px] text-slate-500 font-mono mt-0.5">
-                  NBM. 129481.2026.IMM
+                <p className="text-xs font-bold text-[#1A202C] tracking-wider">
+                  (_______________________)
                 </p>
               </div>
             </div>

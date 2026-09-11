@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ProgramKerja, Transaksi, Bidang, UserRole, JenisNominal, JenisTransaksi } from '../types';
 import { PrintableProkerReportModal } from './PrintableProkerReportModal';
+import { DetailLaporanProkerView } from './DetailLaporanProkerView';
 import {
   FileSpreadsheet,
   PlusCircle,
@@ -17,7 +18,8 @@ import {
   X,
   Camera,
   Upload,
-  Printer
+  Printer,
+  Eye
 } from 'lucide-react';
 
 interface BuatLaporanKeuanganViewProps {
@@ -37,6 +39,7 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
 }) => {
   const [selectedProkerForInput, setSelectedProkerForInput] = useState<ProgramKerja | null>(null);
   const [selectedProkerForPrint, setSelectedProkerForPrint] = useState<ProgramKerja | null>(null);
+  const [selectedProkerForDetail, setSelectedProkerForDetail] = useState<ProgramKerja | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterBidangId, setFilterBidangId] = useState<string>('ALL');
 
@@ -100,6 +103,32 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3500);
   };
+
+  if (selectedProkerForDetail) {
+    return (
+      <>
+        <DetailLaporanProkerView
+          proker={selectedProkerForDetail}
+          transaksiList={transaksiList}
+          currentLevel="PK"
+          currentOrgName="PK IMM Teknik Mesin UI"
+          onBack={() => setSelectedProkerForDetail(null)}
+          onOpenPrintModal={(p) => setSelectedProkerForPrint(p)}
+          onExportExcel={() => {}}
+        />
+
+        {selectedProkerForPrint && (
+          <PrintableProkerReportModal
+            proker={selectedProkerForPrint}
+            transaksiList={transaksiList}
+            currentLevel="PK"
+            currentOrgName="PK IMM Teknik Mesin UI"
+            onClose={() => setSelectedProkerForPrint(null)}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -238,13 +267,25 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
                   </button>
                 )}
 
-                <button
-                  onClick={() => setSelectedProkerForPrint(proker)}
-                  className="w-full py-2 bg-slate-100 hover:bg-[#2D3748] hover:text-white text-[#2D3748] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Cetak Laporan PDF</span>
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setSelectedProkerForDetail(proker)}
+                    className="py-2 bg-slate-100 hover:bg-[#7A0C1E] hover:text-white text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-2xs"
+                    title="Lihat Detail Laporan Kegiatan"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Lihat Laporan</span>
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedProkerForPrint(proker)}
+                    className="py-2 bg-slate-100 hover:bg-[#2D3748] hover:text-white text-[#2D3748] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-2xs"
+                    title="Cetak Laporan PDF"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Cetak PDF</span>
+                  </button>
+                </div>
               </div>
             </div>
           );

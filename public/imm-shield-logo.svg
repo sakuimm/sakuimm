@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Top Ribbon IMM -->
+  <rect x="25" y="6" width="70" height="22" rx="2" fill="#E5A912" stroke="#1A202C" stroke-width="1.5" />
+  <text x="60" y="22" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="14" fill="#1A202C" text-anchor="middle" letter-spacing="2">IMM</text>
+
+  <!-- Shield Body -->
+  <!-- Outer Shield Border -->
+  <path d="M 20 28 L 100 28 L 100 95 C 100 125, 60 148, 60 148 C 60 148, 20 125, 20 95 Z" 
+        fill="#9E1224" stroke="#1A202C" stroke-width="2.5" stroke-linejoin="round" />
+
+  <!-- Inner Gold Trim -->
+  <path d="M 24 32 L 96 32 L 96 93 C 96 120, 60 142, 60 142 C 60 142, 24 120, 24 93 Z" 
+        fill="#A8162A" stroke="#E5A912" stroke-width="2" stroke-linejoin="round" />
+
+  <!-- Sun Rays (Matahari Bersinar Muhammadiyah) -->
+  <g fill="#E5A912" opacity="0.95">
+    <circle cx="60" cy="70" r="14" />
+    <!-- 12 Rays -->
+    <polygon points="60,46 57,55 63,55" />
+    <polygon points="60,94 57,85 63,85" />
+    <polygon points="36,70 45,67 45,73" />
+    <polygon points="84,70 75,67 75,73" />
+    
+    <polygon points="43,53 51,57 47,63" />
+    <polygon points="77,87 69,83 73,77" />
+    <polygon points="77,53 69,57 73,63" />
+    <polygon points="43,87 51,83 47,77" />
+
+    <polygon points="50,48 53,56 46,55" />
+    <polygon points="70,92 67,84 74,85" />
+    <polygon points="70,48 67,56 74,55" />
+    <polygon points="50,92 53,84 46,85" />
+  </g>
+
+  <!-- White Circle for Quran/Pen base -->
+  <circle cx="60" cy="70" r="9" fill="#FFFFFF" stroke="#E5A912" stroke-width="1" />
+
+  <!-- Wreath / Bunga Melati (Green & White leaves) -->
+  <path d="M 33 80 C 33 105, 48 122, 60 128 C 48 120, 39 105, 39 82 Z" fill="#2E7D32" />
+  <path d="M 87 80 C 87 105, 72 122, 60 128 C 72 120, 81 105, 81 82 Z" fill="#2E7D32" />
+  <circle cx="36" cy="85" r="2.5" fill="#FFFFFF" />
+  <circle cx="41" cy="98" r="2.5" fill="#FFFFFF" />
+  <circle cx="49" cy="112" r="2.5" fill="#FFFFFF" />
+  <circle cx="84" cy="85" r="2.5" fill="#FFFFFF" />
+  <circle cx="79" cy="98" r="2.5" fill="#FFFFFF" />
+  <circle cx="71" cy="112" r="2.5" fill="#FFFFFF" />
+
+  <!-- Open Book (Al-Qur'an) -->
+  <path d="M 46 76 Q 60 81 74 76 L 74 81 Q 60 86 46 81 Z" fill="#FFFFFF" stroke="#1A202C" stroke-width="0.8" />
+  <path d="M 46 75 C 53 73, 60 76, 60 78 C 60 76, 67 73, 74 75 L 72 80 C 66 78, 60 80, 60 81 C 60 80, 54 78, 48 80 Z" fill="#FFFFFF" stroke="#1A202C" stroke-width="0.8" />
+
+  <!-- Upright Pen (Pena Tegak Hitam) -->
+  <polygon points="60,42 57,68 63,68" fill="#1A202C" />
+  <polygon points="60,36 58,42 62,42" fill="#E5A912" />
+  <!-- White pen nib point -->
+  <polygon points="60,34 59,37 61,37" fill="#FFFFFF" />
+
+  <!-- Bottom Ribbon / Pita -->
+  <path d="M 42 135 L 78 135 L 85 145 L 75 142 L 60 148 L 45 142 L 35 145 Z" 
+        fill="#E5A912" stroke="#1A202C" stroke-width="1.2" />
+</svg>

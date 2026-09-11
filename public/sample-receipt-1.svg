@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 480" width="340" height="480">
+  <defs>
+    <filter id="paper-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <path d="M 10 10 L 330 10 L 330 460 L 320 468 L 310 460 L 300 468 L 290 460 L 280 468 L 270 460 L 260 468 L 250 460 L 240 468 L 230 460 L 220 468 L 210 460 L 200 468 L 190 460 L 180 468 L 170 460 L 160 468 L 150 460 L 140 468 L 130 460 L 120 468 L 110 460 L 100 468 L 90 460 L 80 468 L 70 460 L 60 468 L 50 460 L 40 468 L 30 460 L 20 468 L 10 460 Z" fill="#FDFDFB" stroke="#CBD5E1" stroke-width="1.2" filter="url(#paper-shadow)" />
+
+  <!-- Indomaret Brand Header -->
+  <g transform="translate(100, 25)">
+    <rect x="0" y="0" width="46" height="18" fill="#005BAA" rx="2" />
+    <rect x="46" y="0" width="46" height="18" fill="#ED1C24" rx="2" />
+    <rect x="92" y="0" width="46" height="18" fill="#FFD100" rx="2" />
+    <text x="70" y="13" font-family="sans-serif" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">Indomaret</text>
+  </g>
+
+  <text x="170" y="60" font-family="monospace" font-size="9" fill="#475569" text-anchor="middle">PT. INDOMARCO PRISMATAMA</text>
+  <text x="170" y="73" font-family="monospace" font-size="8.5" fill="#64748B" text-anchor="middle">JL. KRAMAT RAYA NO. 12, JAKARTA PUSAT</text>
+  <text x="170" y="85" font-family="monospace" font-size="8" fill="#94A3B8" text-anchor="middle">NPWP: 01.337.994.6-092.000</text>
+
+  <line x1="25" y1="96" x2="315" y2="96" stroke="#94A3B8" stroke-width="1" stroke-dasharray="4 3" />
+
+  <text x="25" y="114" font-family="monospace" font-size="9.5" fill="#334155">10.08.26-11:30</text>
+  <text x="180" y="114" font-family="monospace" font-size="9.5" fill="#334155">2.1.84/01/04</text>
+  <text x="25" y="128" font-family="monospace" font-size="9.5" fill="#334155">STRUK: 9812-4019-3312</text>
+  <text x="25" y="142" font-family="monospace" font-size="9.5" fill="#334155">KASIR: SITI NURHALIZA</text>
+
+  <line x1="25" y1="154" x2="315" y2="154" stroke="#94A3B8" stroke-width="1" stroke-dasharray="4 3" />
+
+  <!-- Items -->
+  <text x="25" y="174" font-family="monospace" font-size="9.5" fill="#1E293B">PAKET KONSUMSI KATERING (120x)</text>
+  <text x="315" y="174" font-family="monospace" font-size="9.5" font-weight="bold" fill="#1E293B" text-anchor="end">3.600.000</text>
+
+  <text x="25" y="196" font-family="monospace" font-size="9.5" fill="#1E293B">SNACK BOX ROTI &amp; KUE (120x)</text>
+  <text x="315" y="196" font-family="monospace" font-size="9.5" font-weight="bold" fill="#1E293B" text-anchor="end">1.800.000</text>
+
+  <text x="25" y="218" font-family="monospace" font-size="9.5" fill="#1E293B">AIR MINERAL GALON + CUP (10x)</text>
+  <text x="315" y="218" font-family="monospace" font-size="9.5" font-weight="bold" fill="#1E293B" text-anchor="end">600.000</text>
+
+  <line x1="25" y1="236" x2="315" y2="236" stroke="#94A3B8" stroke-width="1" stroke-dasharray="4 3" />
+
+  <!-- Total -->
+  <text x="25" y="258" font-family="monospace" font-size="10" font-weight="bold" fill="#334155">TOTAL ITEM  3</text>
+  <text x="315" y="258" font-family="monospace" font-size="11" font-weight="bold" fill="#334155" text-anchor="end">6.000.000</text>
+
+  <text x="25" y="278" font-family="monospace" font-size="11" font-weight="900" fill="#1E293B">TOTAL BAYAR</text>
+  <text x="315" y="278" font-family="monospace" font-size="12" font-weight="900" fill="#1E293B" text-anchor="end">Rp6.000.000</text>
+
+  <text x="25" y="298" font-family="monospace" font-size="9.5" fill="#475569">DEBIT BCA SYARIAH</text>
+  <text x="315" y="298" font-family="monospace" font-size="9.5" fill="#475569" text-anchor="end">6.000.000</text>
+
+  <text x="25" y="316" font-family="monospace" font-size="9" fill="#64748B">KEMBALIAN</text>
+  <text x="315" y="316" font-family="monospace" font-size="9" fill="#64748B" text-anchor="end">0</text>
+
+  <!-- Stamp -->
+  <rect x="85" y="345" width="170" height="48" rx="6" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-dasharray="6 2" transform="rotate(-4 170 369)" />
+  <text x="170" y="367" font-family="sans-serif" font-size="13" font-weight="900" fill="#2E7D32" text-anchor="middle" transform="rotate(-4 170 369)" letter-spacing="2">LUNAS / VERIFIED</text>
+  <text x="170" y="383" font-family="monospace" font-size="8.5" font-weight="bold" fill="#2E7D32" text-anchor="middle" transform="rotate(-4 170 369)">SAKU IMM DIGITAL VERIFIED</text>
+
+  <text x="170" y="425" font-family="monospace" font-size="8" fill="#94A3B8" text-anchor="middle">LAYANAN KONSUMEN SMS: 0816 500 580</text>
+  <text x="170" y="440" font-family="monospace" font-size="8" fill="#94A3B8" text-anchor="middle">TERIMA KASIH DAN SELAMAT BELANJA</text>
+</svg>
