@@ -456,6 +456,20 @@ Setiap pembaruan aktivitas wajib ditambahkan pada bagian **5. LOG CHRONOLOGICAL 
     - Mendukung routing terpisah: `input-proker` memuat `InputProkerView`, sedangkan `program-kerja` memuat `MasterDataView`.
 - **Dampak Arsitektur / Catatan:** Kompilasi TypeScript (`npm run build`) sukses tanpa error (exit code 0, 1.62s). Pengujian browser end-to-end terverifikasi penuh (`input_program_kerja_form_1789107825728.png`, `program_kerja_table_1789107970680.png`, `search_filtered_table_1789108014942.png`).
 
+### [2026-09-11 T16:30] - Resolusi Deployment Vercel & Pembersihan Jargon UI (Penghapusan Tulisan USP)
+- **Kategori:** BUGFIX / CLOUD DEPLOYMENT & UI POLISH
+- **Pelaku:** AI Agent (Antigravity)
+- **File Terdampak:** `package.json`, `package-lock.json`, `vercel.json` [NEW], `src/components/LoginPage.tsx`, `PROJECT_HISTORICAL_MEMORY.md`
+- **Rincian Perubahan:**
+  - **1. Perbaikan Deployment Cloud Vercel (Exit Code 0, State SUCCESS):**
+    - Menghapus dependensi spesifik arsitektur `@rollup/rollup-darwin-arm64` dari `devDependencies` `package.json` yang menyebabkan kegagalan `EBADPLATFORM` pada Linux x64 Vercel.
+    - Menambahkan konfigurasi standar `vercel.json` dengan framework Vite dan SPA rewrites ke `/index.html`.
+  - **2. Pembersihan Label Jargon Teknis / "USP" di Halaman Login:**
+    - Menghilangkan badge pill `USP #{idx + 1}` di atas judul slide slider login agar tampilan bersih dan profesional.
+    - Menyesuaikan label slider bawah dari `3 Nilai Utama (USP) SAKU IMM` menjadi `3 Nilai Utama SAKU IMM`.
+- **Dampak Arsitektur / Catatan:** Deployment Vercel berhasil `SUCCESS` (Commit `6311bb3`), situs produksi aktif di `https://sakuimm.vercel.app` (HTTP 200 OK).
+
+
 
 
 
