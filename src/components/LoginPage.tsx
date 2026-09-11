@@ -266,14 +266,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
               const SlideIcon = slide.icon;
               return (
                 <div key={idx} className="space-y-5 animate-fadeIn">
-                  {/* USP Badge Header */}
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-bold text-[#0097A7] backdrop-blur-sm">
-                    <span className="text-[#81B29A] font-extrabold">USP #{idx + 1}</span>
-                    <span>•</span>
-                    <span className="text-white tracking-wide">{slide.title}</span>
-                  </div>
-
-                  {/* Prominent USP Icon with Glow */}
+                  {/* Prominent Feature Icon with Glow */}
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/25 flex items-center justify-center shadow-lg backdrop-blur-md">
                       <SlideIcon className="w-8 h-8 text-[#0097A7]" />
@@ -340,7 +333,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
           {/* INTERACTIVE 3-BAR SLIDER INDICATOR (Transparan, Akuntabel, Berkelanjutan) */}
           <div className="relative z-10 pt-4 border-t border-white/15">
             <div className="text-[10px] uppercase font-bold tracking-wider text-slate-300 mb-2 flex items-center justify-between">
-              <span>3 Nilai Utama (USP) SAKU IMM</span>
+              <span>3 Nilai Utama SAKU IMM</span>
               <span className="text-[#0097A7]">Slide {activeSlide + 1} dari 3</span>
             </div>
             <div className="flex items-center gap-2">
@@ -354,7 +347,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                       ? 'bg-[#0097A7] shadow-md text-white ring-2 ring-white/30'
                       : 'bg-white/20 hover:bg-white/40 text-slate-300'
                   }`}
-                  title={`Lihat USP: ${slide.title}`}
+                  title={`Lihat: ${slide.title}`}
                 >
                   {slide.title}
                 </button>
