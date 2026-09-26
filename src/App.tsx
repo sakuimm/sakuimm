@@ -90,8 +90,33 @@ export function App() {
     setTransaksiList(updated);
   };
 
+  const handleUpdateTransaksi = (trx: Transaksi) => {
+    const updated = storageService.updateTransaksi(trx, userName);
+    setTransaksiList(updated);
+  };
+
+  const handleDeleteTransaksi = (id: string) => {
+    const updated = storageService.deleteTransaksi(id, userName);
+    setTransaksiList(updated);
+  };
+
+  const handleResubmitTransaksi = (id: string) => {
+    const updated = storageService.resubmitTransaksi(id, userName);
+    setTransaksiList(updated);
+  };
+
   const handleAddProker = (proker: ProgramKerja) => {
     const updated = storageService.addProker(proker);
+    setProkerList(updated);
+  };
+
+  const handleUpdateProker = (proker: ProgramKerja) => {
+    const updated = storageService.updateProker(proker, userName);
+    setProkerList(updated);
+  };
+
+  const handleDeleteProker = (id: string) => {
+    const updated = storageService.deleteProker(id, userName);
     setProkerList(updated);
   };
 
@@ -102,6 +127,11 @@ export function App() {
 
   const handleSubmitProkerLPJ = (prokerId: string) => {
     const updated = storageService.submitProkerLPJ(prokerId);
+    setProkerList(updated);
+  };
+
+  const handleReopenProkerLPJ = (prokerId: string) => {
+    const updated = storageService.reopenProkerLPJ(prokerId, userName);
     setProkerList(updated);
   };
 
@@ -190,6 +220,9 @@ export function App() {
               transaksiList={transaksiList}
               userRole={userRole}
               onAddTransaksi={handleAddTransaksi}
+              onUpdateTransaksi={handleUpdateTransaksi}
+              onDeleteTransaksi={handleDeleteTransaksi}
+              onResubmitTransaksi={handleResubmitTransaksi}
             />
           )}
 
@@ -212,7 +245,10 @@ export function App() {
               currentLevel={currentLevel}
               userRole={userRole}
               onAddProker={handleAddProker}
+              onUpdateProker={handleUpdateProker}
+              onDeleteProker={handleDeleteProker}
               onSubmitProkerLPJ={handleSubmitProkerLPJ}
+              onReopenProkerLPJ={handleReopenProkerLPJ}
               onToggleStatusProker={handleToggleStatusProker}
             />
           )}

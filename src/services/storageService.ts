@@ -90,6 +90,60 @@ export const storageService = {
     return updated;
   },
 
+  updateTransaksi(trx: Transaksi, actorNama: string): Transaksi[] {
+    const current = this.getTransaksiList();
+    const updated = current.map((t) => (t.id === trx.id ? { ...trx, statusRevisi: 'normal' as const } : t));
+    this.saveTransaksiList(updated);
+
+    this.addAuditLog({
+      id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+      transaksiId: trx.id,
+      actorNama: `${actorNama} (${trx.organisasiNama})`,
+      aksi: 'UPDATE',
+      waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      keterangan: `Pembaruan data transaksi "${trx.keterangan}" Rp ${trx.nominal.toLocaleString('id-ID')}`
+    });
+
+    return updated;
+  },
+
+  deleteTransaksi(id: string, actorNama: string): Transaksi[] {
+    const current = this.getTransaksiList();
+    const target = current.find((t) => t.id === id);
+    const updated = current.filter((t) => t.id !== id);
+    this.saveTransaksiList(updated);
+
+    if (target) {
+      this.addAuditLog({
+        id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+        transaksiId: id,
+        actorNama,
+        aksi: 'DELETE',
+        waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+        keterangan: `Penghapusan permanen transaksi "${target.keterangan}" Rp ${target.nominal.toLocaleString('id-ID')}`
+      });
+    }
+
+    return updated;
+  },
+
+  resubmitTransaksi(id: string, actorNama: string): Transaksi[] {
+    const current = this.getTransaksiList();
+    const updated = current.map((t) => (t.id === id ? { ...t, statusRevisi: 'disubmit_ulang' as const } : t));
+    this.saveTransaksiList(updated);
+
+    this.addAuditLog({
+      id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+      transaksiId: id,
+      actorNama,
+      aksi: 'RESUBMIT',
+      waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      keterangan: `Submit ulang transaksi ID "${id}" pasca revisi`
+    });
+
+    return updated;
+  },
+
   // Program Kerja Handlers
   getProkerList(): ProgramKerja[] {
     this.initData();
@@ -111,6 +165,43 @@ export const storageService = {
     const current = this.getProkerList();
     const updated = [...current, proker];
     this.saveProkerList(updated);
+    return updated;
+  },
+
+  updateProker(proker: ProgramKerja, actorNama?: string): ProgramKerja[] {
+    const current = this.getProkerList();
+    const updated = current.map((p) => (p.id === proker.id ? proker : p));
+    this.saveProkerList(updated);
+
+    this.addAuditLog({
+      id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+      prokerId: proker.id,
+      actorNama: actorNama || 'Pengurus IMM',
+      aksi: 'UPDATE',
+      waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      keterangan: `Pembaruan data Program Kerja "${proker.namaProker}"`
+    });
+
+    return updated;
+  },
+
+  deleteProker(id: string, actorNama?: string): ProgramKerja[] {
+    const current = this.getProkerList();
+    const target = current.find((p) => p.id === id);
+    const updated = current.filter((p) => p.id !== id);
+    this.saveProkerList(updated);
+
+    if (target) {
+      this.addAuditLog({
+        id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+        prokerId: id,
+        actorNama: actorNama || 'Pengurus IMM',
+        aksi: 'DELETE',
+        waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+        keterangan: `Penghapusan Program Kerja "${target.namaProker}"`
+      });
+    }
+
     return updated;
   },
 
@@ -136,6 +227,28 @@ export const storageService = {
       return p;
     });
     this.saveProkerList(updated);
+    return updated;
+  },
+
+  reopenProkerLPJ(prokerId: string, actorNama?: string): ProgramKerja[] {
+    const current = this.getProkerList();
+    const updated = current.map((p) => {
+      if (p.id === prokerId) {
+        return { ...p, statusLaporan: 'Belum' as const };
+      }
+      return p;
+    });
+    this.saveProkerList(updated);
+
+    this.addAuditLog({
+      id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+      prokerId,
+      actorNama: actorNama || 'Bendahara Umum',
+      aksi: 'REOPEN_LPJ',
+      waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      keterangan: `Penarikan kembali LPJ (Re-open) untuk proker ID "${prokerId}"`
+    });
+
     return updated;
   },
 

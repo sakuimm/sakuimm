@@ -28,6 +28,9 @@ interface BuatLaporanKeuanganViewProps {
   transaksiList: Transaksi[];
   userRole: UserRole;
   onAddTransaksi: (trx: Transaksi) => void;
+  onUpdateTransaksi?: (trx: Transaksi) => void;
+  onDeleteTransaksi?: (id: string) => void;
+  onResubmitTransaksi?: (id: string) => void;
 }
 
 export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = ({
@@ -36,6 +39,9 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
   transaksiList,
   userRole,
   onAddTransaksi,
+  onUpdateTransaksi,
+  onDeleteTransaksi,
+  onResubmitTransaksi,
 }) => {
   const [selectedProkerForInput, setSelectedProkerForInput] = useState<ProgramKerja | null>(null);
   const [selectedProkerForPrint, setSelectedProkerForPrint] = useState<ProgramKerja | null>(null);

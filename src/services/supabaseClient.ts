@@ -11,15 +11,17 @@ export interface SupabaseConfig {
   url: string;
 }
 
-export const getSupabaseConfig = (): SupabaseConfig => {
-  const isConfigured = Boolean(
+export const isSupabaseConfigured = (): boolean => {
+  return Boolean(
     import.meta.env.VITE_SUPABASE_URL &&
     import.meta.env.VITE_SUPABASE_ANON_KEY &&
     !import.meta.env.VITE_SUPABASE_URL.includes('your-supabase-project')
   );
+};
 
+export const getSupabaseConfig = (): SupabaseConfig => {
   return {
-    isConfigured,
+    isConfigured: isSupabaseConfigured(),
     url: supabaseUrl
   };
 };

@@ -33,6 +33,7 @@ interface DetailLaporanProkerViewProps {
   onOpenPrintModal: (proker: ProgramKerja) => void;
   onExportExcel: () => void;
   onSubmitLPJ?: (prokerId: string) => void;
+  onReopenLPJ?: (prokerId: string) => void;
 }
 
 export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = ({
@@ -44,11 +45,12 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
   onOpenPrintModal,
   onExportExcel,
   onSubmitLPJ,
+  onReopenLPJ,
 }) => {
   const [activeReceiptModal, setActiveReceiptModal] = useState<{ title: string; image: string } | null>(null);
   const [userReceipts, setUserReceipts] = useState<string[]>([]);
   const [uploadToast, setUploadToast] = useState<string | null>(null);
-  const [currentStatus, setCurrentStatus] = useState<'Belum' | 'Selesai'>(proker.statusLaporan || 'Belum');
+  const [currentStatus, setCurrentStatus] = useState<'Belum' | 'Selesai' | 'Revisi'>(proker.statusLaporan || 'Belum');
 
   const handleSubmitLPJAction = () => {
     if (currentStatus === 'Selesai') return;
@@ -57,6 +59,15 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
     }
     setCurrentStatus('Selesai');
     setUploadToast(`Laporan LPJ "${proker.namaProker}" berhasil disubmit! Status otomatis berubah menjadi LPJ Selesai.`);
+    setTimeout(() => setUploadToast(null), 4000);
+  };
+
+  const handleReopenLPJAction = () => {
+    if (onReopenLPJ) {
+      onReopenLPJ(proker.id);
+    }
+    setCurrentStatus('Belum');
+    setUploadToast(`LPJ "${proker.namaProker}" ditarik kembali ke status Belum LPJ (Draft). Anda dapat mengedit transaksi dan submit ulang.`);
     setTimeout(() => setUploadToast(null), 4000);
   };
 
@@ -124,9 +135,18 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
         {/* Action Buttons Top Right */}
         <div className="flex items-center gap-2 flex-wrap">
           {currentStatus === 'Selesai' ? (
-            <div className="px-3.5 py-2 bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-2xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>LPJ Selesai (Disubmit)</span>
+            <div className="flex items-center gap-2">
+              <div className="px-3.5 py-2 bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-2xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>LPJ Selesai (Disubmit)</span>
+              </div>
+              <button
+                onClick={handleReopenLPJAction}
+                className="px-3 py-2 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 font-bold text-xs rounded-xl shadow-2xs transition-all"
+                title="Tarik kembali LPJ ke status Belum LPJ untuk revisi"
+              >
+                Tarik Kembali LPJ
+              </button>
             </div>
           ) : (
             <button

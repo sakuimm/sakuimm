@@ -3,7 +3,7 @@ import { Bidang, ProgramKerja, KategoriProker, UserRole, Transaksi, OrgLevel } f
 import { DetailLaporanProkerView } from './DetailLaporanProkerView';
 import { PrintableProkerReportModal } from './PrintableProkerReportModal';
 import { exportService } from '../services/exportService';
-import { FolderKanban, Plus, CheckCircle, ShieldCheck, Lock, Calendar, CheckCircle2, Clock, Eye, FileText } from 'lucide-react';
+import { FolderKanban, Plus, CheckCircle, ShieldCheck, Lock, Calendar, CheckCircle2, Clock, Eye, FileText, Edit3, Trash2, X } from 'lucide-react';
 
 interface MasterDataViewProps {
   bidangList: Bidang[];
@@ -12,7 +12,10 @@ interface MasterDataViewProps {
   currentLevel?: OrgLevel;
   userRole: UserRole;
   onAddProker: (proker: ProgramKerja) => void;
+  onUpdateProker?: (proker: ProgramKerja) => void;
+  onDeleteProker?: (prokerId: string) => void;
   onSubmitProkerLPJ?: (prokerId: string) => void;
+  onReopenProkerLPJ?: (prokerId: string) => void;
   onToggleStatusProker?: (prokerId: string) => void;
 }
 
@@ -23,7 +26,10 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
   currentLevel = 'PK',
   userRole,
   onAddProker,
+  onUpdateProker,
+  onDeleteProker,
   onSubmitProkerLPJ,
+  onReopenProkerLPJ,
   onToggleStatusProker,
 }) => {
   const [activeTab, setActiveTab] = useState<'proker' | 'bidang'>('proker');
@@ -31,6 +37,9 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
   const [selectedBidangId, setSelectedBidangId] = useState(bidangList[0]?.id || 'b1');
   const [kategori, setKategori] = useState<KategoriProker>('Kemahasiswaan');
   const [tanggalPelaksanaan, setTanggalPelaksanaan] = useState('02 - 04 September 2026');
+
+  // Edit Proker Modal State
+  const [editingProker, setEditingProker] = useState<ProgramKerja | null>(null);
 
   // Modal / Detail View States
   const [selectedProkerForDetail, setSelectedProkerForDetail] = useState<ProgramKerja | null>(null);
@@ -66,6 +75,21 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
     setNewProkerNama('');
   };
 
+  const handleUpdateProkerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProker || !onUpdateProker) return;
+    onUpdateProker(editingProker);
+    setEditingProker(null);
+  };
+
+  const handleDeleteProkerClick = (id: string, nama: string) => {
+    if (!onDeleteProker) return;
+    const confirmDelete = window.confirm(`Apakah Anda yakin ingin menghapus Program Kerja "${nama}"? Data transaksi terkait juga perlu diperiksa.`);
+    if (confirmDelete) {
+      onDeleteProker(id);
+    }
+  };
+
   const handleExportExcel = () => {
     exportService.exportProkerSummaryToExcel(prokerList, transaksiList, currentLevel);
   };
@@ -86,6 +110,7 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
           onOpenPrintModal={(p) => setSelectedProkerForPrint(p)}
           onExportExcel={handleExportExcel}
           onSubmitLPJ={onSubmitProkerLPJ}
+          onReopenLPJ={onReopenProkerLPJ}
         />
 
         {selectedProkerForPrint && (
@@ -304,12 +329,19 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
                           </button>
 
                           <button
-                            onClick={() => setSelectedProkerForPrint(p)}
-                            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center gap-1 shadow-2xs border border-slate-200 active:scale-95"
-                            title="Export PDF Laporan Proker"
+                            onClick={() => setEditingProker(p)}
+                            className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[11px] rounded-lg transition-all border border-amber-200"
+                            title="Edit Program Kerja"
                           >
-                            <FileText className="w-3.5 h-3.5 text-slate-500" />
-                            <span>Export (PDF)</span>
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteProkerClick(p.id, p.namaProker)}
+                            className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] rounded-lg transition-all border border-red-200"
+                            title="Hapus Program Kerja"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
@@ -348,6 +380,113 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
                 <CheckCircle className="w-4 h-4 text-[#81B29A]" />
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* EDIT PROGRAM KERJA MODAL */}
+      {editingProker && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex justify-center items-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-[24px] max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#7A0C1E]/10 text-[#7A0C1E]">
+                  Edit Program Kerja
+                </span>
+                <h3 className="text-base font-extrabold text-[#2D3748] mt-1">Ubah Data Agenda Proker</h3>
+              </div>
+              <button
+                onClick={() => setEditingProker(null)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateProkerSubmit} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Nama Program Kerja *
+                </label>
+                <input
+                  type="text"
+                  value={editingProker.namaProker}
+                  onChange={(e) => setEditingProker({ ...editingProker, namaProker: e.target.value })}
+                  required
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Tanggal Pelaksanaan *
+                </label>
+                <input
+                  type="text"
+                  value={editingProker.tanggalPelaksanaan || ''}
+                  onChange={(e) => setEditingProker({ ...editingProker, tanggalPelaksanaan: e.target.value })}
+                  placeholder="02 - 04 September 2026"
+                  required
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Kategori Kegiatan *
+                </label>
+                <select
+                  value={editingProker.kategori}
+                  onChange={(e) => setEditingProker({ ...editingProker, kategori: e.target.value as KategoriProker })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
+                >
+                  <option value="Kemahasiswaan">Kemahasiswaan</option>
+                  <option value="Keagamaan">Keagamaan</option>
+                  <option value="Kemasyarakatan">Kemasyarakatan</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Penanggung Jawab (PIC)
+                </label>
+                <input
+                  type="text"
+                  value={editingProker.penanggungJawab || ''}
+                  onChange={(e) => setEditingProker({ ...editingProker, penanggungJawab: e.target.value })}
+                  placeholder="Nama PIC"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Deskripsi Program Kerja
+                </label>
+                <textarea
+                  value={editingProker.deskripsi || ''}
+                  onChange={(e) => setEditingProker({ ...editingProker, deskripsi: e.target.value })}
+                  rows={2}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingProker(null)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl shadow-md"
+                >
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -29,6 +29,7 @@ export interface Organisasi {
   indukNama?: string;
   status: 'verified' | 'pending' | 'rejected';
   tanggalPendaftaran?: string;
+  alasanPenolakan?: string;
 }
 
 export interface Bidang {
@@ -45,11 +46,12 @@ export interface ProgramKerja {
   namaProker: string;
   kategori: KategoriProker;
   tanggalPelaksanaan?: string;
-  statusLaporan?: 'Belum' | 'Selesai';
+  statusLaporan?: 'Belum' | 'Selesai' | 'Revisi';
   penanggungJawab?: string;
   tanggalDibuat?: string;
   deskripsi?: string;
   targetAnggaran?: number;
+  catatanRevisi?: string;
 }
 
 export interface Transaksi {
@@ -69,13 +71,16 @@ export interface Transaksi {
   uploadStatus: UploadStatus;
   organisasiNama: string;
   isDeleted?: boolean;
+  statusRevisi?: 'normal' | 'revisi_diminta' | 'disubmit_ulang';
+  catatanRevisi?: string;
 }
 
 export interface AuditLog {
   id: string;
   transaksiId?: string;
+  prokerId?: string;
   actorNama: string;
-  aksi: 'CREATE' | 'UPDATE' | 'SOFT_DELETE' | 'REGISTER_ORG' | 'VERIFY_ORG' | 'REJECT_ORG';
+  aksi: 'CREATE' | 'UPDATE' | 'DELETE' | 'SOFT_DELETE' | 'RESUBMIT' | 'REGISTER_ORG' | 'VERIFY_ORG' | 'REJECT_ORG' | 'REOPEN_LPJ';
   waktu: string;
   keterangan: string;
 }
