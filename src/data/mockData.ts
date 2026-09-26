@@ -28,11 +28,16 @@ export const OFFICIAL_IMM_BIDANG: Bidang[] = [
 
 export const MOCK_ORGANISASI: Organisasi[] = [
   { id: 'org-dpp', nama: 'DPP IMM (Dewan Pimpinan Pusat)', level: 'DPP', status: 'verified' },
-  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM', status: 'verified' },
+  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified' },
   { id: 'org-pc', nama: 'PC IMM Jakarta Selatan', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'verified' },
   { id: 'org-korkom', nama: 'KORKOM IMM Universitas Indonesia', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'verified' },
   { id: 'org-pk', nama: 'PK IMM Teknik Mesin Universitas Indonesia', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'verified' },
-  { id: 'org-pending-1', nama: 'PK IMM Fakultas Hukum Universitas Pancasila', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'pending' },
+  
+  // Pending Approval Chain Samples for each Tier
+  { id: 'org-pending-pk', nama: 'PK IMM Fakultas Hukum Universitas Pancasila', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'pending' },
+  { id: 'org-pending-korkom', nama: 'KORKOM IMM Universitas Pancasila', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'pending' },
+  { id: 'org-pending-pc', nama: 'PC IMM Kota Depok', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'pending' },
+  { id: 'org-pending-dpd', nama: 'DPD IMM Jawa Barat', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'pending' },
 ];
 
 export const MOCK_PROKER: ProgramKerja[] = [

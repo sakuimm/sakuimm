@@ -4,7 +4,6 @@ import { Building2, Layers, Filter } from 'lucide-react';
 
 interface HeaderProps {
   currentLevel: OrgLevel;
-  setCurrentLevel: (level: OrgLevel) => void;
   isAggregateMode: boolean;
   setIsAggregateMode: (mode: boolean) => void;
   currentOrgName: string;
@@ -12,7 +11,6 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   currentLevel,
-  setCurrentLevel,
   isAggregateMode,
   setIsAggregateMode,
   currentOrgName,
@@ -27,24 +25,6 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[#2D3748] text-white">
             Level {currentLevel}
           </span>
-        </div>
-
-        {/* Level Switcher Demo Buttons */}
-        <div className="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs">
-          <span className="text-[11px] font-semibold text-slate-400 px-2">Switch Level:</span>
-          {(['PK', 'KORKOM', 'PC', 'DPD', 'DPP'] as OrgLevel[]).map((lvl) => (
-            <button
-              key={lvl}
-              onClick={() => setCurrentLevel(lvl)}
-              className={`px-2.5 py-1 font-semibold rounded-md transition-all ${
-                currentLevel === lvl
-                  ? 'bg-white text-[#2D3748] shadow-xs'
-                  : 'text-slate-500 hover:text-[#2D3748]'
-              }`}
-            >
-              {lvl}
-            </button>
-          ))}
         </div>
       </div>
 

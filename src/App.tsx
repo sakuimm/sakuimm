@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { UserRole, OrgLevel, Transaksi, ProgramKerja, Organisasi } from './types';
 import { OFFICIAL_IMM_BIDANG } from './data/mockData';
-import { storageService } from './services/storageService';
+import { storageService, isDemoRoute } from './services/storageService';
 import { apiService } from './services/apiService';
 import { LoginPage } from './components/LoginPage';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardView } from './components/DashboardView';
 import { BuatLaporanKeuanganView } from './components/BuatLaporanKeuanganView';
-import { TransactionFormView } from './components/TransactionFormView';
-import { InputProkerView } from './components/InputProkerView';
 import { MasterDataView } from './components/MasterDataView';
 import { ReportsView } from './components/ReportsView';
 import { SettingsView } from './components/SettingsView';
 import { OrganizationVerificationView } from './components/OrganizationVerificationView';
+import { FlaskConical } from 'lucide-react';
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,6 +45,7 @@ export function App() {
       setCurrentLevel(session.currentLevel);
       setUserName(session.userName);
       setUserEmail(session.userEmail);
+      setActiveTab('dashboard');
     }
   }, []);
 
@@ -67,8 +67,8 @@ export function App() {
     setCurrentLevel(level);
     setUserName(finalName);
     setUserEmail(finalEmail);
-    setActiveTab('dashboard');
     setIsLoggedIn(true);
+    setActiveTab('dashboard');
 
     // Save Persistent Session
     storageService.saveUserSession({
@@ -82,7 +82,6 @@ export function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setActiveTab('dashboard');
     storageService.clearUserSession();
   };
 
@@ -101,6 +100,11 @@ export function App() {
     setProkerList(updated);
   };
 
+  const handleSubmitProkerLPJ = (prokerId: string) => {
+    const updated = storageService.submitProkerLPJ(prokerId);
+    setProkerList(updated);
+  };
+
   const handleVerifyOrg = async (id: string) => {
     const updated = await apiService.verifyOrganisasi(id, userName);
     setOrganisasiList(updated);
@@ -111,10 +115,11 @@ export function App() {
     setOrganisasiList(updated);
   };
 
-  const handleRegisterOrgSuccess = async (namaOrg: string, level: OrgLevel, email: string, namaBendahara: string) => {
+  const handleRegisterOrgSuccess = async (namaOrg: string, level: OrgLevel, email: string, namaBendahara: string, indukNama?: string) => {
     await apiService.registerOrganisasi({
       namaOrganisasi: namaOrg,
       level,
+      parentOrgId: indukNama,
       namaBendahara,
       email,
       password: 'password123'
@@ -144,32 +149,33 @@ export function App() {
 
   return (
     <div className="flex min-h-screen bg-[#F8F9FA]">
-      {/* Sidebar Navigation (5 Menu Utama SAKU IMM) */}
+      {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         userRole={userRole}
         userLevel={currentLevel}
         userName={userName}
-        pendingVerificationCount={organisasiList.filter((o) => o.status === 'pending').length}
         onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
+        {isDemoRoute() && (
+          <div className="bg-amber-600 text-white px-6 py-2.5 text-xs font-bold flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-2">
+              <FlaskConical className="w-4 h-4 text-amber-200" />
+              <span>🧪 DEMO SANDBOX MODE — Anda sedang menggunakan versi simulasi dengan data mock. Data di halaman ini tidak memengaruhi data real.</span>
+            </div>
+            <a href="/" className="bg-white text-amber-900 px-3 py-1 rounded-lg font-extrabold hover:bg-amber-50 transition-all text-[11px]">
+              Buka Real App (/)
+            </a>
+          </div>
+        )}
+
         {/* Top Header */}
         <Header
           currentLevel={currentLevel}
-          setCurrentLevel={(lvl) => {
-            setCurrentLevel(lvl);
-            storageService.saveUserSession({
-              isLoggedIn: true,
-              userRole,
-              currentLevel: lvl,
-              userName,
-              userEmail
-            });
-          }}
           isAggregateMode={isAggregateMode}
           setIsAggregateMode={setIsAggregateMode}
           currentOrgName={getOrgName(currentLevel)}
@@ -177,16 +183,6 @@ export function App() {
 
         {/* Dynamic View Routing */}
         <main className="p-6 md:p-8 pt-6 md:pt-8 max-w-7xl w-full mx-auto">
-          {activeTab === 'input-transaksi' && (
-            <TransactionFormView
-              transaksiList={transaksiList}
-              prokerList={prokerList}
-              bidangList={OFFICIAL_IMM_BIDANG}
-              userRole={userRole}
-              onAddTransaksi={handleAddTransaksi}
-            />
-          )}
-
           {activeTab === 'buat-laporan' && (
             <BuatLaporanKeuanganView
               prokerList={prokerList}
@@ -204,26 +200,19 @@ export function App() {
               currentLevel={currentLevel}
               userRole={userRole}
               isAggregateMode={isAggregateMode}
-              onNavigateToTransaksi={() => setActiveTab('input-transaksi')}
+              onNavigateToTransaksi={() => setActiveTab('buat-laporan')}
             />
           )}
 
-          {activeTab === 'input-proker' && (
-            <InputProkerView
-              bidangList={OFFICIAL_IMM_BIDANG}
-              onAddProker={handleAddProker}
-              onNavigateToList={() => setActiveTab('program-kerja')}
-              userRole={userRole}
-            />
-          )}
-
-          {(activeTab === 'program-kerja' || activeTab === 'master-data') && (
+          {activeTab === 'master-data' && (
             <MasterDataView
               bidangList={OFFICIAL_IMM_BIDANG}
               prokerList={prokerList}
+              transaksiList={transaksiList}
+              currentLevel={currentLevel}
               userRole={userRole}
               onAddProker={handleAddProker}
-              onNavigateToInput={() => setActiveTab('input-proker')}
+              onSubmitProkerLPJ={handleSubmitProkerLPJ}
               onToggleStatusProker={handleToggleStatusProker}
             />
           )}
@@ -236,15 +225,21 @@ export function App() {
             />
           )}
 
-          {(activeTab === 'pengaturan' || activeTab === 'verifikasi') && (
+          {activeTab === 'pengaturan' && (
             <SettingsView
               userName={userName}
               userRole={userRole}
               userLevel={currentLevel}
-              organisasiList={organisasiList}
-              onVerifyOrg={handleVerifyOrg}
-              onRejectOrg={handleRejectOrg}
               onUpdateUser={handleUpdateUserName}
+            />
+          )}
+
+          {activeTab === 'verifikasi' && currentLevel !== 'PK' && (
+            <OrganizationVerificationView
+              organisasiList={organisasiList}
+              userLevel={currentLevel}
+              onVerify={handleVerifyOrg}
+              onReject={handleRejectOrg}
             />
           )}
         </main>

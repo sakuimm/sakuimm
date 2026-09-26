@@ -79,3 +79,32 @@ export interface AuditLog {
   waktu: string;
   keterangan: string;
 }
+
+export const ORG_LEVEL_ORDER: Record<OrgLevel, number> = {
+  DPP: 1,
+  DPD: 2,
+  PC: 3,
+  KORKOM: 4,
+  PK: 5
+};
+
+export const getTargetChildLevel = (parentLevel: OrgLevel): OrgLevel | null => {
+  switch (parentLevel) {
+    case 'DPP': return 'DPD';
+    case 'DPD': return 'PC';
+    case 'PC': return 'KORKOM';
+    case 'KORKOM': return 'PK';
+    case 'PK': return null;
+  }
+};
+
+export const getParentLevel = (childLevel: OrgLevel): OrgLevel | null => {
+  switch (childLevel) {
+    case 'PK': return 'KORKOM';
+    case 'KORKOM': return 'PC';
+    case 'PC': return 'DPD';
+    case 'DPD': return 'DPP';
+    case 'DPP': return null;
+  }
+};
+

@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
-import { Organisasi } from '../types';
-import { UserCheck, CheckCircle2, XCircle, Clock, Building2 } from 'lucide-react';
+import { Organisasi, OrgLevel, getTargetChildLevel, ORG_LEVEL_ORDER } from '../types';
+import { UserCheck, CheckCircle2, XCircle, Clock, Building2, ShieldCheck } from 'lucide-react';
 
 interface OrganizationVerificationViewProps {
   organisasiList: Organisasi[];
+  userLevel: OrgLevel;
   onVerify: (id: string) => void;
   onReject: (id: string) => void;
 }
 
 export const OrganizationVerificationView: React.FC<OrganizationVerificationViewProps> = ({
   organisasiList,
+  userLevel,
   onVerify,
   onReject,
 }) => {
   const [rejectReasonModal, setRejectReasonModal] = useState<string | null>(null);
   const [reasonText, setReasonText] = useState('');
 
-  const pendingOrgs = organisasiList.filter((o) => o.status === 'pending');
+  const targetChildLevel = getTargetChildLevel(userLevel);
+  const currentLevelOrder = ORG_LEVEL_ORDER[userLevel];
+  const targetLevelOrder = targetChildLevel ? ORG_LEVEL_ORDER[targetChildLevel] : null;
+
+  // Filter pending orgs based on the approval hierarchy rule (User Level N approves Level N+1)
+  const pendingOrgs = organisasiList.filter(
+    (o) => o.status === 'pending' && (!targetChildLevel || o.level === targetChildLevel)
+  );
   const verifiedOrgs = organisasiList.filter((o) => o.status === 'verified');
 
   const confirmReject = () => {
@@ -30,11 +39,25 @@ export const OrganizationVerificationView: React.FC<OrganizationVerificationView
   return (
     <div className="space-y-6">
       {/* Title */}
-      <div>
-        <h2 className="text-xl font-bold text-[#2D3748]">Verifikasi Pendaftaran Organisasi</h2>
-        <p className="text-xs text-slate-500">
-          Panel persetujuan pendaftaran organisasi turunan oleh Induk Pimpinan
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-card border border-slate-200 shadow-xs">
+        <div>
+          <h2 className="text-xl font-bold text-[#2D3748] flex items-center gap-2">
+            <ShieldCheck className="w-6 h-6 text-[#7A0C1E]" />
+            <span>Approval & Verifikasi User / Organisasi</span>
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Panel persetujuan berjenjang akun & pimpinan turunan (Level {currentLevelOrder}: {userLevel})
+          </p>
+        </div>
+
+        {targetChildLevel && (
+          <div className="px-3.5 py-2 bg-[#7A0C1E]/10 border border-[#7A0C1E]/20 rounded-xl text-xs flex items-center gap-2">
+            <span className="font-semibold text-[#7A0C1E]">Otoritas Approval:</span>
+            <span className="font-extrabold text-[#7A0C1E] bg-[#7A0C1E] text-white px-2 py-0.5 rounded text-[11px]">
+              No.{currentLevelOrder} ({userLevel}) &rarr; Menyetujui No.{targetLevelOrder} ({targetChildLevel})
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Pending Verifications Card */}
@@ -42,10 +65,10 @@ export const OrganizationVerificationView: React.FC<OrganizationVerificationView
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
             <Clock className="w-5 h-5 text-[#F4A261]" />
-            <span>Permohonan Pendaftaran Menunggu Verifikasi ({pendingOrgs.length})</span>
+            <span>Permohonan Pendaftaran Menunggu Approval {targetChildLevel ? `Level ${targetChildLevel}` : ''} ({pendingOrgs.length})</span>
           </h3>
           <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-[#F4A261]/15 text-[#9C5217]">
-            Pending Review
+            Pending Review Level {targetLevelOrder || '-'}
           </span>
         </div>
 

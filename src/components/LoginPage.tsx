@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { UserRole, OrgLevel } from '../types';
 import { RegisterOrganizationModal } from './RegisterOrganizationModal';
-import { ShieldCheck, Lock, Mail, ArrowRight, Camera, CheckCircle2, FileCheck, Eye, EyeOff, User, Layers, RefreshCw, Building2 } from 'lucide-react';
+import { isDemoRoute } from '../services/storageService';
+import { ShieldCheck, Lock, Mail, ArrowRight, Camera, CheckCircle2, FileCheck, Eye, EyeOff, User, Layers, RefreshCw, Building2, FlaskConical } from 'lucide-react';
 
 interface LoginPageProps {
   onLogin: (role: UserRole, level: OrgLevel, email: string, name: string) => void;
@@ -19,6 +20,58 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
   const [activeSlide, setActiveSlide] = useState(0);
   const [showRegisterOrgModal, setShowRegisterOrgModal] = useState(false);
 
+  // Read configured credentials from .env for all 5 IMM Leadership Levels
+  const dppEmail = import.meta.env.VITE_CREDENTIALS_DPP_EMAIL || 'dpp@imm.or.id';
+  const dppPass = import.meta.env.VITE_CREDENTIALS_DPP_PASSWORD || 'admin123';
+  const dppName = import.meta.env.VITE_CREDENTIALS_DPP_NAME || 'Pimpinan Pusat (DPP IMM)';
+  const dppRole = (import.meta.env.VITE_CREDENTIALS_DPP_ROLE as UserRole) || 'super_admin';
+  const dppLevel = (import.meta.env.VITE_CREDENTIALS_DPP_LEVEL as OrgLevel) || 'DPP';
+
+  const dpdEmail = import.meta.env.VITE_CREDENTIALS_DPD_EMAIL || 'dpd@imm.or.id';
+  const dpdPass = import.meta.env.VITE_CREDENTIALS_DPD_PASSWORD || 'dpd123';
+  const dpdName = import.meta.env.VITE_CREDENTIALS_DPD_NAME || 'Pimpinan Daerah (DPD IMM DKI Jakarta)';
+  const dpdRole = (import.meta.env.VITE_CREDENTIALS_DPD_ROLE as UserRole) || 'bendahara_umum';
+  const dpdLevel = (import.meta.env.VITE_CREDENTIALS_DPD_LEVEL as OrgLevel) || 'DPD';
+
+  const pcEmail = import.meta.env.VITE_CREDENTIALS_PC_EMAIL || 'pc@imm.or.id';
+  const pcPass = import.meta.env.VITE_CREDENTIALS_PC_PASSWORD || 'pc123';
+  const pcName = import.meta.env.VITE_CREDENTIALS_PC_NAME || 'Pimpinan Cabang (PC IMM Jakarta Selatan)';
+  const pcRole = (import.meta.env.VITE_CREDENTIALS_PC_ROLE as UserRole) || 'tim_verifikasi_internal';
+  const pcLevel = (import.meta.env.VITE_CREDENTIALS_PC_LEVEL as OrgLevel) || 'PC';
+
+  const korkomEmail = import.meta.env.VITE_CREDENTIALS_KORKOM_EMAIL || 'korkom@imm.or.id';
+  const korkomPass = import.meta.env.VITE_CREDENTIALS_KORKOM_PASSWORD || 'korkom123';
+  const korkomName = import.meta.env.VITE_CREDENTIALS_KORKOM_NAME || 'Koordinator Komisariat (KORKOM IMM UI)';
+  const korkomRole = (import.meta.env.VITE_CREDENTIALS_KORKOM_ROLE as UserRole) || 'bendahara_umum';
+  const korkomLevel = (import.meta.env.VITE_CREDENTIALS_KORKOM_LEVEL as OrgLevel) || 'KORKOM';
+
+  const pkEmail = import.meta.env.VITE_CREDENTIALS_PK_EMAIL || 'pk@imm.or.id';
+  const pkPass = import.meta.env.VITE_CREDENTIALS_PK_PASSWORD || 'pk123';
+  const pkName = import.meta.env.VITE_CREDENTIALS_PK_NAME || 'Pimpinan Komisariat (PK IMM Teknik Mesin UI)';
+  const pkRole = (import.meta.env.VITE_CREDENTIALS_PK_ROLE as UserRole) || 'bendahara_umum';
+  const pkLevel = (import.meta.env.VITE_CREDENTIALS_PK_LEVEL as OrgLevel) || 'PK';
+
+  // Backward Compatibility Credentials
+  const bendaharaEmail = import.meta.env.VITE_CREDENTIALS_BENDAHARA_EMAIL || 'bendahara@imm.or.id';
+  const bendaharaPass = import.meta.env.VITE_CREDENTIALS_BENDAHARA_PASSWORD || 'password123';
+  const bendaharaName = import.meta.env.VITE_CREDENTIALS_BENDAHARA_NAME || 'Immawan Ahmad (Bendahara Umum)';
+  const bendaharaRole = (import.meta.env.VITE_CREDENTIALS_BENDAHARA_ROLE as UserRole) || 'bendahara_umum';
+  const bendaharaLevel = (import.meta.env.VITE_CREDENTIALS_BENDAHARA_LEVEL as OrgLevel) || 'PK';
+
+  const verifikasiEmail = import.meta.env.VITE_CREDENTIALS_VERIFIKASI_EMAIL || 'verifikasi@imm.or.id';
+  const verifikasiPass = import.meta.env.VITE_CREDENTIALS_VERIFIKASI_PASSWORD || 'password123';
+  const verifikasiName = import.meta.env.VITE_CREDENTIALS_VERIFIKASI_NAME || 'Immawati Fatimah (Tim Verifikasi)';
+  const verifikasiRole = (import.meta.env.VITE_CREDENTIALS_VERIFIKASI_ROLE as UserRole) || 'tim_verifikasi_internal';
+  const verifikasiLevel = (import.meta.env.VITE_CREDENTIALS_VERIFIKASI_LEVEL as OrgLevel) || 'PC';
+
+  const adminEmail = import.meta.env.VITE_CREDENTIALS_ADMIN_EMAIL || 'admin@imm.or.id';
+  const adminPass = import.meta.env.VITE_CREDENTIALS_ADMIN_PASSWORD || 'password123';
+  const adminName = import.meta.env.VITE_CREDENTIALS_ADMIN_NAME || 'Admin Pusat IMM (Super Admin)';
+  const adminRole = (import.meta.env.VITE_CREDENTIALS_ADMIN_ROLE as UserRole) || 'super_admin';
+  const adminLevel = (import.meta.env.VITE_CREDENTIALS_ADMIN_LEVEL as OrgLevel) || 'DPP';
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   // Auto-slide carousel interval every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
@@ -27,9 +80,104 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     return () => clearInterval(timer);
   }, []);
 
+  const handleQuickLogin = (target: 'dpp' | 'dpd' | 'pc' | 'korkom' | 'pk' | 'bendahara' | 'verifikasi' | 'admin') => {
+    setErrorMessage(null);
+    if (target === 'dpp' || target === 'admin') {
+      setEmail(dppEmail);
+      setPassword(dppPass);
+      setRole(dppRole);
+      setLevel(dppLevel);
+      setNama(dppName);
+      onLogin(dppRole, dppLevel, dppEmail, dppName);
+    } else if (target === 'dpd') {
+      setEmail(dpdEmail);
+      setPassword(dpdPass);
+      setRole(dpdRole);
+      setLevel(dpdLevel);
+      setNama(dpdName);
+      onLogin(dpdRole, dpdLevel, dpdEmail, dpdName);
+    } else if (target === 'pc' || target === 'verifikasi') {
+      setEmail(pcEmail);
+      setPassword(pcPass);
+      setRole(pcRole);
+      setLevel(pcLevel);
+      setNama(pcName);
+      onLogin(pcRole, pcLevel, pcEmail, pcName);
+    } else if (target === 'korkom') {
+      setEmail(korkomEmail);
+      setPassword(korkomPass);
+      setRole(korkomRole);
+      setLevel(korkomLevel);
+      setNama(korkomName);
+      onLogin(korkomRole, korkomLevel, korkomEmail, korkomName);
+    } else if (target === 'pk' || target === 'bendahara') {
+      setEmail(pkEmail);
+      setPassword(pkPass);
+      setRole(pkRole);
+      setLevel(pkLevel);
+      setNama(pkName);
+      onLogin(pkRole, pkLevel, pkEmail, pkName);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(role, level, email, nama);
+    setErrorMessage(null);
+
+    const inputEmail = email.trim().toLowerCase();
+
+    // Check matching 5 level credentials
+    if (inputEmail === dppEmail.toLowerCase() || inputEmail === adminEmail.toLowerCase()) {
+      if (password !== dppPass && password !== adminPass) {
+        setErrorMessage('Kata sandi untuk akun Level 1 (DPP IMM) salah. Silakan periksa kembali.');
+        return;
+      }
+      onLogin(dppRole, dppLevel, dppEmail, dppName);
+      return;
+    }
+
+    if (inputEmail === dpdEmail.toLowerCase()) {
+      if (password !== dpdPass) {
+        setErrorMessage('Kata sandi untuk akun Level 2 (DPD IMM) salah. Silakan periksa kembali.');
+        return;
+      }
+      onLogin(dpdRole, dpdLevel, dpdEmail, dpdName);
+      return;
+    }
+
+    if (inputEmail === pcEmail.toLowerCase() || inputEmail === verifikasiEmail.toLowerCase()) {
+      if (password !== pcPass && password !== verifikasiPass) {
+        setErrorMessage('Kata sandi untuk akun Level 3 (PC IMM) salah. Silakan periksa kembali.');
+        return;
+      }
+      onLogin(pcRole, pcLevel, pcEmail, pcName);
+      return;
+    }
+
+    if (inputEmail === korkomEmail.toLowerCase()) {
+      if (password !== korkomPass) {
+        setErrorMessage('Kata sandi untuk akun Level 4 (KORKOM IMM) salah. Silakan periksa kembali.');
+        return;
+      }
+      onLogin(korkomRole, korkomLevel, korkomEmail, korkomName);
+      return;
+    }
+
+    if (inputEmail === pkEmail.toLowerCase() || inputEmail === bendaharaEmail.toLowerCase()) {
+      if (password !== pkPass && password !== bendaharaPass) {
+        setErrorMessage('Kata sandi untuk akun Level 5 (PK IMM) salah. Silakan periksa kembali.');
+        return;
+      }
+      onLogin(pkRole, pkLevel, pkEmail, pkName);
+      return;
+    }
+
+    // Default fallback login for any other valid email
+    if (password.length < 4) {
+      setErrorMessage('Kata sandi minimal 4 karakter.');
+      return;
+    }
+    onLogin(role, level, email, nama || 'Pengurus IMM');
   };
 
   const uspSlides = [
@@ -77,6 +225,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
 
           {/* Middle Form Area */}
           <div className="my-auto py-6 max-w-md w-full mx-auto space-y-5">
+            {isDemoRoute() && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2 mb-2">
+                <FlaskConical className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <div>
+                  <span className="font-bold">DEMO SANDBOX MODE</span>
+                  <p className="text-[11px] text-amber-700">
+                    Data simulasi aktif. Untuk versi Real App tanpa mock data, <a href="/" className="underline font-bold">buka Aplikasi Utama (/)</a>.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Sign In vs Sign Up Segmented Tab Switcher */}
             <div className="flex p-1 bg-slate-100 rounded-xl mb-4">
               <button
@@ -113,6 +273,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                   : 'Lengkapi data pimpinan & peran untuk mendaftar akun baru.'}
               </p>
             </div>
+
+            {errorMessage && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 font-bold text-xs rounded-xl flex items-center gap-2 animate-fadeIn">
+                <Lock className="w-4 h-4 text-red-600 flex-shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Sign Up Only Inputs: Level, Role, Name */}
@@ -228,6 +395,62 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                 <span>{authMode === 'signin' ? 'Masuk ke Dashboard IMM' : 'Daftar & Masuk ke Dashboard'}</span>
                 <ArrowRight className="w-4 h-4 text-[#81B29A]" />
               </button>
+
+              {/* Quick Login 1-Klik Per Level Pimpinan (5 Level IMM) - ONLY IN DEMO MODE */}
+              {authMode === 'signin' && isDemoRoute() && (
+                <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-xl space-y-2 mt-3">
+                  <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider text-center flex items-center justify-center gap-1">
+                    <FlaskConical className="w-3.5 h-3.5 text-amber-600" />
+                    <span>⚡ Quick Login Demo 1-Klik (5 Level Pimpinan)</span>
+                  </p>
+                  <div className="grid grid-cols-5 gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleQuickLogin('dpp')}
+                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-[#7A0C1E] transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                    >
+                      <span>DPP</span>
+                      <span className="text-[8px] opacity-75 font-normal">Level 1</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickLogin('dpd')}
+                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                    >
+                      <span>DPD</span>
+                      <span className="text-[8px] opacity-75 font-normal">Level 2</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickLogin('pc')}
+                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                    >
+                      <span>PC</span>
+                      <span className="text-[8px] opacity-75 font-normal">Level 3</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickLogin('korkom')}
+                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                    >
+                      <span>KORKOM</span>
+                      <span className="text-[8px] opacity-75 font-normal">Level 4</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickLogin('pk')}
+                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-[#7A0C1E] transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                    >
+                      <span>PK</span>
+                      <span className="text-[8px] opacity-75 font-normal">Level 5</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Register New Organization Trigger Button */}
               <div className="pt-2 text-center">

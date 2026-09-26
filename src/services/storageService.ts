@@ -1,13 +1,29 @@
 import { Transaksi, ProgramKerja, Organisasi, AuditLog, UserRole, OrgLevel } from '../types';
 import { MOCK_TRANSAKSI, MOCK_PROKER, MOCK_ORGANISASI, MOCK_AUDIT_LOG } from '../data/mockData';
 
-const KEYS = {
-  TRANSAKSI: 'sakuimm_transaksi_v1',
-  PROKER: 'sakuimm_proker_v1',
-  ORGANISASI: 'sakuimm_organisasi_v1',
-  AUDIT_LOG: 'sakuimm_audit_log_v1',
-  USER_SESSION: 'sakuimm_user_session_v1'
+export const isDemoRoute = (): boolean => {
+  return typeof window !== 'undefined' && window.location.pathname.startsWith('/demo');
 };
+
+const getKeys = () => {
+  const isDemo = isDemoRoute();
+  const prefix = isDemo ? 'sakuimm_demo_' : 'sakuimm_prod_';
+  return {
+    TRANSAKSI: `${prefix}transaksi_v1`,
+    PROKER: `${prefix}proker_v1`,
+    ORGANISASI: `${prefix}organisasi_v1`,
+    AUDIT_LOG: `${prefix}audit_log_v1`,
+    USER_SESSION: `${prefix}user_session_v1`
+  };
+};
+
+export const PROD_INITIAL_ORGANISASI: Organisasi[] = [
+  { id: 'org-dpp', nama: 'DPP IMM (Dewan Pimpinan Pusat)', level: 'DPP', status: 'verified' },
+  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified' },
+  { id: 'org-pc', nama: 'PC IMM Jakarta Selatan', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'verified' },
+  { id: 'org-korkom', nama: 'KORKOM IMM Universitas Indonesia', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'verified' },
+  { id: 'org-pk', nama: 'PK IMM Teknik Mesin Universitas Indonesia', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'verified' }
+];
 
 export interface UserSession {
   isLoggedIn: boolean;
@@ -19,61 +35,40 @@ export interface UserSession {
 
 // Storage Service Wrapper for Local Persistence
 export const storageService = {
-  // Initialize default data if empty or merge essential proker
+  // Initialize default data if empty
   initData(): void {
-    if (!localStorage.getItem(KEYS.TRANSAKSI)) {
-      localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify(MOCK_TRANSAKSI));
-    } else {
-      try {
-        const trxs = JSON.parse(localStorage.getItem(KEYS.TRANSAKSI) || '[]');
-        const hasRakornas = trxs.some((t: Transaksi) => t.programKerjaId === 'pr-rakornas');
-        if (!hasRakornas) {
-          const rakornasTrx = MOCK_TRANSAKSI.filter((t) => t.programKerjaId === 'pr-rakornas');
-          localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify([...rakornasTrx, ...trxs]));
-        }
-      } catch (e) {
-        localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify(MOCK_TRANSAKSI));
-      }
-    }
+    const keys = getKeys();
+    const isDemo = isDemoRoute();
 
-    if (!localStorage.getItem(KEYS.PROKER)) {
-      localStorage.setItem(KEYS.PROKER, JSON.stringify(MOCK_PROKER));
-    } else {
-      try {
-        const prokers = JSON.parse(localStorage.getItem(KEYS.PROKER) || '[]');
-        const hasRakornas = prokers.some((p: ProgramKerja) => p.id === 'pr-rakornas');
-        if (!hasRakornas) {
-          const rakornas = MOCK_PROKER.find((p) => p.id === 'pr-rakornas');
-          if (rakornas) {
-            localStorage.setItem(KEYS.PROKER, JSON.stringify([rakornas, ...prokers]));
-          }
-        }
-      } catch (e) {
-        localStorage.setItem(KEYS.PROKER, JSON.stringify(MOCK_PROKER));
-      }
+    if (!localStorage.getItem(keys.TRANSAKSI)) {
+      localStorage.setItem(keys.TRANSAKSI, JSON.stringify(isDemo ? MOCK_TRANSAKSI : []));
     }
-
-    if (!localStorage.getItem(KEYS.ORGANISASI)) {
-      localStorage.setItem(KEYS.ORGANISASI, JSON.stringify(MOCK_ORGANISASI));
+    if (!localStorage.getItem(keys.PROKER)) {
+      localStorage.setItem(keys.PROKER, JSON.stringify(isDemo ? MOCK_PROKER : []));
     }
-    if (!localStorage.getItem(KEYS.AUDIT_LOG)) {
-      localStorage.setItem(KEYS.AUDIT_LOG, JSON.stringify(MOCK_AUDIT_LOG));
+    if (!localStorage.getItem(keys.ORGANISASI)) {
+      localStorage.setItem(keys.ORGANISASI, JSON.stringify(isDemo ? MOCK_ORGANISASI : PROD_INITIAL_ORGANISASI));
+    }
+    if (!localStorage.getItem(keys.AUDIT_LOG)) {
+      localStorage.setItem(keys.AUDIT_LOG, JSON.stringify(isDemo ? MOCK_AUDIT_LOG : []));
     }
   },
 
   // Transaksi Handlers
   getTransaksiList(): Transaksi[] {
     this.initData();
+    const keys = getKeys();
     try {
-      const data = localStorage.getItem(KEYS.TRANSAKSI);
-      return data ? JSON.parse(data) : MOCK_TRANSAKSI;
+      const data = localStorage.getItem(keys.TRANSAKSI);
+      return data ? JSON.parse(data) : (isDemoRoute() ? MOCK_TRANSAKSI : []);
     } catch {
-      return MOCK_TRANSAKSI;
+      return isDemoRoute() ? MOCK_TRANSAKSI : [];
     }
   },
 
   saveTransaksiList(list: Transaksi[]): void {
-    localStorage.setItem(KEYS.TRANSAKSI, JSON.stringify(list));
+    const keys = getKeys();
+    localStorage.setItem(keys.TRANSAKSI, JSON.stringify(list));
   },
 
   addTransaksi(trx: Transaksi, actorNama: string): Transaksi[] {
@@ -98,16 +93,18 @@ export const storageService = {
   // Program Kerja Handlers
   getProkerList(): ProgramKerja[] {
     this.initData();
+    const keys = getKeys();
     try {
-      const data = localStorage.getItem(KEYS.PROKER);
-      return data ? JSON.parse(data) : MOCK_PROKER;
+      const data = localStorage.getItem(keys.PROKER);
+      return data ? JSON.parse(data) : (isDemoRoute() ? MOCK_PROKER : []);
     } catch {
-      return MOCK_PROKER;
+      return isDemoRoute() ? MOCK_PROKER : [];
     }
   },
 
   saveProkerList(list: ProgramKerja[]): void {
-    localStorage.setItem(KEYS.PROKER, JSON.stringify(list));
+    const keys = getKeys();
+    localStorage.setItem(keys.PROKER, JSON.stringify(list));
   },
 
   addProker(proker: ProgramKerja): ProgramKerja[] {
@@ -130,19 +127,51 @@ export const storageService = {
     return updated;
   },
 
+  submitProkerLPJ(prokerId: string): ProgramKerja[] {
+    const current = this.getProkerList();
+    const updated = current.map((p) => {
+      if (p.id === prokerId) {
+        return { ...p, statusLaporan: 'Selesai' as const };
+      }
+      return p;
+    });
+    this.saveProkerList(updated);
+    return updated;
+  },
+
   // Organisasi Handlers
   getOrganisasiList(): Organisasi[] {
     this.initData();
+    const keys = getKeys();
     try {
-      const data = localStorage.getItem(KEYS.ORGANISASI);
-      return data ? JSON.parse(data) : MOCK_ORGANISASI;
+      const data = localStorage.getItem(keys.ORGANISASI);
+      return data ? JSON.parse(data) : (isDemoRoute() ? MOCK_ORGANISASI : PROD_INITIAL_ORGANISASI);
     } catch {
-      return MOCK_ORGANISASI;
+      return isDemoRoute() ? MOCK_ORGANISASI : PROD_INITIAL_ORGANISASI;
     }
   },
 
   saveOrganisasiList(list: Organisasi[]): void {
-    localStorage.setItem(KEYS.ORGANISASI, JSON.stringify(list));
+    const keys = getKeys();
+    localStorage.setItem(keys.ORGANISASI, JSON.stringify(list));
+  },
+
+  addOrganisasi(org: Organisasi): Organisasi[] {
+    const current = this.getOrganisasiList();
+    const updated = [org, ...current];
+    this.saveOrganisasiList(updated);
+
+    // Auto-create Audit Log Entry
+    const newAuditLog: AuditLog = {
+      id: `AL-${Math.floor(100 + Math.random() * 900)}`,
+      actorNama: `Pendaftar ${org.nama}`,
+      aksi: 'REGISTER_ORG',
+      waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+      keterangan: `Pendaftaran organisasi baru level ${org.level}: "${org.nama}" dengan Induk "${org.parentNama || org.indukNama || '-'}"`
+    };
+    this.addAuditLog(newAuditLog);
+
+    return updated;
   },
 
   verifyOrganisasi(id: string): Organisasi[] {
@@ -162,24 +191,27 @@ export const storageService = {
   // Audit Log Handlers
   getAuditLogs(): AuditLog[] {
     this.initData();
+    const keys = getKeys();
     try {
-      const data = localStorage.getItem(KEYS.AUDIT_LOG);
-      return data ? JSON.parse(data) : MOCK_AUDIT_LOG;
+      const data = localStorage.getItem(keys.AUDIT_LOG);
+      return data ? JSON.parse(data) : (isDemoRoute() ? MOCK_AUDIT_LOG : []);
     } catch {
-      return MOCK_AUDIT_LOG;
+      return isDemoRoute() ? MOCK_AUDIT_LOG : [];
     }
   },
 
   addAuditLog(entry: AuditLog): void {
+    const keys = getKeys();
     const current = this.getAuditLogs();
     const updated = [entry, ...current];
-    localStorage.setItem(KEYS.AUDIT_LOG, JSON.stringify(updated));
+    localStorage.setItem(keys.AUDIT_LOG, JSON.stringify(updated));
   },
 
   // User Session Handlers
   getUserSession(): UserSession | null {
+    const keys = getKeys();
     try {
-      const data = localStorage.getItem(KEYS.USER_SESSION);
+      const data = localStorage.getItem(keys.USER_SESSION);
       return data ? JSON.parse(data) : null;
     } catch {
       return null;
@@ -187,10 +219,12 @@ export const storageService = {
   },
 
   saveUserSession(session: UserSession): void {
-    localStorage.setItem(KEYS.USER_SESSION, JSON.stringify(session));
+    const keys = getKeys();
+    localStorage.setItem(keys.USER_SESSION, JSON.stringify(session));
   },
 
   clearUserSession(): void {
-    localStorage.removeItem(KEYS.USER_SESSION);
+    const keys = getKeys();
+    localStorage.removeItem(keys.USER_SESSION);
   }
 };

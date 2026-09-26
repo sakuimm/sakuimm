@@ -4,7 +4,7 @@ import { Building2, ShieldCheck, Mail, Lock, User, CheckCircle2, X } from 'lucid
 
 interface RegisterOrganizationModalProps {
   onClose: () => void;
-  onRegisterSuccess: (namaOrg: string, level: OrgLevel, email: string, namaBendahara: string) => void;
+  onRegisterSuccess: (namaOrg: string, level: OrgLevel, email: string, namaBendahara: string, indukNama: string) => void;
 }
 
 export const RegisterOrganizationModal: React.FC<RegisterOrganizationModalProps> = ({
@@ -32,8 +32,8 @@ export const RegisterOrganizationModal: React.FC<RegisterOrganizationModalProps>
     setIsSubmitted(true);
 
     setTimeout(() => {
-      onRegisterSuccess(namaOrganisasi, level, email, namaBendahara);
-    }, 2000);
+      onRegisterSuccess(namaOrganisasi, level, email, namaBendahara, indukNama);
+    }, 1500);
   };
 
   return (

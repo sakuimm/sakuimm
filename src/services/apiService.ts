@@ -1,5 +1,6 @@
 import { Transaksi, ProgramKerja, Organisasi, AuditLog, UserRole, OrgLevel } from '../types';
 import { storageService } from './storageService';
+import { supabase } from './supabaseClient';
 
 export interface LoginResponse {
   accessToken: string;
@@ -33,6 +34,37 @@ export interface DashboardSummaryResponse {
 }
 
 export const apiService = {
+  /**
+   * Upload receipt file to Supabase Storage Bucket 'receipts'
+   */
+  async uploadReceiptFile(file: File): Promise<{ fileId: string; publicUrl: string }> {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `receipt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      const filePath = `transaksi/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('receipts')
+        .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+      if (error) {
+        const localUrl = URL.createObjectURL(file);
+        return { fileId: `local-${Date.now()}`, publicUrl: localUrl };
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('receipts')
+        .getPublicUrl(filePath);
+
+      return {
+        fileId: data?.path || filePath,
+        publicUrl: publicUrlData.publicUrl
+      };
+    } catch {
+      const localUrl = URL.createObjectURL(file);
+      return { fileId: `local-${Date.now()}`, publicUrl: localUrl };
+    }
+  },
   /**
    * POST /api/v1/auth/login
    */

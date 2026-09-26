@@ -62,21 +62,49 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const displayPengeluaran = totalPengeluaran * aggregateMultiplier;
   const displaySaldo = displayPemasukan - displayPengeluaran;
 
-  // Chart 1 Data: Pie Chart Pengeluaran Per Kategori Proker
+  // Dynamic Chart 1 Data: Pie Chart Pengeluaran Per Kategori Proker
+  const kemahasiswaanVal = transaksiList
+    .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Kemahasiswaan')
+    .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+
+  const keagamaanVal = transaksiList
+    .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Keagamaan')
+    .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+
+  const kemasyarakatanVal = transaksiList
+    .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Kemasyarakatan')
+    .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+
+  const totalKategoriExpense = kemahasiswaanVal + keagamaanVal + kemasyarakatanVal;
+
   const dataKategori = [
-    { name: 'Kemahasiswaan', value: 3750000 * aggregateMultiplier, color: '#7A0C1E' },
-    { name: 'Keagamaan', value: 450000 * aggregateMultiplier, color: '#0097A7' },
-    { name: 'Kemasyarakatan', value: 1200000 * aggregateMultiplier, color: '#1D4ED8' },
+    { name: 'Kemahasiswaan', value: kemahasiswaanVal, color: '#7A0C1E' },
+    { name: 'Keagamaan', value: keagamaanVal, color: '#0097A7' },
+    { name: 'Kemasyarakatan', value: kemasyarakatanVal, color: '#1D4ED8' },
   ];
 
-  // Chart 2 Data: Pie Chart Pengeluaran Per Bidang (Instruksi screenshot: Ganti bar chart tren dengan pie chart pengeluaran per bidang)
-  const dataPengeluaranBidang = [
-    { name: 'Kader (KDR)', value: 1850000 * aggregateMultiplier, color: '#7A0C1E' },
-    { name: 'Tabligh & Keislaman (TKK)', value: 450000 * aggregateMultiplier, color: '#0097A7' },
-    { name: 'Sosial & Pemas. (SPM)', value: 1200000 * aggregateMultiplier, color: '#1D4ED8' },
-    { name: 'Media & Komunikasi (MED)', value: 1200000 * aggregateMultiplier, color: '#F4A261' },
-    { name: 'Ekonomi & Kewirausahaan (EKW)', value: 750000 * aggregateMultiplier, color: '#2E7D32' },
-  ];
+  // Dynamic Chart 2 Data: Pie Chart Pengeluaran Per Bidang
+  const bidangExpensesMap: Record<string, number> = {};
+  transaksiList
+    .filter((t) => t.jenisNominal === 'pengeluaran')
+    .forEach((t) => {
+      const bNama = t.bidangNama || 'Umum';
+      bidangExpensesMap[bNama] = (bidangExpensesMap[bNama] || 0) + t.nominal * aggregateMultiplier;
+    });
+
+  const chartColors = ['#7A0C1E', '#0097A7', '#1D4ED8', '#F4A261', '#2E7D32', '#C05621', '#4A5568'];
+
+  const dataPengeluaranBidangRaw = Object.keys(bidangExpensesMap).map((bNama, index) => ({
+    name: bNama,
+    value: bidangExpensesMap[bNama],
+    color: chartColors[index % chartColors.length]
+  }));
+
+  const totalBidangExpense = dataPengeluaranBidangRaw.reduce((sum, b) => sum + b.value, 0);
+
+  const dataPengeluaranBidang = dataPengeluaranBidangRaw.length > 0
+    ? dataPengeluaranBidangRaw
+    : [{ name: 'Belum Ada Pengeluaran', value: 0, color: '#CBD5E1' }];
 
   const hasSubordinates = currentLevel !== 'PK';
 
@@ -282,91 +310,72 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
-      {/* Bottom Section: Ringkasan per Program Kerja (Hanya untuk Komisariat/Level Sendiri; Mode Pimpinan Bawahan Terproteksi Privasi) */}
-      {hasSubordinates ? (
-        <div className="p-6 bg-white border border-slate-200 rounded-card shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3.5 bg-[#0097A7]/10 text-[#0097A7] rounded-2xl flex-shrink-0">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="font-bold text-sm text-[#2D3748]">Protokol Privasi Finansial Otonom Aktif</h4>
-                <span className="px-2 py-0.5 bg-[#81B29A]/20 text-[#2D5A44] text-[10px] font-extrabold rounded-full">
-                  Privasi Otonom
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Sesuai prinsip transparansi berkeadilan IMM, Pimpinan tingkat <span className="font-bold text-[#7A0C1E]">{currentLevel}</span> memantau perputaran dana bawahan ({selectedSubordinateLevel === 'ALL' ? 'Seluruh Level Bawahan' : `Level ${selectedSubordinateLevel}`}) secara agregat (Total Saldo, Pemasukan, Pengeluaran, serta Pie Chart Pengeluaran Kategori & Bidang). Rincian transaksi dan kwitansi internal tetap menjadi hak otonomi komisariat pelaksana.
-              </p>
-            </div>
+      {/* Bottom Section: Ringkasan per Program Kerja */}
+      <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="font-bold text-[#2D3748] text-base">Ringkasan Anggaran Program Kerja</h3>
+            <p className="text-xs text-slate-500">Rekapitulasi surplus/defisit kas per program kerja aktif</p>
           </div>
-          <span className="hidden lg:inline-flex px-3.5 py-1.5 bg-slate-100 border border-slate-200 text-slate-700 font-extrabold text-xs rounded-xl whitespace-nowrap">
-            Agregat {selectedSubordinateLevel === 'ALL' ? 'Semua Bawahan' : `Level ${selectedSubordinateLevel}`}
-          </span>
+          <button
+            onClick={onNavigateToTransaksi}
+            className="px-3.5 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+          >
+            + Buat Laporan Keuangan
+          </button>
         </div>
-      ) : (
-        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div>
-              <h3 className="font-bold text-[#2D3748] text-base">Ringkasan Anggaran Program Kerja</h3>
-              <p className="text-xs text-slate-500">Rekapitulasi surplus/defisit kas per program kerja aktif</p>
-            </div>
-            <button
-              onClick={onNavigateToTransaksi}
-              className="px-3.5 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5"
-            >
-              <span>+ Input Transaksi</span>
-            </button>
-          </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
-                  <th className="py-3 px-3">Nama Program Kerja</th>
-                  <th className="py-3 px-3">Bidang Naungan</th>
-                  <th className="py-3 px-3">Jadwal Pelaksanaan</th>
-                  <th className="py-3 px-3">Pemasukan</th>
-                  <th className="py-3 px-3">Pengeluaran</th>
-                  <th className="py-3 px-3">Surplus / Defisit</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {prokerList.map((pr) => {
-                  const pem = pr.id === 'pr-1' ? 3750000 : pr.id === 'pr-4' ? 2400000 : 0;
-                  const peng = pr.id === 'pr-1' ? 1850000 : pr.id === 'pr-2' ? 450000 : pr.id === 'pr-5' ? 1200000 : 0;
-                  const diff = pem - peng;
-                  return (
-                    <tr key={pr.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-3 font-extrabold text-[#2D3748]">{pr.namaProker}</td>
-                      <td className="py-3 px-3 text-slate-600 font-medium">{pr.bidangNama}</td>
-                      <td className="py-3 px-3 text-slate-500">{pr.tanggalPelaksanaan || '02 - 04 Sept 2026'}</td>
-                      <td className="py-3 px-3 text-[#2E7D32] font-bold">
-                        Rp {pem.toLocaleString('id-ID')}
-                      </td>
-                      <td className="py-3 px-3 text-[#C05621] font-bold">
-                        Rp {peng.toLocaleString('id-ID')}
-                      </td>
-                      <td className="py-3 px-3">
-                        <span
-                          className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                            diff >= 0
-                              ? 'bg-[#81B29A]/20 text-[#2D5A44]'
-                              : 'bg-[#F4A261]/20 text-[#9C5217]'
-                          }`}
-                        >
-                          {diff >= 0 ? `Surplus (+Rp ${diff.toLocaleString('id-ID')})` : `Defisit (-Rp ${Math.abs(diff).toLocaleString('id-ID')})`}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
+                <th className="py-3 px-3">Nama Program Kerja</th>
+                <th className="py-3 px-3">Bidang Naungan</th>
+                <th className="py-3 px-3">Jadwal Pelaksanaan</th>
+                <th className="py-3 px-3">Pemasukan</th>
+                <th className="py-3 px-3">Pengeluaran</th>
+                <th className="py-3 px-3">Surplus / Defisit</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {prokerList.map((pr) => {
+                const pTrx = transaksiList.filter((t) => t.programKerjaId === pr.id);
+                const pem = pTrx
+                  .filter((t) => t.jenisNominal === 'pemasukan')
+                  .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+                const peng = pTrx
+                  .filter((t) => t.jenisNominal === 'pengeluaran')
+                  .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+                const diff = pem - peng;
+                return (
+                  <tr key={pr.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-3 font-extrabold text-[#2D3748]">{pr.namaProker}</td>
+                    <td className="py-3 px-3 text-slate-600 font-medium">{pr.bidangNama}</td>
+                    <td className="py-3 px-3 text-slate-500">{pr.tanggalPelaksanaan || '02 - 04 Sept 2026'}</td>
+                    <td className="py-3 px-3 text-[#2E7D32] font-bold">
+                      Rp {pem.toLocaleString('id-ID')}
+                    </td>
+                    <td className="py-3 px-3 text-[#C05621] font-bold">
+                      Rp {peng.toLocaleString('id-ID')}
+                    </td>
+                    <td className="py-3 px-3">
+                      <span
+                        className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                          diff >= 0
+                            ? 'bg-[#81B29A]/20 text-[#2D5A44]'
+                            : 'bg-[#F4A261]/20 text-[#9C5217]'
+                        }`}
+                      >
+                        {diff >= 0 ? `Surplus (+Rp ${diff.toLocaleString('id-ID')})` : `Defisit (-Rp ${Math.abs(diff).toLocaleString('id-ID')})`}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   );
 };
