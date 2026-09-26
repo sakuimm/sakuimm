@@ -90,8 +90,8 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
       {/* Page Title */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-[#2D3748]">Pencatatan Transaksi Harian</h2>
-          <p className="text-xs text-slate-500">Pencatatan nota bukti transaksi digital & otomatis watermark Sharp</p>
+          <h2 className="text-xl font-bold text-[#2D3748]">Input Transaksi Per Program Kerja</h2>
+          <p className="text-xs text-slate-500">Pilih Program Kerja dan Input Transaksi Berbasis Nota</p>
         </div>
         {showSuccessToast && (
           <div className="px-4 py-2 bg-[#81B29A] text-[#2D3748] text-xs font-bold rounded-lg shadow-sm flex items-center gap-2">
@@ -126,26 +126,34 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
                   <PlusCircle className="w-4 h-4 text-[#81B29A]" />
-                  <span>Form Input Transaksi</span>
+                  <span>Formulir Transaksi Baru</span>
                 </h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                  Mobile-First
+                <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#7A0C1E]/10 text-[#7A0C1E]">
+                  Terhubung Proker
                 </span>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Tanggal */}
+            {/* Dropdown Program Kerja (Dependent) */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Tanggal Transaksi
+                Program Kerja Sasaran *
               </label>
-              <input
-                type="date"
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
-                required
+              <select
+                value={selectedProkerId}
+                onChange={(e) => setSelectedProkerId(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748]"
-              />
+              >
+                {filteredProker.length > 0 ? (
+                  filteredProker.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.namaProker} ({p.kategori})
+                    </option>
+                  ))
+                ) : (
+                  <option value="">-- Bebas / Rutin Organisasi --</option>
+                )}
+              </select>
             </div>
 
             {/* Dropdown Bidang */}
@@ -166,32 +174,24 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
               </select>
             </div>
 
-            {/* Dropdown Program Kerja (Dependent) */}
+            {/* Tanggal */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Program Kerja
+                Tanggal Transaksi *
               </label>
-              <select
-                value={selectedProkerId}
-                onChange={(e) => setSelectedProkerId(e.target.value)}
+              <input
+                type="date"
+                value={tanggal}
+                onChange={(e) => setTanggal(e.target.value)}
+                required
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748]"
-              >
-                {filteredProker.length > 0 ? (
-                  filteredProker.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.namaProker} ({p.kategori})
-                    </option>
-                  ))
-                ) : (
-                  <option value="">-- Bebas / Rutin Organisasi --</option>
-                )}
-              </select>
+              />
             </div>
 
             {/* Jenis Nominal Toggle (Eksklusif!) */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Jenis Nominal (Pilih Salah Satu)
+                Jenis Arus Kas *
               </label>
               <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-lg">
                 <button
@@ -203,7 +203,7 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
                       : 'text-slate-500 hover:bg-slate-200'
                   }`}
                 >
-                  <span>Pemasukan (+Kas)</span>
+                  <span>+ Pemasukan (+Kas)</span>
                 </button>
                 <button
                   type="button"
@@ -214,7 +214,7 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
                       : 'text-slate-500 hover:bg-slate-200'
                   }`}
                 >
-                  <span>Pengeluaran (-Kas)</span>
+                  <span>- Pengeluaran (-Kas)</span>
                 </button>
               </div>
             </div>
@@ -222,52 +222,52 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
             {/* Nominal Rupiah */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Nominal Transaksi (Rp)
+                Nominal Transaksi (Rp) *
               </label>
               <input
                 type="text"
                 value={nominalStr}
                 onChange={(e) => setNominalStr(e.target.value)}
-                placeholder="Contoh: 250000"
+                placeholder="Rp 0"
                 required
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-[#2D3748] focus:outline-none focus:border-[#2D3748]"
-              />
-            </div>
-
-            {/* Keterangan */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Keterangan Transaksi / Nota
-              </label>
-              <textarea
-                value={keterangan}
-                onChange={(e) => setKeterangan(e.target.value)}
-                placeholder="Rincian pembelian atau sumber dana..."
-                rows={2}
-                required
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748]"
               />
             </div>
 
             {/* Jenis Transaksi (Operasional / Inventaris) */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Kategori Alokasi
+                Kategori Alokasi Anggaran
               </label>
               <select
                 value={jenisTransaksi}
                 onChange={(e) => setJenisTransaksi(e.target.value as JenisTransaksi)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748]"
               >
-                <option value="operasional">Operasional Program Kerja</option>
+                <option value="operasional">Konsumsi Peserta / Operasional</option>
                 <option value="inventaris">Inventaris / Aset Organisasi</option>
               </select>
+            </div>
+
+            {/* Keterangan */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                Keterangan Transaksi / Nama Merchant *
+              </label>
+              <textarea
+                value={keterangan}
+                onChange={(e) => setKeterangan(e.target.value)}
+                placeholder="Contoh: Konsumsi peserta 3 hari - Indomaret Kramat Raya"
+                rows={2}
+                required
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#2D3748]"
+              />
             </div>
 
             {/* Upload / Capture Kamera Native */}
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                Foto Bukti Nota (Kamera Native / Unggah)
+                Foto Bukti Nota Kasir / Kuitansi Fisik
               </label>
               <div className="border-2 border-dashed border-slate-200 rounded-lg p-3 text-center bg-slate-50/50 hover:bg-slate-50 transition-all">
                 {photoSelected ? (
@@ -279,11 +279,11 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
                   </div>
                 ) : (
                   <label className="cursor-pointer space-y-1 block">
-                    <div className="w-8 h-8 rounded-full bg-[#2D3748]/10 text-[#2D3748] mx-auto flex items-center justify-center">
-                      <Camera className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-full bg-[#7A0C1E]/10 text-[#7A0C1E] mx-auto flex items-center justify-center">
+                      <Camera className="w-4 h-4 text-[#7A0C1E]" />
                     </div>
-                    <p className="text-xs font-bold text-[#2D3748]">Ambil Foto Kamera / Pilihh File</p>
-                    <p className="text-[10px] text-slate-400">Otomatis kompresi Sharp (Max 1200px)</p>
+                    <p className="text-xs font-bold text-[#7A0C1E]">Ambil Foto Kamera / Pilih Berkas</p>
+                    <p className="text-[10px] text-slate-400">JPG, PNG maksimal 5MB + Kompresi Otomatis Sharp</p>
                     <input
                       type="file"
                       accept="image/*"
@@ -299,10 +299,10 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-2.5 bg-[#2D3748] hover:bg-slate-700 text-white font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-2 shadow-xs"
+              className="w-full py-3 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm"
             >
-              <span>Simpan & Upload ke Google Drive Queue</span>
-              <Upload className="w-3.5 h-3.5 text-[#81B29A]" />
+              <Upload className="w-4 h-4 text-[#81B29A]" />
+              <span>Simpan Transaksi Kas</span>
             </button>
           </form>
           </>
@@ -313,7 +313,10 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-[#2D3748] text-base">Riwayat Pencatatan Transaksi Organisasi</h3>
+              <div>
+                <h3 className="font-bold text-[#2D3748] text-base">Riwayat Pencatatan Transaksi</h3>
+                <p className="text-xs text-slate-500">Daftar Transaksi Periode Berjalan</p>
+              </div>
               <span className="text-xs text-slate-500 font-medium">Soft-Delete Enabled</span>
             </div>
 

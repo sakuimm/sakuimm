@@ -118,13 +118,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-extrabold text-base">Dashboard Ringkasan Beranda ({currentLevel})</h4>
+              <h4 className="font-extrabold text-base">
+                {currentLevel === 'DPP'
+                  ? 'Ikhtisar Keuangan (DPP IMM) | View Only'
+                  : currentLevel === 'KORKOM'
+                  ? 'Transparansi SAKU IMM | View Only'
+                  : `Dashboard Ringkasan Beranda (${currentLevel})`}
+              </h4>
               <span className="px-2 py-0.5 bg-[#0097A7] text-white font-bold text-[10px] rounded-full">
                 Privasi Terjaga
               </span>
             </div>
             <p className="text-xs text-slate-200 mt-0.5">
-              Pimpinan tingkat atas dapat memantau Total Pemasukan & Pengeluaran serta Pie Chart Pengeluaran Per Kategori/Bidang secara agregat tanpa mengekspos nota detail individu.
+              {currentLevel === 'DPP' || currentLevel === 'KORKOM'
+                ? `Lihat agregat Total Pemasukan, Total Pengeluaran dan Total Pengeluaran Per Bidang semua level pimpinan IMM di bawah.`
+                : 'Pimpinan tingkat atas dapat memantau Total Pemasukan & Pengeluaran serta Pie Chart Pengeluaran Per Kategori/Bidang secara agregat tanpa mengekspos nota detail individu.'}
             </p>
           </div>
         </div>
@@ -321,7 +329,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             onClick={onNavigateToTransaksi}
             className="px-3.5 py-1.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
           >
-            + Buat Laporan Keuangan
+            + Input Transaksi
           </button>
         </div>
 

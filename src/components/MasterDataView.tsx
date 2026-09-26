@@ -145,17 +145,17 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
                   <Plus className="w-4 h-4 text-[#81B29A]" />
-                  <span>Tambah Program Kerja</span>
+                  <span>Formulir Pendaftaran Proker</span>
                 </h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#81B29A]/15 text-[#2D5A44]">
-                  Proker Form
+                <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#7A0C1E]/10 text-[#7A0C1E]">
+                  Wajib Isi Tanda *
                 </span>
               </div>
 
               <form onSubmit={handleCreateProker} className="space-y-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                    Pilih Bidang IMM *
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                    PILIH BIDANG IMM *
                   </label>
                   <select
                     value={selectedBidangId}
@@ -168,17 +168,18 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
                       </option>
                     ))}
                   </select>
+                  <p className="text-[10px] text-slate-400 mt-1">Sesuai standar struktur baku 22 Bidang Tanfidz IMM</p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                    Nama Program Kerja *
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                    NAMA PROGRAM KERJA *
                   </label>
                   <input
                     type="text"
                     value={newProkerNama}
                     onChange={(e) => setNewProkerNama(e.target.value)}
-                    placeholder="Contoh: Darul Arqam Dasar XXVII"
+                    placeholder="Contoh: Darul Arqam Dasar (DAD) XXVI"
                     required
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
                   />
@@ -186,8 +187,8 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
 
                 {/* Tanggal Pelaksanaan Input */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                    Tanggal Pelaksanaan *
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                    TANGGAL PELAKSANAAN *
                   </label>
                   <div className="relative">
                     <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -195,35 +196,48 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
                       type="text"
                       value={tanggalPelaksanaan}
                       onChange={(e) => setTanggalPelaksanaan(e.target.value)}
-                      placeholder="Contoh: 02 - 04 September 2026"
+                      placeholder="02 - 04 September 2026"
                       required
                       className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
                     />
                   </div>
-                  <p className="text-[10px] text-slate-400 mt-1">Format contoh: 02 - 04 September 2026</p>
+                  <p className="text-[10px] text-slate-400 mt-1">Format: DD - DD Bulan YYYY</p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">
-                    Kategori Proker *
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+                    KATEGORI KEGIATAN *
                   </label>
                   <select
                     value={kategori}
                     onChange={(e) => setKategori(e.target.value as KategoriProker)}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
                   >
-                    <option value="Keagamaan">Keagamaan</option>
                     <option value="Kemahasiswaan">Kemahasiswaan</option>
+                    <option value="Keagamaan">Keagamaan</option>
                     <option value="Kemasyarakatan">Kemasyarakatan</option>
                   </select>
+                  <p className="text-[10px] text-slate-400 mt-1">Trikompetensi Dasar IMM</p>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-2.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                >
-                  + Simpan Program Kerja
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 py-2.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                  >
+                    + Daftarkan Program Kerja
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewProkerNama('');
+                      setTanggalPelaksanaan('02 - 04 September 2026');
+                    }}
+                    className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition-all"
+                  >
+                    Reset
+                  </button>
+                </div>
               </form>
             </div>
           ) : (

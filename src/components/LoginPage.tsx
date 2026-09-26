@@ -184,7 +184,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     {
       title: "Transparan",
       tagline: "Akuntabilitas & Visibilitas Keuangan Real-Time",
-      desc: "Sistem pencatatan keuangan otonom terintegrasi dengan visibilitas transparan dari Komisariat (PK), Cabang (PC), Daerah (DPD), hingga Pusat (DPP).",
+      desc: "Data keuangan terdokumentasi secara terstruktur, dan dapat dipantau sesuai kewenangan setiap level pimpinan.",
       icon: ShieldCheck,
       cardTitle: "Kas Organisasi Transparan",
       cardValue: "Rp 28.450.000",
@@ -192,8 +192,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     },
     {
       title: "Akuntabel",
-      tagline: "Pencatatan Nota Digital & Jejak Audit Terverifikasi",
-      desc: "Digitalisasi kwitansi otomatis dengan stempel watermark resmi Sharp Pipe, snapshot Audit Trail JSONB, serta wewenang kontrol hak akses yang tegas.",
+      tagline: "Pertanggungjawaban Keuangan Sah & Digital",
+      desc: "Setiap transaksi program kerja semua bidang, tercatat dan dilengkapi bukti, sehingga pengelolaan keuangan dapat dipertanggungjawabkan.",
       icon: FileCheck,
       cardTitle: "Nota & Audit Trail",
       cardValue: "100% Verified",
@@ -202,7 +202,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     {
       title: "Berkelanjutan",
       tagline: "Tata Kelola Kas Organisasi Terstruktur & Modern",
-      desc: "Mendukung keberlanjutan program kerja organisasi IMM antar-generasi kepengurusan dengan pengelolaan arsip keuangan terdigitalisasi.",
+      desc: "Data laporan keuangan yang konsisten dan dapat diteruskan setiap periode pimpinan dari waktu ke waktu Sehingga data laporan keuangan dapat dijadikan dasar evaluasi dan pengambilan keputusan organisasi.",
       icon: RefreshCw,
       cardTitle: "Tata Kelola Berkelanjutan",
       cardValue: "22 Bidang Resmi",
