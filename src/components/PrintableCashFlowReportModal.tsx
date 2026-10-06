@@ -73,7 +73,7 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
           <div className="flex items-center justify-between pb-3 mb-1">
             {/* Logo Left */}
             <div className="w-20 flex-shrink-0 flex items-center justify-center">
-              <img src="/imm-shield-logo.svg" alt="IMM Logo" className="h-20 object-contain" />
+              <img src="/imm-shield-logo.svg" alt="IMM Shield Logo" className="h-20 object-contain" />
             </div>
 
             {/* Header Text Center */}
@@ -82,13 +82,13 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
                 IKATAN MAHASISWA MUHAMMADIYAH
               </h1>
               <h2 className="text-base md:text-lg font-black uppercase text-[#7A0C1E] tracking-wide mt-0.5">
-                {currentLevel === 'DPP' ? 'DEWAN PIMPINAN PUSAT IMM' : getLevelHeaderTitle(currentLevel)}
+                {getLevelHeaderTitle(currentLevel)}
               </h2>
-              <p className="text-xs text-slate-700 font-medium mt-1">
-                Jl. Kramat Raya No.49, Jakarta Pusat 10450
+              <p className="text-xs text-[#1A202C] font-extrabold mt-1 uppercase tracking-wider">
+                {currentOrgName}
               </p>
-              <p className="text-xs text-slate-700 font-medium">
-                Telp. (021) 3903021 | Email: dpp@imm.or.id
+              <p className="text-[11px] text-slate-500 font-medium">
+                Sistem Tata Kelola Keuangan SAKU IMM • Terverifikasi Digital
               </p>
             </div>
 
@@ -99,7 +99,7 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
                 <span>Dicatat melalui SAKU IMM</span>
               </div>
               <p className="text-[11px] text-slate-600 font-semibold">
-                13 Agustus 2026 &nbsp;|&nbsp; 14:30 WIB
+                {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>

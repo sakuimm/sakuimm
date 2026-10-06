@@ -51,13 +51,15 @@ export const MOCK_PROKER: ProgramKerja[] = [
     statusLaporan: 'Selesai',
     penanggungJawab: 'Ahmad Fauzan',
     tanggalDibuat: '1 Juli 2026',
-    deskripsi: 'Rapat koordinasi nasional untuk membahas program kerja IMM tahun 2026.'
+    deskripsi: 'Rapat koordinasi nasional untuk membahas program kerja IMM tahun 2026.',
+    organisasiLevel: 'DPP',
+    organisasiNama: 'DPP IMM (Pusat)'
   },
-  { id: 'pr-1', bidangId: 'b2', bidangNama: 'Kader', namaProker: 'Darul Arqam Dasar (DAD) XXVI', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '02 - 04 September 2026', statusLaporan: 'Selesai' },
-  { id: 'pr-2', bidangId: 'b11', bidangNama: 'Tabligh dan Kajian Keislaman', namaProker: 'Kajian Rutin Selasa Subuh', kategori: 'Keagamaan', tanggalPelaksanaan: '12 - 26 Agustus 2026', statusLaporan: 'Selesai' },
-  { id: 'pr-3', bidangId: 'b8', bidangNama: 'Sosial dan Pemberdayaan Masyarakat', namaProker: 'Bakti Sosial & Pengobatan Gratis', kategori: 'Kemasyarakatan', tanggalPelaksanaan: '15 - 17 September 2026', statusLaporan: 'Belum' },
-  { id: 'pr-4', bidangId: 'b9', bidangNama: 'Ekonomi dan Kewirausahaan', namaProker: 'Penjualan Merchandising IMM', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '01 - 30 Agustus 2026', statusLaporan: 'Selesai' },
-  { id: 'pr-5', bidangId: 'b12', bidangNama: 'Media dan Komunikasi', namaProker: 'Pelatihan Desain & Website', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '10 - 12 Oktober 2026', statusLaporan: 'Belum' },
+  { id: 'pr-1', bidangId: 'b2', bidangNama: 'Kader', namaProker: 'Darul Arqam Dasar (DAD) XXVI', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '02 - 04 September 2026', statusLaporan: 'Selesai', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-2', bidangId: 'b11', bidangNama: 'Tabligh dan Kajian Keislaman', namaProker: 'Kajian Rutin Selasa Subuh', kategori: 'Keagamaan', tanggalPelaksanaan: '12 - 26 Agustus 2026', statusLaporan: 'Selesai', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-3', bidangId: 'b8', bidangNama: 'Sosial dan Pemberdayaan Masyarakat', namaProker: 'Bakti Sosial & Pengobatan Gratis', kategori: 'Kemasyarakatan', tanggalPelaksanaan: '15 - 17 September 2026', statusLaporan: 'Belum', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-4', bidangId: 'b9', bidangNama: 'Ekonomi dan Kewirausahaan', namaProker: 'Penjualan Merchandising IMM', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '01 - 30 Agustus 2026', statusLaporan: 'Selesai', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-5', bidangId: 'b12', bidangNama: 'Media dan Komunikasi', namaProker: 'Pelatihan Desain & Website', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '10 - 12 Oktober 2026', statusLaporan: 'Belum', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
 ];
 
 export const MOCK_TRANSAKSI: Transaksi[] = [
@@ -76,7 +78,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'operasional',
     buktiDriveFileId: 'DRV-RAKORNAS-01',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-RAKORNAS-02',
@@ -92,7 +95,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'operasional',
     buktiDriveFileId: 'DRV-RAKORNAS-02',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-RAKORNAS-03',
@@ -108,7 +112,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'operasional',
     buktiDriveFileId: 'DRV-RAKORNAS-03',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-RAKORNAS-04',
@@ -124,7 +129,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'operasional',
     buktiDriveFileId: 'DRV-RAKORNAS-04',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-RAKORNAS-05',
@@ -140,7 +146,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'operasional',
     buktiDriveFileId: 'DRV-RAKORNAS-05',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-RAKORNAS-06',
@@ -156,7 +163,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'operasional',
     buktiDriveFileId: 'DRV-RAKORNAS-06',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-RAKORNAS-07',
@@ -172,7 +180,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     jenisTransaksi: 'inventaris',
     buktiDriveFileId: 'DRV-RAKORNAS-07',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'DPP IMM'
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
   },
   {
     id: 'TRX-1001',
@@ -189,7 +198,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     buktiDriveFileId: '1AbCdEfGhIjKlMnOpQ',
     buktiDriveUrl: 'https://drive.google.com/file/d/sample-1',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'PK IMM Teknik Mesin UI'
+    organisasiNama: 'PK IMM Teknik Mesin UI',
+    organisasiLevel: 'PK'
   },
   {
     id: 'TRX-1002',
@@ -206,7 +216,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     buktiDriveFileId: '2BcDeFgHiJkLmNoPqR',
     buktiDriveUrl: 'https://drive.google.com/file/d/sample-2',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'PK IMM Teknik Mesin UI'
+    organisasiNama: 'PK IMM Teknik Mesin UI',
+    organisasiLevel: 'PK'
   },
   {
     id: 'TRX-1003',
@@ -223,7 +234,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     buktiDriveFileId: '3CdEfGhIjKlMnOpQrS',
     buktiDriveUrl: 'https://drive.google.com/file/d/sample-3',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'PK IMM Teknik Mesin UI'
+    organisasiNama: 'PK IMM Teknik Mesin UI',
+    organisasiLevel: 'PK'
   },
   {
     id: 'TRX-1004',
@@ -240,7 +252,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     buktiDriveFileId: '4DeFgHiJkLmNoPqRsT',
     buktiDriveUrl: 'https://drive.google.com/file/d/sample-4',
     uploadStatus: 'COMPLETED',
-    organisasiNama: 'PK IMM Teknik Mesin UI'
+    organisasiNama: 'PK IMM Teknik Mesin UI',
+    organisasiLevel: 'PK'
   },
   {
     id: 'TRX-1005',
@@ -255,7 +268,8 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     nominal: 1200000,
     jenisTransaksi: 'inventaris',
     uploadStatus: 'PENDING',
-    organisasiNama: 'PK IMM Teknik Mesin UI'
+    organisasiNama: 'PK IMM Teknik Mesin UI',
+    organisasiLevel: 'PK'
   }
 ];
 

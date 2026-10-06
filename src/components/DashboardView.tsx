@@ -42,7 +42,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // Filter Subordinate Level Selector state for Pimpinan yang punya bawahan
   const [selectedSubordinateLevel, setSelectedSubordinateLevel] = useState<string>('ALL');
 
-  // Aggregate Calculations
+  // Real Aggregate Calculations (No Artificial Multiplier)
   const totalPemasukan = transaksiList
     .filter((t) => t.jenisNominal === 'pemasukan')
     .reduce((sum, t) => sum + t.nominal, 0);
@@ -51,29 +51,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     .filter((t) => t.jenisNominal === 'pengeluaran')
     .reduce((sum, t) => sum + t.nominal, 0);
 
-  // Multiplier for Aggregate mode simulation
-  const aggregateMultiplier = isAggregateMode
-    ? (selectedSubordinateLevel === 'ALL'
-        ? (currentLevel === 'DPP' ? 15 : currentLevel === 'DPD' ? 5 : 2)
-        : selectedSubordinateLevel === 'PK' ? 1.5 : selectedSubordinateLevel === 'PC' ? 3 : 2)
-    : 1;
-
-  const displayPemasukan = totalPemasukan * aggregateMultiplier;
-  const displayPengeluaran = totalPengeluaran * aggregateMultiplier;
+  const displayPemasukan = totalPemasukan;
+  const displayPengeluaran = totalPengeluaran;
   const displaySaldo = displayPemasukan - displayPengeluaran;
 
   // Dynamic Chart 1 Data: Pie Chart Pengeluaran Per Kategori Proker
   const kemahasiswaanVal = transaksiList
     .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Kemahasiswaan')
-    .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+    .reduce((sum, t) => sum + t.nominal, 0);
 
   const keagamaanVal = transaksiList
     .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Keagamaan')
-    .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+    .reduce((sum, t) => sum + t.nominal, 0);
 
   const kemasyarakatanVal = transaksiList
     .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Kemasyarakatan')
-    .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+    .reduce((sum, t) => sum + t.nominal, 0);
 
   const totalKategoriExpense = kemahasiswaanVal + keagamaanVal + kemasyarakatanVal;
 
@@ -89,7 +82,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     .filter((t) => t.jenisNominal === 'pengeluaran')
     .forEach((t) => {
       const bNama = t.bidangNama || 'Umum';
-      bidangExpensesMap[bNama] = (bidangExpensesMap[bNama] || 0) + t.nominal * aggregateMultiplier;
+      bidangExpensesMap[bNama] = (bidangExpensesMap[bNama] || 0) + t.nominal;
     });
 
   const chartColors = ['#7A0C1E', '#0097A7', '#1D4ED8', '#F4A261', '#2E7D32', '#C05621', '#4A5568'];
@@ -216,7 +209,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
           <div className="flex items-center gap-1.5 text-xs">
             <span className="px-2 py-0.5 rounded-full font-bold bg-[#C05621]/10 text-[#C05621]">
-              ↓ 5%
+              +5%
             </span>
             <span className="text-slate-500">vs target anggaran</span>
           </div>
@@ -350,10 +343,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 const pTrx = transaksiList.filter((t) => t.programKerjaId === pr.id);
                 const pem = pTrx
                   .filter((t) => t.jenisNominal === 'pemasukan')
-                  .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+                  .reduce((sum, t) => sum + t.nominal, 0);
                 const peng = pTrx
                   .filter((t) => t.jenisNominal === 'pengeluaran')
-                  .reduce((sum, t) => sum + t.nominal, 0) * aggregateMultiplier;
+                  .reduce((sum, t) => sum + t.nominal, 0);
                 const diff = pem - peng;
                 return (
                   <tr key={pr.id} className="hover:bg-slate-50 transition-colors">

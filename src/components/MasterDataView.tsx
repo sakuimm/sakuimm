@@ -328,21 +328,25 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
                             <span>Lihat Detail</span>
                           </button>
 
-                          <button
-                            onClick={() => setEditingProker(p)}
-                            className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[11px] rounded-lg transition-all border border-amber-200"
-                            title="Edit Program Kerja"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" />
-                          </button>
+                          {userRole !== 'tim_verifikasi_internal' && (
+                            <>
+                              <button
+                                onClick={() => setEditingProker(p)}
+                                className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[11px] rounded-lg transition-all border border-amber-200"
+                                title="Edit Program Kerja"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
 
-                          <button
-                            onClick={() => handleDeleteProkerClick(p.id, p.namaProker)}
-                            className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] rounded-lg transition-all border border-red-200"
-                            title="Hapus Program Kerja"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                              <button
+                                onClick={() => handleDeleteProkerClick(p.id, p.namaProker)}
+                                className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] rounded-lg transition-all border border-red-200"
+                                title="Hapus Program Kerja"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>

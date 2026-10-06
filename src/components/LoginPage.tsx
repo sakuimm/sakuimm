@@ -11,6 +11,7 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSuccess }) => {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [isSignupSubmitted, setIsSignupSubmitted] = useState(false);
   const [email, setEmail] = useState('bendahara@imm.or.id');
   const [password, setPassword] = useState('password123');
   const [role, setRole] = useState<UserRole>('bendahara_umum');
@@ -124,12 +125,28 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     e.preventDefault();
     setErrorMessage(null);
 
+    if (authMode === 'signup') {
+      if (!email || !password || !nama) {
+        setErrorMessage('Mohon lengkapi seluruh data pendaftaran.');
+        return;
+      }
+      if (password.length < 4) {
+        setErrorMessage('Kata sandi minimal 4 karakter.');
+        return;
+      }
+      if (onRegisterOrgSuccess) {
+        onRegisterOrgSuccess(nama, level, email, nama);
+      }
+      setIsSignupSubmitted(true);
+      return;
+    }
+
     const inputEmail = email.trim().toLowerCase();
 
     // Check matching 5 level credentials
     if (inputEmail === dppEmail.toLowerCase() || inputEmail === adminEmail.toLowerCase()) {
       if (password !== dppPass && password !== adminPass) {
-        setErrorMessage('Kata sandi untuk akun Level 1 (DPP IMM) salah. Silakan periksa kembali.');
+        setErrorMessage('Kata sandi atau email salah. Silakan periksa kembali.');
         return;
       }
       onLogin(dppRole, dppLevel, dppEmail, dppName);
@@ -138,7 +155,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
 
     if (inputEmail === dpdEmail.toLowerCase()) {
       if (password !== dpdPass) {
-        setErrorMessage('Kata sandi untuk akun Level 2 (DPD IMM) salah. Silakan periksa kembali.');
+        setErrorMessage('Kata sandi atau email salah. Silakan periksa kembali.');
         return;
       }
       onLogin(dpdRole, dpdLevel, dpdEmail, dpdName);
@@ -147,7 +164,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
 
     if (inputEmail === pcEmail.toLowerCase() || inputEmail === verifikasiEmail.toLowerCase()) {
       if (password !== pcPass && password !== verifikasiPass) {
-        setErrorMessage('Kata sandi untuk akun Level 3 (PC IMM) salah. Silakan periksa kembali.');
+        setErrorMessage('Kata sandi atau email salah. Silakan periksa kembali.');
         return;
       }
       onLogin(pcRole, pcLevel, pcEmail, pcName);
@@ -156,7 +173,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
 
     if (inputEmail === korkomEmail.toLowerCase()) {
       if (password !== korkomPass) {
-        setErrorMessage('Kata sandi untuk akun Level 4 (KORKOM IMM) salah. Silakan periksa kembali.');
+        setErrorMessage('Kata sandi atau email salah. Silakan periksa kembali.');
         return;
       }
       onLogin(korkomRole, korkomLevel, korkomEmail, korkomName);
@@ -165,7 +182,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
 
     if (inputEmail === pkEmail.toLowerCase() || inputEmail === bendaharaEmail.toLowerCase()) {
       if (password !== pkPass && password !== bendaharaPass) {
-        setErrorMessage('Kata sandi untuk akun Level 5 (PK IMM) salah. Silakan periksa kembali.');
+        setErrorMessage('Kata sandi atau email salah. Silakan periksa kembali.');
         return;
       }
       onLogin(pkRole, pkLevel, pkEmail, pkName);
@@ -184,7 +201,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     {
       title: "Transparan",
       tagline: "Akuntabilitas & Visibilitas Keuangan Real-Time",
-      desc: "Data keuangan terdokumentasi secara terstruktur, dan dapat dipantau sesuai kewenangan setiap level pimpinan.",
+      desc: "Sistem pencatatan keuangan otonom terintegrasi dengan visibilitas transparan dari Komisariat (PK), Cabang (PC), Daerah (DPD), hingga Pusat (DPP).",
       icon: ShieldCheck,
       cardTitle: "Kas Organisasi Transparan",
       cardValue: "Rp 28.450.000",
@@ -202,7 +219,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     {
       title: "Berkelanjutan",
       tagline: "Tata Kelola Kas Organisasi Terstruktur & Modern",
-      desc: "Data laporan keuangan yang konsisten dan dapat diteruskan setiap periode pimpinan dari waktu ke waktu Sehingga data laporan keuangan dapat dijadikan dasar evaluasi dan pengambilan keputusan organisasi.",
+      desc: "Mendukung keberlanjutan program kerja organisasi IMM antar-generasi kepengurusan dengan pengelolaan arsip keuangan terdigitalisasi.",
       icon: RefreshCw,
       cardTitle: "Tata Kelola Berkelanjutan",
       cardValue: "22 Bidang Resmi",
@@ -241,7 +258,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
             <div className="flex p-1 bg-slate-100 rounded-xl mb-4">
               <button
                 type="button"
-                onClick={() => setAuthMode('signin')}
+                onClick={() => {
+                  setIsSignupSubmitted(false);
+                  setAuthMode('signin');
+                }}
                 className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all ${
                   authMode === 'signin'
                     ? 'bg-[#7A0C1E] text-white shadow-sm'
@@ -252,7 +272,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
               </button>
               <button
                 type="button"
-                onClick={() => setAuthMode('signup')}
+                onClick={() => {
+                  setIsSignupSubmitted(false);
+                  setAuthMode('signup');
+                }}
                 className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all ${
                   authMode === 'signup'
                     ? 'bg-[#7A0C1E] text-white shadow-sm'
@@ -263,207 +286,246 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
               </button>
             </div>
 
-            <div className="text-center space-y-1">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[#7A0C1E] tracking-tight">
-                {authMode === 'signin' ? 'Selamat Datang Kembali' : 'Pendaftaran Akun Baru'}
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">
-                {authMode === 'signin'
-                  ? 'Masukkan email dan kata sandi Anda untuk mengakses SAKU IMM.'
-                  : 'Lengkapi data pimpinan & peran untuk mendaftar akun baru.'}
-              </p>
-            </div>
-
-            {errorMessage && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 font-bold text-xs rounded-xl flex items-center gap-2 animate-fadeIn">
-                <Lock className="w-4 h-4 text-red-600 flex-shrink-0" />
-                <span>{errorMessage}</span>
+            {isSignupSubmitted ? (
+              <div className="space-y-4 py-4 text-center animate-fadeIn">
+                <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600 shadow-sm">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <div className="space-y-1">
+                  <h2 className="text-xl font-bold text-[#7A0C1E]">
+                    Pengajuan Akun Berhasil Terkirim!
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Permohonan akun baru telah terdaftar di sistem SAKU IMM.
+                  </p>
+                </div>
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-left text-xs text-amber-800 space-y-2">
+                  <span className="font-bold flex items-center gap-1.5 text-amber-900">
+                    <ShieldCheck className="w-4.5 h-4.5 text-amber-700" /> Status: Menunggu Verifikasi Organisasi
+                  </span>
+                  <p className="text-[11px] text-amber-700 leading-relaxed">
+                    Pengajuan pendaftaran akun untuk <strong>{nama || 'Pengurus IMM'}</strong> ({level}) memerlukan proses verifikasi dan persetujuan dari pimpinan di atasnya ({level === 'PK' ? 'KORKOM / PC' : level === 'KORKOM' ? 'PC' : level === 'PC' ? 'DPD' : 'DPP'}) sebelum akun dapat digunakan untuk masuk.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignupSubmitted(false);
+                    setAuthMode('signin');
+                  }}
+                  className="w-full py-3.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2"
+                >
+                  <span>Kembali ke Halaman Masuk (Sign In)</span>
+                  <ArrowRight className="w-4 h-4 text-[#81B29A]" />
+                </button>
               </div>
-            )}
+            ) : (
+              <>
+                <div className="text-center space-y-1">
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-[#7A0C1E] tracking-tight">
+                    {authMode === 'signin' ? 'Selamat Datang Kembali' : 'Pendaftaran Akun Baru'}
+                  </h1>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {authMode === 'signin'
+                      ? 'Masukkan email dan kata sandi Anda untuk mengakses SAKU IMM.'
+                      : 'Lengkapi data pimpinan & peran untuk mendaftar akun baru.'}
+                  </p>
+                </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Sign Up Only Inputs: Level, Role, Name */}
-              {authMode === 'signup' && (
-                <>
-                  {/* Level Organisasi Segmented Picker */}
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Level Organisasi Pimpinan *
-                    </label>
-                    <div className="grid grid-cols-5 gap-1 p-1 bg-slate-100 rounded-xl">
-                      {(['PK', 'KORKOM', 'PC', 'DPD', 'DPP'] as OrgLevel[]).map((lvl) => (
-                        <button
-                          key={lvl}
-                          type="button"
-                          onClick={() => setLevel(lvl)}
-                          className={`py-2 text-[11px] font-bold rounded-lg transition-all ${
-                            level === lvl
-                              ? 'bg-[#7A0C1E] text-white shadow-sm'
-                              : 'text-slate-600 hover:bg-slate-200/70'
-                          }`}
+                {errorMessage && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 font-bold text-xs rounded-xl flex items-center gap-2 animate-fadeIn">
+                    <Lock className="w-4 h-4 text-red-600 flex-shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Sign Up Only Inputs: Level, Role, Name */}
+                  {authMode === 'signup' && (
+                    <>
+                      {/* Level Organisasi Segmented Picker */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Level Organisasi Pimpinan *
+                        </label>
+                        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100 rounded-xl">
+                          {(['PK', 'KORKOM', 'PC', 'DPD'] as OrgLevel[]).map((lvl) => (
+                            <button
+                              key={lvl}
+                              type="button"
+                              onClick={() => setLevel(lvl)}
+                              className={`py-2 text-[11px] font-bold rounded-lg transition-all ${
+                                level === lvl
+                                  ? 'bg-[#7A0C1E] text-white shadow-sm'
+                                  : 'text-slate-600 hover:bg-slate-200/70'
+                              }`}
+                            >
+                              {lvl}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Peran Pengguna (Role Dropdown) */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Peran Pengguna (Role) *
+                        </label>
+                        <select
+                          value={role}
+                          onChange={(e) => setRole(e.target.value as UserRole)}
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
                         >
-                          {lvl}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                          <option value="bendahara_umum">Bendahara Umum (Full Access Input & Edit)</option>
+                          <option value="tim_verifikasi_internal">Tim Verifikasi Internal (Read-Only Mode)</option>
+                        </select>
+                      </div>
 
-                  {/* Peran Pengguna (Role Dropdown) */}
+                      {/* Nama Lengkap */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Nama Lengkap Pengguna *
+                        </label>
+                        <div className="relative">
+                          <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                          <input
+                            type="text"
+                            value={nama}
+                            onChange={(e) => setNama(e.target.value)}
+                            required
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
+                            placeholder="Contoh: Immawan Ahmad"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Both Sign In & Sign Up: Email Address */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Peran Pengguna (Role) *
-                    </label>
-                    <select
-                      value={role}
-                      onChange={(e) => setRole(e.target.value as UserRole)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
-                    >
-                      <option value="bendahara_umum">Bendahara Umum (Full Access Input & Edit)</option>
-                      <option value="tim_verifikasi_internal">Tim Verifikasi Internal (Read-Only Mode)</option>
-                      <option value="super_admin">Super Admin System (Verifikasi Induk)</option>
-                    </select>
-                  </div>
-
-                  {/* Nama Lengkap */}
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Nama Lengkap Pengguna *
+                      Email Pengguna *
                     </label>
                     <div className="relative">
-                      <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                       <input
-                        type="text"
-                        value={nama}
-                        onChange={(e) => setNama(e.target.value)}
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
-                        placeholder="Contoh: Immawan Ahmad"
+                        placeholder="nama@imm.or.id"
                       />
                     </div>
                   </div>
-                </>
-              )}
 
-              {/* Both Sign In & Sign Up: Email Address */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  Email Pengguna *
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
-                    placeholder="nama@imm.or.id"
-                  />
-                </div>
-              </div>
+                  {/* Both Sign In & Sign Up: Password */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      Kata Sandi *
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Both Sign In & Sign Up: Password */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  Kata Sandi *
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
-                    placeholder="••••••••"
-                  />
+                  {/* Primary Action Button */}
                   <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600"
+                    type="submit"
+                    className="w-full py-3.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mt-2 shadow-md hover:shadow-lg active:scale-[0.99]"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    <span>{authMode === 'signin' ? 'Masuk ke Dashboard IMM' : 'KIRIM PENGAJUAN AKUN'}</span>
+                    <ArrowRight className="w-4 h-4 text-[#81B29A]" />
                   </button>
-                </div>
-              </div>
 
-              {/* Primary Action Button */}
-              <button
-                type="submit"
-                className="w-full py-3.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 mt-2 shadow-md hover:shadow-lg active:scale-[0.99]"
-              >
-                <span>{authMode === 'signin' ? 'Masuk ke Dashboard IMM' : 'Daftar & Masuk ke Dashboard'}</span>
-                <ArrowRight className="w-4 h-4 text-[#81B29A]" />
-              </button>
+                  {/* Quick Login 1-Klik Per Level Pimpinan (5 Level IMM) - ONLY IN DEMO MODE */}
+                  {authMode === 'signin' && isDemoRoute() && (
+                    <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-xl space-y-2 mt-3">
+                      <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider text-center flex items-center justify-center gap-1">
+                        <FlaskConical className="w-3.5 h-3.5 text-amber-600" />
+                        <span>⚡ Quick Login Demo 1-Klik (5 Level Pimpinan)</span>
+                      </p>
+                      <div className="grid grid-cols-5 gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleQuickLogin('dpp')}
+                          className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-[#7A0C1E] transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                        >
+                          <span>DPP</span>
+                          <span className="text-[8px] opacity-75 font-normal">Level 1</span>
+                        </button>
 
-              {/* Quick Login 1-Klik Per Level Pimpinan (5 Level IMM) - ONLY IN DEMO MODE */}
-              {authMode === 'signin' && isDemoRoute() && (
-                <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-xl space-y-2 mt-3">
-                  <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider text-center flex items-center justify-center gap-1">
-                    <FlaskConical className="w-3.5 h-3.5 text-amber-600" />
-                    <span>⚡ Quick Login Demo 1-Klik (5 Level Pimpinan)</span>
-                  </p>
-                  <div className="grid grid-cols-5 gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleQuickLogin('dpd')}
+                          className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                        >
+                          <span>DPD</span>
+                          <span className="text-[8px] opacity-75 font-normal">Level 2</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleQuickLogin('pc')}
+                          className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                        >
+                          <span>PC</span>
+                          <span className="text-[8px] opacity-75 font-normal">Level 3</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleQuickLogin('korkom')}
+                          className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                        >
+                          <span>KORKOM</span>
+                          <span className="text-[8px] opacity-75 font-normal">Level 4</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleQuickLogin('pk')}
+                          className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-[#7A0C1E] transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                        >
+                          <span>PK</span>
+                          <span className="text-[8px] opacity-75 font-normal">Level 5</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Register New Organization Trigger Button */}
+                  <div className="pt-2 text-center">
                     <button
                       type="button"
-                      onClick={() => handleQuickLogin('dpp')}
-                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-[#7A0C1E] transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
+                      onClick={() => {
+                        setIsSignupSubmitted(false);
+                        setAuthMode('signup');
+                      }}
+                      className="text-xs text-[#7A0C1E] hover:underline font-bold flex items-center justify-center gap-1.5 mx-auto"
                     >
-                      <span>DPP</span>
-                      <span className="text-[8px] opacity-75 font-normal">Level 1</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin('dpd')}
-                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
-                    >
-                      <span>DPD</span>
-                      <span className="text-[8px] opacity-75 font-normal">Level 2</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin('pc')}
-                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
-                    >
-                      <span>PC</span>
-                      <span className="text-[8px] opacity-75 font-normal">Level 3</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin('korkom')}
-                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
-                    >
-                      <span>KORKOM</span>
-                      <span className="text-[8px] opacity-75 font-normal">Level 4</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin('pk')}
-                      className="px-1.5 py-1.5 bg-white hover:bg-[#7A0C1E] hover:text-white border border-slate-200 rounded-lg text-[10px] font-bold text-[#7A0C1E] transition-all text-center flex flex-col items-center justify-center shadow-2xs active:scale-95"
-                    >
-                      <span>PK</span>
-                      <span className="text-[8px] opacity-75 font-normal">Level 5</span>
+                      <Building2 className="w-4 h-4 text-[#81B29A]" />
+                      <span>Belum Terdaftar? Daftarkan Organisasi Baru (PK/PC/DPD)</span>
                     </button>
                   </div>
-                </div>
-              )}
-
-              {/* Register New Organization Trigger Button */}
-              <div className="pt-2 text-center">
-                <button
-                  type="button"
-                  onClick={() => setShowRegisterOrgModal(true)}
-                  className="text-xs text-[#7A0C1E] hover:underline font-bold flex items-center justify-center gap-1.5 mx-auto"
-                >
-                  <Building2 className="w-4 h-4 text-[#81B29A]" />
-                  <span>Belum Terdaftar? Daftarkan Organisasi Baru (PK/PC/DPD)</span>
-                </button>
-              </div>
-            </form>
+                </form>
+              </>
+            )}
           </div>
 
           {/* Footer Copyright */}

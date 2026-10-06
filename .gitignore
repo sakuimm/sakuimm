@@ -34,3 +34,4 @@ lerna-debug.log*
 # Temporary Document Extractions
 prd_extracted.txt
 tech_extracted.txt
+scratch/

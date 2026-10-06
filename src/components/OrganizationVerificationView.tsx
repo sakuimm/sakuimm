@@ -22,11 +22,14 @@ export const OrganizationVerificationView: React.FC<OrganizationVerificationView
   const currentLevelOrder = ORG_LEVEL_ORDER[userLevel];
   const targetLevelOrder = targetChildLevel ? ORG_LEVEL_ORDER[targetChildLevel] : null;
 
-  // Filter pending orgs based on the approval hierarchy rule (User Level N approves Level N+1)
+  // Filter pending orgs based on the approval hierarchy rule (User Level N approves Level N+1 or child levels)
   const pendingOrgs = organisasiList.filter(
-    (o) => o.status === 'pending' && (!targetChildLevel || o.level === targetChildLevel)
+    (o) => o.status === 'pending' && (!targetChildLevel || o.level === targetChildLevel || (ORG_LEVEL_ORDER[o.level] > currentLevelOrder))
   );
-  const verifiedOrgs = organisasiList.filter((o) => o.status === 'verified');
+  // Filter verified orgs to show only organizations at or below current user level (exclude higher level orgs)
+  const verifiedOrgs = organisasiList.filter(
+    (o) => o.status === 'verified' && ORG_LEVEL_ORDER[o.level] >= currentLevelOrder
+  );
 
   const confirmReject = () => {
     if (rejectReasonModal) {
@@ -87,7 +90,7 @@ export const OrganizationVerificationView: React.FC<OrganizationVerificationView
                     <h4 className="font-bold text-[#2D3748] text-sm">{org.nama}</h4>
                   </div>
                   <p className="text-xs text-slate-500">
-                    Organisasi Induk: <span className="font-semibold text-slate-700">{org.parentNama}</span>
+                    Organisasi Induk: <span className="font-semibold text-slate-700">{org.parentNama || org.indukNama || 'Pimpinan Induk'}</span>
                   </p>
                   <p className="text-[11px] text-slate-400">
                     Pemohon: Bendahara Umum Pendaftar • Tanggal: 28 Agustus 2026

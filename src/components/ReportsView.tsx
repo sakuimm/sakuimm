@@ -32,9 +32,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
     .filter((t) => t.jenisNominal === 'pengeluaran')
     .reduce((sum, t) => sum + t.nominal, 0);
 
-  const mult = isAggregateMode ? (currentLevel === 'DPP' ? 15 : 5) : 1;
-  const dispPemasukan = totalPemasukan * mult;
-  const dispPengeluaran = totalPengeluaran * mult;
+  const dispPemasukan = totalPemasukan;
+  const dispPengeluaran = totalPengeluaran;
   const dispSaldo = dispPemasukan - dispPengeluaran;
 
   const getOrgName = (lvl: OrgLevel) => {

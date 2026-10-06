@@ -81,6 +81,7 @@ export const storageService = {
       id: `AL-${Math.floor(100 + Math.random() * 900)}`,
       transaksiId: trx.id,
       actorNama: `${actorNama} (${trx.organisasiNama})`,
+      organisasiLevel: trx.organisasiLevel || 'PK',
       aksi: 'CREATE',
       waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
       keterangan: `Pencatatan ${trx.jenisNominal} Rp ${trx.nominal.toLocaleString('id-ID')} pada Proker "${trx.programKerjaNama}"`
@@ -99,6 +100,7 @@ export const storageService = {
       id: `AL-${Math.floor(100 + Math.random() * 900)}`,
       transaksiId: trx.id,
       actorNama: `${actorNama} (${trx.organisasiNama})`,
+      organisasiLevel: trx.organisasiLevel || 'PK',
       aksi: 'UPDATE',
       waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
       keterangan: `Pembaruan data transaksi "${trx.keterangan}" Rp ${trx.nominal.toLocaleString('id-ID')}`
@@ -118,6 +120,7 @@ export const storageService = {
         id: `AL-${Math.floor(100 + Math.random() * 900)}`,
         transaksiId: id,
         actorNama,
+        organisasiLevel: target.organisasiLevel || 'PK',
         aksi: 'DELETE',
         waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
         keterangan: `Penghapusan permanen transaksi "${target.keterangan}" Rp ${target.nominal.toLocaleString('id-ID')}`
@@ -129,6 +132,7 @@ export const storageService = {
 
   resubmitTransaksi(id: string, actorNama: string): Transaksi[] {
     const current = this.getTransaksiList();
+    const target = current.find((t) => t.id === id);
     const updated = current.map((t) => (t.id === id ? { ...t, statusRevisi: 'disubmit_ulang' as const } : t));
     this.saveTransaksiList(updated);
 
@@ -136,6 +140,7 @@ export const storageService = {
       id: `AL-${Math.floor(100 + Math.random() * 900)}`,
       transaksiId: id,
       actorNama,
+      organisasiLevel: target?.organisasiLevel || 'PK',
       aksi: 'RESUBMIT',
       waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
       keterangan: `Submit ulang transaksi ID "${id}" pasca revisi`

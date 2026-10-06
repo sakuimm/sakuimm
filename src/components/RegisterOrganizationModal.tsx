@@ -29,11 +29,8 @@ export const RegisterOrganizationModal: React.FC<RegisterOrganizationModalProps>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    onRegisterSuccess(namaOrganisasi, level, email, namaBendahara, indukNama);
     setIsSubmitted(true);
-
-    setTimeout(() => {
-      onRegisterSuccess(namaOrganisasi, level, email, namaBendahara, indukNama);
-    }, 1500);
   };
 
   return (
@@ -63,7 +60,7 @@ export const RegisterOrganizationModal: React.FC<RegisterOrganizationModalProps>
         {/* Content Form */}
         <div className="p-6">
           {isSubmitted ? (
-            <div className="text-center py-8 space-y-4">
+            <div className="text-center py-6 space-y-4">
               <div className="w-16 h-16 bg-[#81B29A]/20 text-[#2D5A44] rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
@@ -73,6 +70,12 @@ export const RegisterOrganizationModal: React.FC<RegisterOrganizationModalProps>
               <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
                 Permohonan pendaftaran <span className="font-bold text-slate-700">{namaOrganisasi}</span> telah diteruskan ke <span className="font-bold text-slate-700">{indukNama}</span> untuk verifikasi pengesahan.
               </p>
+              <button
+                onClick={onClose}
+                className="w-full py-3 bg-[#7A0C1E] hover:bg-[#600917] text-white font-black text-xs rounded-xl shadow-md transition-all active:scale-95"
+              >
+                Selesai & Tutup Form
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">

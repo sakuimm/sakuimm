@@ -23,32 +23,16 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
   const pemasukanList = prokerTrx.filter((t) => t.jenisNominal === 'pemasukan');
   const pengeluaranList = prokerTrx.filter((t) => t.jenisNominal === 'pengeluaran');
 
-  // Fallback demo data if proker has no transactions yet (matches the exact official mockup)
-  const displayPemasukan = pemasukanList.length > 0 ? pemasukanList : [
-    { id: 'p-1', tanggal: '5 Agu', keterangan: 'Sponsor A', nominal: 10000000, jenisNominal: 'pemasukan' as const, jenisTransaksi: 'operasional' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName },
-    { id: 'p-2', tanggal: '7 Agu', keterangan: 'Sponsor B', nominal: 7000000, jenisNominal: 'pemasukan' as const, jenisTransaksi: 'operasional' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName },
-    { id: 'p-3', tanggal: '9 Agu', keterangan: 'Kontribusi peserta', nominal: 3000000, jenisNominal: 'pemasukan' as const, jenisTransaksi: 'operasional' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName }
-  ];
-
-  const displayPengeluaran = pengeluaranList.length > 0 ? pengeluaranList : [
-    { id: 'e-1', tanggal: '10 Agu', keterangan: 'Konsumsi peserta', jenisTransaksi: 'operasional' as const, nominal: 6000000, jenisNominal: 'pengeluaran' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName },
-    { id: 'e-2', tanggal: '10 Agu', keterangan: 'Transportasi', jenisTransaksi: 'operasional' as const, nominal: 4500000, jenisNominal: 'pengeluaran' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName },
-    { id: 'e-3', tanggal: '11 Agu', keterangan: 'Sewa perlengkapan', jenisTransaksi: 'operasional' as const, nominal: 5000000, jenisNominal: 'pengeluaran' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName },
-    { id: 'e-4', tanggal: '12 Agu', keterangan: 'Pembelian inventaris', jenisTransaksi: 'inventaris' as const, nominal: 3000000, jenisNominal: 'pengeluaran' as const, uploadStatus: 'COMPLETED' as const, bidangId: proker.bidangId, bidangNama: proker.bidangNama, programKerjaId: proker.id, programKerjaNama: proker.namaProker, kategoriProker: proker.kategori, organisasiNama: currentOrgName }
-  ];
+  // Real proker transaction data (no fake demo fallbacks)
+  const displayPemasukan = pemasukanList;
+  const displayPengeluaran = pengeluaranList;
 
   const totalPemasukanNum = displayPemasukan.reduce((sum, t) => sum + t.nominal, 0);
   const totalPengeluaranNum = displayPengeluaran.reduce((sum, t) => sum + t.nominal, 0);
   const surplusDefisitNum = totalPemasukanNum - totalPengeluaranNum;
 
-  // 5 sample receipts for Section 4 BUKTI TRANSAKSI (Matching merchant names from mockup)
-  const sampleReceipts = [
-    { title: '10 Agu – Konsumsi peserta', image: '/sample-receipt-1.svg' },
-    { title: '10 Agu – Transportasi', image: '/sample-receipt-2.svg' },
-    { title: '11 Agu – Sewa perlengkapan', image: '/sample-receipt-3.svg' },
-    { title: '12 Agu – Pembelian inventaris', image: '/sample-receipt-4.svg' },
-    { title: '9 Agu – Kontribusi peserta', image: '/sample-receipt-5.svg' },
-  ];
+  // Uploaded receipt photos from real transactions
+  const prokerReceipts = prokerTrx.filter((t) => t.buktiDriveUrl || t.buktiDriveFileId);
 
   const getLevelHeaderTitle = (lvl: OrgLevel) => {
     switch (lvl) {
@@ -95,32 +79,43 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
         <div className="p-8 md:p-12 text-[#1A202C] font-sans leading-relaxed bg-white print:p-6" id="printable-report-area">
           
           {/* 1. KOP SURAT RESMI ORGANISASI IMM */}
-          <div className="flex items-center gap-5 pb-3 mb-1">
+          <div className="flex items-center justify-between pb-3 mb-1">
             {/* Logo Left */}
             <div className="w-20 flex-shrink-0 flex items-center justify-center">
-              <img src="/logosakuimmnew.png" alt="IMM Logo" className="h-20 object-contain" />
+              <img src="/imm-shield-logo.svg" alt="IMM Shield Logo" className="h-20 object-contain" />
             </div>
 
-            {/* Header Text */}
-            <div className="text-center flex-1 pr-6">
-              <h1 className="text-xl md:text-2xl font-black tracking-wide uppercase text-[#1A202C]">
+            {/* Header Text Center */}
+            <div className="text-center flex-1 px-4">
+              <h1 className="text-lg md:text-xl font-black tracking-wide uppercase text-[#1A202C]">
                 IKATAN MAHASISWA MUHAMMADIYAH
               </h1>
-              <h2 className="text-lg md:text-xl font-extrabold uppercase text-[#1A202C] tracking-wide mt-0.5">
+              <h2 className="text-base md:text-lg font-black uppercase text-[#7A0C1E] tracking-wide mt-0.5">
                 {getLevelHeaderTitle(currentLevel)}
               </h2>
-              <p className="text-xs text-slate-700 font-medium mt-1">
-                Jl. Kramat Raya No.49, Jakarta Pusat 10450
+              <p className="text-xs text-[#1A202C] font-extrabold mt-1 uppercase tracking-wider">
+                {currentOrgName}
               </p>
-              <p className="text-xs text-slate-700 font-medium">
-                Telp. (021) 3903021 | Email: dpp@imm.or.id
+              <p className="text-[11px] text-slate-500 font-medium">
+                Sistem Tata Kelola Keuangan SAKU IMM • Terverifikasi Digital
+              </p>
+            </div>
+
+            {/* Badge Right (SAKU IMM Record Verification Stamp) */}
+            <div className="w-48 text-right space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#7A0C1E] text-white rounded text-[10px] font-bold">
+                <span className="bg-white text-[#7A0C1E] px-1 rounded font-black text-[9px]">IMM</span>
+                <span>Dicatat melalui SAKU IMM</span>
+              </div>
+              <p className="text-[11px] text-slate-600 font-semibold">
+                {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>
 
-          {/* Double Horizontal Divider Bar (Top Maroon Bold, Bottom Thin Black) */}
+          {/* Double Horizontal Divider Bar (Top Maroon Thick, Bottom Black Thin) */}
           <div className="space-y-0.5 mb-6">
-            <div className="h-1 bg-[#7A0C1E] w-full" />
+            <div className="h-[3.5px] bg-[#7A0C1E] w-full" />
             <div className="h-[1px] bg-slate-900 w-full" />
           </div>
 
@@ -144,7 +139,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
             <div className="flex items-start">
               <span className="w-44 font-bold text-[#1A202C]">Pelaksanaan</span>
               <span className="font-bold text-[#1A202C]">:</span>
-              <span className="ml-2 font-medium text-[#1A202C]">{proker.tanggalPelaksanaan || '10 – 12 Agustus 2026'}</span>
+              <span className="ml-2 font-medium text-[#1A202C]">{proker.tanggalPelaksanaan || '-'}</span>
             </div>
           </div>
 
@@ -197,15 +192,23 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-400">
-                {displayPemasukan.map((item) => (
-                  <tr key={item.id}>
-                    <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.tanggal}</td>
-                    <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.keterangan}</td>
-                    <td className="py-2 px-3 text-right font-medium text-[#1A202C]">
-                      Rp{item.nominal.toLocaleString('id-ID')}
+                {displayPemasukan.length > 0 ? (
+                  displayPemasukan.map((item) => (
+                    <tr key={item.id}>
+                      <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.tanggal}</td>
+                      <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.keterangan}</td>
+                      <td className="py-2 px-3 text-right font-medium text-[#1A202C]">
+                        Rp{item.nominal.toLocaleString('id-ID')}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="py-3 px-3 text-center text-slate-400 italic">
+                      Belum ada transaksi pemasukan tercatat untuk proker ini
                     </td>
                   </tr>
-                ))}
+                )}
                 <tr className="bg-[#EBF7EE] font-bold border-t border-slate-400">
                   <td colSpan={2} className="py-2 px-3 text-center border-r border-slate-400">Total</td>
                   <td className="py-2 px-3 text-right text-[#1A202C]">
@@ -231,18 +234,26 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-400">
-                {displayPengeluaran.map((item) => (
-                  <tr key={item.id}>
-                    <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.tanggal}</td>
-                    <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.keterangan}</td>
-                    <td className="py-2 px-3 border-r border-slate-400 text-center font-medium capitalize">
-                      {item.jenisTransaksi}
-                    </td>
-                    <td className="py-2 px-3 text-right font-medium text-[#1A202C]">
-                      Rp{item.nominal.toLocaleString('id-ID')}
+                {displayPengeluaran.length > 0 ? (
+                  displayPengeluaran.map((item) => (
+                    <tr key={item.id}>
+                      <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.tanggal}</td>
+                      <td className="py-2 px-3 border-r border-slate-400 font-medium">{item.keterangan}</td>
+                      <td className="py-2 px-3 border-r border-slate-400 text-center font-medium capitalize">
+                        {item.jenisTransaksi}
+                      </td>
+                      <td className="py-2 px-3 text-right font-medium text-[#1A202C]">
+                        Rp{item.nominal.toLocaleString('id-ID')}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-3 px-3 text-center text-slate-400 italic">
+                      Belum ada transaksi pengeluaran tercatat untuk proker ini
                     </td>
                   </tr>
-                ))}
+                )}
                 <tr className="bg-[#FDEAEA] font-bold border-t border-slate-400">
                   <td colSpan={3} className="py-2 px-3 text-center border-r border-slate-400">Total</td>
                   <td className="py-2 px-3 text-right text-[#1A202C]">
@@ -259,30 +270,38 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
               4. BUKTI TRANSAKSI
             </h3>
             
-            <div className="grid grid-cols-5 gap-3">
-              {sampleReceipts.map((rec, idx) => (
-                <div key={idx} className="flex flex-col items-center">
-                  {/* Real Thermal Paper Receipt Visual */}
-                  <div className="w-full h-36 border border-slate-300 rounded overflow-hidden shadow-2xs bg-white flex items-center justify-center p-0.5">
-                    <img src={rec.image} alt={rec.title} className="w-full h-full object-cover object-top" />
+            {prokerReceipts.length > 0 ? (
+              <div className="grid grid-cols-4 gap-3">
+                {prokerReceipts.map((t, idx) => (
+                  <div key={idx} className="flex flex-col items-center border border-slate-200 p-2 rounded-lg bg-slate-50">
+                    <div className="w-full h-32 border border-slate-300 rounded overflow-hidden bg-white flex items-center justify-center">
+                      <img src={t.buktiDriveUrl || '/sample-receipt-1.svg'} alt={t.keterangan} className="w-full h-full object-cover" />
+                    </div>
+                    <span className="text-[10px] text-slate-800 text-center mt-1.5 leading-tight font-bold truncate w-full">
+                      {t.keterangan}
+                    </span>
+                    <span className="text-[9px] text-slate-500 text-center">
+                      Rp {t.nominal.toLocaleString('id-ID')}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-slate-800 text-center mt-1.5 leading-tight font-medium">
-                    {rec.title}
-                  </span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500 italic p-3 bg-slate-50 border border-slate-200 rounded-lg text-center">
+                Belum ada bukti nota digital yang terlampir pada transaksi program kerja ini.
+              </p>
+            )}
           </div>
 
           {/* 7. BLOK TANDA TANGAN LEGALISASI */}
           <div className="pt-6 flex justify-end font-sans page-break-inside-avoid">
-            <div className="text-center w-64 space-y-16">
+            <div className="text-center w-72 space-y-16">
               <div>
                 <p className="text-xs text-slate-800">
-                  Jakarta, 13 Agustus 2026
+                  {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
                 <p className="text-xs font-bold text-slate-900 mt-0.5">
-                  Bendahara Umum DPP IMM
+                  Bendahara Umum {currentOrgName}
                 </p>
               </div>
 

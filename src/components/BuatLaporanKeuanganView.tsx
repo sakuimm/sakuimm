@@ -105,7 +105,10 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
     };
 
     onAddTransaksi(newTrx);
-    setSelectedProkerForInput(null);
+    // Keep pop-up modal open for continuous inputs pasca simpan
+    setKeterangan('');
+    setNominalStr('');
+    setPhotoSelected(null);
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3500);
   };
@@ -121,6 +124,8 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
           onBack={() => setSelectedProkerForDetail(null)}
           onOpenPrintModal={(p) => setSelectedProkerForPrint(p)}
           onExportExcel={() => {}}
+          onUpdateTransaksi={onUpdateTransaksi}
+          onDeleteTransaksi={onDeleteTransaksi}
         />
 
         {selectedProkerForPrint && (
@@ -263,6 +268,15 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
                   <div className="p-2 bg-slate-100 rounded-xl text-center text-[10px] text-slate-500 font-bold flex items-center justify-center gap-1">
                     <Lock className="w-3 h-3" /> Read-Only Mode (Tim Verifikasi)
                   </div>
+                ) : proker.statusLaporan === 'Selesai' ? (
+                  <button
+                    disabled
+                    className="w-full py-2.5 bg-slate-100 text-slate-400 font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-not-allowed opacity-70"
+                    title="Laporan LPJ sudah disubmit (Selesai). Transaksi terkunci."
+                  >
+                    <Lock className="w-4 h-4 text-slate-400" />
+                    <span>INPUT TERKUNCI (LPJ SELESAI)</span>
+                  </button>
                 ) : (
                   <button
                     onClick={() => handleOpenForm(proker)}
@@ -284,9 +298,14 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
                   </button>
 
                   <button
-                    onClick={() => setSelectedProkerForPrint(proker)}
-                    className="py-2 bg-slate-100 hover:bg-[#2D3748] hover:text-white text-[#2D3748] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-2xs"
-                    title="Cetak Laporan PDF"
+                    disabled={proker.statusLaporan !== 'Selesai'}
+                    onClick={() => proker.statusLaporan === 'Selesai' && setSelectedProkerForPrint(proker)}
+                    className={`py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-2xs ${
+                      proker.statusLaporan === 'Selesai'
+                        ? 'bg-slate-100 hover:bg-[#2D3748] hover:text-white text-[#2D3748] cursor-pointer'
+                        : 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
+                    }`}
+                    title={proker.statusLaporan === 'Selesai' ? 'Cetak Laporan PDF' : 'Cetak PDF hanya aktif setelah LPJ disubmit'}
                   >
                     <Printer className="w-3.5 h-3.5" />
                     <span>Cetak PDF</span>
@@ -405,20 +424,22 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
                 />
               </div>
 
-              {/* Kategori Alokasi */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
-                  Kategori Alokasi Transaksi
-                </label>
-                <select
-                  value={jenisTransaksi}
-                  onChange={(e) => setJenisTransaksi(e.target.value as JenisTransaksi)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748]"
-                >
-                  <option value="operasional">Operasional Program Kerja</option>
-                  <option value="inventaris">Inventaris / Aset Organisasi</option>
-                </select>
-              </div>
+              {/* Kategori Alokasi - Only shown for Pengeluaran */}
+              {jenisNominal === 'pengeluaran' && (
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                    Kategori Alokasi Transaksi
+                  </label>
+                  <select
+                    value={jenisTransaksi}
+                    onChange={(e) => setJenisTransaksi(e.target.value as JenisTransaksi)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748]"
+                  >
+                    <option value="operasional">Operasional Program Kerja</option>
+                    <option value="inventaris">Inventaris / Aset Organisasi</option>
+                  </select>
+                </div>
+              )}
 
               {/* Upload Bukti Nota */}
               <div>

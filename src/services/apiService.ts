@@ -104,6 +104,8 @@ export const apiService = {
       level: payload.level,
       status: 'pending',
       tanggalPendaftaran: new Date().toISOString().split('T')[0],
+      parentId: payload.parentOrgId,
+      parentNama: payload.parentOrgId || 'PIMPINAN INDUK',
       indukNama: payload.parentOrgId || 'PIMPINAN INDUK'
     };
 

@@ -14,6 +14,9 @@ import { SettingsView } from './components/SettingsView';
 import { OrganizationVerificationView } from './components/OrganizationVerificationView';
 import { FlaskConical } from 'lucide-react';
 
+import { InputProkerView } from './components/InputProkerView';
+import { TransactionFormView } from './components/TransactionFormView';
+
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>('bendahara_umum');
@@ -86,7 +89,12 @@ export function App() {
   };
 
   const handleAddTransaksi = (trx: Transaksi) => {
-    const updated = storageService.addTransaksi(trx, userName);
+    const trxWithLevel: Transaksi = {
+      ...trx,
+      organisasiLevel: trx.organisasiLevel || currentLevel,
+      organisasiNama: trx.organisasiNama || getOrgName(currentLevel)
+    };
+    const updated = storageService.addTransaksi(trxWithLevel, userName);
     setTransaksiList(updated);
   };
 
@@ -106,7 +114,12 @@ export function App() {
   };
 
   const handleAddProker = (proker: ProgramKerja) => {
-    const updated = storageService.addProker(proker);
+    const prokerWithLevel: ProgramKerja = {
+      ...proker,
+      organisasiLevel: proker.organisasiLevel || currentLevel,
+      organisasiNama: proker.organisasiNama || getOrgName(currentLevel)
+    };
+    const updated = storageService.addProker(prokerWithLevel);
     setProkerList(updated);
   };
 
@@ -168,6 +181,31 @@ export function App() {
     });
   };
 
+  // Level-based data isolation & aggregation filtering logic
+  const ORG_ORDER: Record<OrgLevel, number> = {
+    DPP: 1,
+    DPD: 2,
+    PC: 3,
+    KORKOM: 4,
+    PK: 5,
+  };
+
+  const filteredProkerList = prokerList.filter((p) => {
+    const pLevel = p.organisasiLevel || 'PK';
+    if (isAggregateMode) {
+      return ORG_ORDER[pLevel] >= ORG_ORDER[currentLevel];
+    }
+    return pLevel === currentLevel;
+  });
+
+  const filteredTransaksiList = transaksiList.filter((t) => {
+    const tLevel = t.organisasiLevel || 'PK';
+    if (isAggregateMode) {
+      return ORG_ORDER[tLevel] >= ORG_ORDER[currentLevel];
+    }
+    return tLevel === currentLevel;
+  });
+
   if (!isLoggedIn) {
     return (
       <LoginPage
@@ -214,10 +252,10 @@ export function App() {
         {/* Dynamic View Routing */}
         <main className="p-6 md:p-8 pt-6 md:pt-8 max-w-7xl w-full mx-auto">
           {activeTab === 'buat-laporan' && (
-            <BuatLaporanKeuanganView
-              prokerList={prokerList}
+            <TransactionFormView
+              transaksiList={filteredTransaksiList}
+              prokerList={filteredProkerList}
               bidangList={OFFICIAL_IMM_BIDANG}
-              transaksiList={transaksiList}
               userRole={userRole}
               onAddTransaksi={handleAddTransaksi}
               onUpdateTransaksi={handleUpdateTransaksi}
@@ -226,10 +264,19 @@ export function App() {
             />
           )}
 
+          {activeTab === 'input-proker' && (
+            <InputProkerView
+              bidangList={OFFICIAL_IMM_BIDANG}
+              onAddProker={handleAddProker}
+              onNavigateToList={() => setActiveTab('master-data')}
+              userRole={userRole}
+            />
+          )}
+
           {activeTab === 'dashboard' && (
             <DashboardView
-              transaksiList={transaksiList}
-              prokerList={prokerList}
+              transaksiList={filteredTransaksiList}
+              prokerList={filteredProkerList}
               currentLevel={currentLevel}
               userRole={userRole}
               isAggregateMode={isAggregateMode}
@@ -240,8 +287,8 @@ export function App() {
           {activeTab === 'master-data' && (
             <MasterDataView
               bidangList={OFFICIAL_IMM_BIDANG}
-              prokerList={prokerList}
-              transaksiList={transaksiList}
+              prokerList={filteredProkerList}
+              transaksiList={filteredTransaksiList}
               currentLevel={currentLevel}
               userRole={userRole}
               onAddProker={handleAddProker}
@@ -255,7 +302,7 @@ export function App() {
 
           {activeTab === 'laporan' && (
             <ReportsView
-              transaksiList={transaksiList}
+              transaksiList={filteredTransaksiList}
               currentLevel={currentLevel}
               isAggregateMode={isAggregateMode}
             />
@@ -266,6 +313,7 @@ export function App() {
               userName={userName}
               userRole={userRole}
               userLevel={currentLevel}
+              isAggregateMode={isAggregateMode}
               onUpdateUser={handleUpdateUserName}
             />
           )}

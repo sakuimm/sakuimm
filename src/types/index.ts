@@ -52,6 +52,8 @@ export interface ProgramKerja {
   deskripsi?: string;
   targetAnggaran?: number;
   catatanRevisi?: string;
+  organisasiLevel?: OrgLevel;
+  organisasiNama?: string;
 }
 
 export interface Transaksi {
@@ -70,6 +72,7 @@ export interface Transaksi {
   buktiDriveUrl?: string;
   uploadStatus: UploadStatus;
   organisasiNama: string;
+  organisasiLevel?: OrgLevel;
   isDeleted?: boolean;
   statusRevisi?: 'normal' | 'revisi_diminta' | 'disubmit_ulang';
   catatanRevisi?: string;
@@ -80,6 +83,7 @@ export interface AuditLog {
   transaksiId?: string;
   prokerId?: string;
   actorNama: string;
+  organisasiLevel?: OrgLevel;
   aksi: 'CREATE' | 'UPDATE' | 'DELETE' | 'SOFT_DELETE' | 'RESUBMIT' | 'REGISTER_ORG' | 'VERIFY_ORG' | 'REJECT_ORG' | 'REOPEN_LPJ';
   waktu: string;
   keterangan: string;

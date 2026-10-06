@@ -7,6 +7,7 @@ interface SettingsViewProps {
   userName: string;
   userRole: UserRole;
   userLevel: OrgLevel;
+  isAggregateMode?: boolean;
   organisasiList?: Organisasi[];
   onVerifyOrg?: (id: string) => void;
   onRejectOrg?: (id: string) => void;
@@ -17,6 +18,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   userName,
   userRole,
   userLevel,
+  isAggregateMode = false,
   organisasiList = [],
   onVerifyOrg,
   onRejectOrg,
@@ -32,6 +34,18 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   // Security preferences states
   const [gdriveSync, setGdriveSync] = useState(true);
   const [emailNotif, setEmailNotif] = useState(true);
+
+  const ORG_ORDER: Record<OrgLevel, number> = {
+    DPP: 1, DPD: 2, PC: 3, KORKOM: 4, PK: 5
+  };
+
+  const filteredAuditLogs = auditLogs.filter((log) => {
+    if (!log.organisasiLevel) return true;
+    if (isAggregateMode) {
+      return ORG_ORDER[log.organisasiLevel] >= ORG_ORDER[userLevel];
+    }
+    return log.organisasiLevel === userLevel;
+  });
 
   useEffect(() => {
     setAuditLogs(storageService.getAuditLogs());
@@ -365,18 +379,26 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {auditLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-3 font-semibold text-[#2D3748] whitespace-nowrap">{log.waktu}</td>
-                    <td className="py-3 px-3 font-bold text-[#2D3748]">{log.actorNama}</td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#7A0C1E]/10 text-[#7A0C1E]">
-                        {log.aksi}
-                      </span>
+                {filteredAuditLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-6 text-center text-slate-400 font-medium text-xs">
+                      Belum ada riwayat aktivitas log untuk pimpinan level ini ({userLevel}).
                     </td>
-                    <td className="py-3 px-3 text-slate-600">{log.keterangan}</td>
                   </tr>
-                ))}
+                ) : (
+                  filteredAuditLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-50">
+                      <td className="py-3 px-3 font-semibold text-[#2D3748] whitespace-nowrap">{log.waktu}</td>
+                      <td className="py-3 px-3 font-bold text-[#2D3748]">{log.actorNama}</td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#7A0C1E]/10 text-[#7A0C1E]">
+                          {log.aksi}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-slate-600">{log.keterangan}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
