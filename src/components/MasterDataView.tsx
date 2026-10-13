@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Bidang, ProgramKerja, KategoriProker, UserRole, Transaksi, OrgLevel } from '../types';
+import { MOCK_PROKER } from '../data/mockData';
+import { storageService } from '../services/storageService';
 import { DetailLaporanProkerView } from './DetailLaporanProkerView';
 import { PrintableProkerReportModal } from './PrintableProkerReportModal';
 import { exportService } from '../services/exportService';
@@ -39,8 +41,38 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
   const [editingProker, setEditingProker] = useState<ProgramKerja | null>(null);
 
   // Modal / Detail View States
-  const [selectedProkerForDetail, setSelectedProkerForDetail] = useState<ProgramKerja | null>(null);
-  const [selectedProkerForPrint, setSelectedProkerForPrint] = useState<ProgramKerja | null>(null);
+  const [selectedProkerForDetail, setSelectedProkerForDetail] = useState<ProgramKerja | null>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('detail') === '1') {
+        const stored = storageService.getProkerList();
+        return stored.length > 0 ? stored[0] : (MOCK_PROKER[1] || MOCK_PROKER[0]);
+      }
+    }
+    return null;
+  });
+  const [selectedProkerForPrint, setSelectedProkerForPrint] = useState<ProgramKerja | null>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('previewProker') === '1') {
+        const stored = storageService.getProkerList();
+        return stored.length > 0 ? stored[0] : (MOCK_PROKER[1] || MOCK_PROKER[0]);
+      }
+    }
+    return null;
+  });
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('detail') === '1' && prokerList.length > 0 && !selectedProkerForDetail) {
+        setSelectedProkerForDetail(prokerList[0]);
+      }
+      if (p.get('previewProker') === '1' && prokerList.length > 0 && !selectedProkerForPrint) {
+        setSelectedProkerForPrint(prokerList[0]);
+      }
+    }
+  }, [prokerList]);
 
   const getOrgName = (lvl: OrgLevel) => {
     switch (lvl) {

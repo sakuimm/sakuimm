@@ -15,7 +15,13 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
   currentLevel,
   isAggregateMode,
 }) => {
-  const [showPrintCashFlowModal, setShowPrintCashFlowModal] = useState(false);
+  const [showPrintCashFlowModal, setShowPrintCashFlowModal] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      return p.get('previewModal') === '1';
+    }
+    return false;
+  });
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
   const handleExportExcel = () => {

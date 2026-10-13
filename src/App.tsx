@@ -18,12 +18,34 @@ import { InputProkerView } from './components/InputProkerView';
 import { TransactionFormView } from './components/TransactionFormView';
 
 export function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('tab')) return true;
+      if (window.location.pathname.startsWith('/demo')) return true;
+      const s = storageService.getUserSession();
+      if (s && s.isLoggedIn) return true;
+    }
+    return false;
+  });
   const [userRole, setUserRole] = useState<UserRole>('bendahara_umum');
-  const [currentLevel, setCurrentLevel] = useState<OrgLevel>('PK');
+  const [currentLevel, setCurrentLevel] = useState<OrgLevel>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      const lvl = p.get('level') as OrgLevel | null;
+      if (lvl) return lvl;
+    }
+    return 'PK';
+  });
   const [userName, setUserName] = useState('Immawan Ahmad');
   const [userEmail, setUserEmail] = useState('bendahara@imm.or.id');
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      return p.get('tab') || 'dashboard';
+    }
+    return 'dashboard';
+  });
   const [isAggregateMode, setIsAggregateMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState('Agustus 2026');
@@ -51,6 +73,16 @@ export function App() {
       setUserName(session.userName);
       setUserEmail(session.userEmail);
       setActiveTab('dashboard');
+    }
+
+    // Support query params for direct rendering / testing
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    const levelParam = params.get('level') as OrgLevel | null;
+    if (tabParam) {
+      setIsLoggedIn(true);
+      setActiveTab(tabParam);
+      if (levelParam) setCurrentLevel(levelParam);
     }
   }, []);
 

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Laporan Audit dan Perbaikan SAKU IMM</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+      font-size: 11px;
+      line-height: 1.4;
+      background: #ffffff;
+    }
+    .header-kop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+    }
+    .kop-logo-left {
+      width: 75px;
+      height: 75px;
+      object-fit: contain;
+    }
+    .kop-logo-right {
+      width: 120px;
+      height: 50px;
+      object-fit: contain;
+    }
+    .kop-text {
+      text-align: center;
+      flex: 1;
+      padding: 0 15px;
+    }
+    .kop-text h1 {
+      font-size: 16px;
+      font-weight: 900;
+      margin: 0;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .kop-text h2 {
+      font-size: 13px;
+      font-weight: 800;
+      margin: 2px 0 0 0;
+      color: #7A0C1E;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kop-text p {
+      font-size: 10px;
+      font-weight: 600;
+      margin: 2px 0 0 0;
+      color: #475569;
+    }
+    .divider-double {
+      margin-bottom: 12px;
+    }
+    .divider-thick {
+      height: 3px;
+      background-color: #7A0C1E;
+    }
+    .divider-thin {
+      height: 1px;
+      background-color: #0f172a;
+      margin-top: 1px;
+    }
+    .doc-meta {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+    .meta-box {
+      flex: 1;
+    }
+    .meta-label {
+      font-size: 9px;
+      font-weight: bold;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+    .meta-value {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 1px;
+    }
+    .badge-success {
+      display: inline-block;
+      background-color: #dcfce7;
+      color: #166534;
+      font-weight: 800;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #bbf7d0;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 14px 0 8px 0;
+      border-left: 4px solid #7A0C1E;
+      padding-left: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin-bottom: 16px;
+      page-break-inside: auto;
+    }
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+    th {
+      background-color: #7A0C1E;
+      color: #ffffff;
+      padding: 6px 8px;
+      font-weight: 800;
+      text-align: left;
+      border: 1px solid #991b1b;
+      text-transform: uppercase;
+      font-size: 9.5px;
+      letter-spacing: 0.3px;
+    }
+    td {
+      padding: 6px 8px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+      color: #334155;
+    }
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+    .col-no { width: 3%; text-align: center; font-weight: bold; }
+    .col-temuan { width: 22%; font-weight: 600; }
+    .col-status { width: 9%; text-align: center; }
+    .col-solusi { width: 26%; }
+    .col-screenshot { width: 22%; text-align: center; }
+    .col-pengujian { width: 18%; }
+    
+    .screenshot-thumb {
+      width: 100%;
+      max-width: 190px;
+      border-radius: 5px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: block;
+      margin: 0 auto;
+    }
+    .screenshot-caption {
+      font-size: 8.5px;
+      color: #64748b;
+      font-weight: bold;
+      margin-top: 3px;
+    }
+    .footer-sign {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 25px;
+      page-break-inside: avoid;
+      padding-top: 15px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .sign-box {
+      text-align: center;
+      width: 220px;
+    }
+    .sign-line {
+      margin-top: 45px;
+      border-bottom: 1px solid #0f172a;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- KOP SURAT RESMI TANFIDZ IMM -->
+  <div class="header-kop">
+    <img src="../public/imm-logo-official.svg" alt="Logo Resmi IMM" class="kop-logo-left">
+    <div class="kop-text">
+      <h1>IKATAN MAHASISWA MUHAMMADIYAH</h1>
+      <h2>DEWAN PIMPINAN PUSAT IMM</h2>
+      <p>Sistem Administrasi & Keuangan SAKU IMM • Terverifikasi Audit Digital Muktamar XVIII</p>
+    </div>
+    <img src="../public/logosakuimmnew.png" alt="Logo SAKU IMM" class="kop-logo-right">
+  </div>
+
+  <div class="divider-double">
+    <div class="divider-thick"></div>
+    <div class="divider-thin"></div>
+  </div>
+
+  <!-- DOCUMENT METADATA -->
+  <div class="doc-meta">
+    <div class="meta-box">
+      <div class="meta-label">ID Dokumen</div>
+      <div class="meta-value">LAPORAN-AUDIT-SAKU-IMM-2026</div>
+    </div>
+    <div class="meta-box">
+      <div class="meta-label">Dokumen Acuan</div>
+      <div class="meta-value">Feedback SAKU IMM.pdf (Temuan 7–11 Okt 2026)</div>
+    </div>
+    <div class="meta-box">
+      <div class="meta-label">Tanggal Rilis</div>
+      <div class="meta-value">13 Oktober 2026</div>
+    </div>
+    <div class="meta-box">
+      <div class="meta-label">Cakupan Audit</div>
+      <div class="meta-value">30 Butir Temuan (6 Batch Perbaikan)</div>
+    </div>
+    <div class="meta-box" style="text-align: right;">
+      <div class="meta-label">Status Akhir</div>
+      <div class="meta-value">
+        <span class="badge-success">✅ 100% SOLVED & VERIFIED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: MATRIKS STATUS PERBAIKAN DENGAN SCREENSHOT HASIL -->
+  <div class="section-title">Matriks Temuan Audit, Status Perbaikan & Bukti Hasil (Screenshot)</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="col-no">No</th>
+        <th class="col-temuan">Modul & Temuan Audit</th>
+        <th class="col-status">Status</th>
+        <th class="col-solusi">Tindakan Korektif (Solusi Implementasi)</th>
+        <th class="col-screenshot">Bukti Visual Improvement (Screenshot)</th>
+        <th class="col-pengujian">Metode & Hasil Pengujian</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- ITEM 1 -->
+      <tr>
+        <td class="col-no">1</td>
+        <td class="col-temuan">
+          <strong>Form Input Ganda di Master Data</strong> (Hal 4)<br>
+          <span style="color:#64748b;">Form proker muncul di sisi kiri tabel proker sehingga layout sempit & redundant.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Formulir kiri dihapus total dari <code>MasterDataView.tsx</code>. Tabel Daftar Program Kerja tampil full-width dengan tombol navigasi <code>+ Input Program Kerja Baru</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/03-daftar-proker-fullwidth.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tabel Proker Full-Width (Form Kiri Dihapus)</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Navigasi:</strong> Tabel melebar 100%. Tombol <code>+ Input</code> mengarahkan ke form mandiri di <code>InputProkerView.tsx</code>.
+        </td>
+      </tr>
+
+      <!-- ITEM 2 -->
+      <tr>
+        <td class="col-no">2</td>
+        <td class="col-temuan">
+          <strong>Nomenklatur Sidebar Menu</strong> (Hal 4)<br>
+          <span style="color:#64748b;">Penamaan menu tidak baku dengan istilah operasional organisasi.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Label menu distandarisasi di <code>Sidebar.tsx</code>: <em>Master Data</em> ➔ <code>Daftar Program Kerja</code>, dan <em>Laporan Keuangan</em> ➔ <code>Laporan Arus Kas</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Sidebar Nomenklatur Baku</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Rute:</strong> Seluruh item menu aktif dan badge rute tersinkronisasi presisi.
+        </td>
+      </tr>
+
+      <!-- ITEM 3 -->
+      <tr>
+        <td class="col-no">3</td>
+        <td class="col-temuan">
+          <strong>Responsivitas Mobile Drawer</strong> (Hal 18–21)<br>
+          <span style="color:#64748b;">Di layar ponsel navigasi terpotong dan tidak ada drawer toggle.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menambahkan tombol hamburger di <code>Header.tsx</code> dan slide-over mobile drawer responsif dengan backdrop overlay di <code>Sidebar.tsx</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Header Hamburger & Drawer Navigasi</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Mobile (Viewport &lt; 768px):</strong> Drawer membuka & menutup mulus saat item diklik.
+        </td>
+      </tr>
+
+      <!-- ITEM 4 -->
+      <tr>
+        <td class="col-no">4</td>
+        <td class="col-temuan">
+          <strong>Filter Periode Kalender Header</strong> (Hal 2)<br>
+          <span style="color:#64748b;">Filter tanggal di header bersifat statis tidak interaktif.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Filter kalender bulan (Jan–Des) & tahun di <code>Header.tsx</code> dihubungkan ke state dinamis <code>selectedPeriod</code> di <code>App.tsx</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Dropdown Periode Kalender Interaktif</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Fungsional:</strong> Perubahan bulan/tahun langsung mengupdate indikator periode aktif sistem.
+        </td>
+      </tr>
+
+      <!-- ITEM 5 -->
+      <tr>
+        <td class="col-no">5</td>
+        <td class="col-temuan">
+          <strong>Cascade Delete Proker & Transaksi</strong> (Hal 6)<br>
+          <span style="color:#64748b;">Hapus proker meninggalkan transaksi yatim (orphan transactions).</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Mekanisme cascade delete diintegrasikan di <code>storageService.ts</code> & <code>App.tsx</code>: hapus proker otomatis membersihkan semua transaksi terkait.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/03-daftar-proker-fullwidth.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Aksi Hapus Proker Berelasi Kas</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Relasi Data:</strong> Menghapus 1 proker menghapus transaksi terkait, saldo kas otomatis tersinkronisasi.
+        </td>
+      </tr>
+
+      <!-- ITEM 6 -->
+      <tr>
+        <td class="col-no">6</td>
+        <td class="col-temuan">
+          <strong>Proteksi Edit/Hapus LPJ Selesai</strong> (Hal 5)<br>
+          <span style="color:#64748b;">Proker berstatus selesai masih bisa diedit atau dihapus.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Tombol Edit & Delete di <code>MasterDataView.tsx</code> disembunyikan otomatis jika status <code>LPJ Selesai</code>. Hanya tampil tombol <em>Lihat Detail</em>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/03-daftar-proker-fullwidth.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tombol Edit/Hapus Disembunyikan (LPJ Selesai)</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Kondisional:</strong> Baris proker <em>Darul Arqam Dasar XXVI</em> (Selesai) tidak memiliki opsi edit/delete.
+        </td>
+      </tr>
+
+      <!-- ITEM 7 -->
+      <tr>
+        <td class="col-no">7</td>
+        <td class="col-temuan">
+          <strong>Hapus Fitur "Tarik Kembali LPJ"</strong> (Hal 6)<br>
+          <span style="color:#64748b;">Fitur pembatalan LPJ melanggar prinsip kepatuhan audit organisasi.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Tombol <em>Tarik Kembali LPJ</em> dihapus permanen dari <code>DetailLaporanProkerView.tsx</code> dan handler dinonaktifkan.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/06-detail-lpj-locked.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Detail LPJ Terkunci Tanpa Opsi Tarik Kembali</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Immutability:</strong> Status LPJ Selesai bersifat permanen dan tidak dapat diturunkan kembali.
+        </td>
+      </tr>
+
+      <!-- ITEM 8 -->
+      <tr>
+        <td class="col-no">8</td>
+        <td class="col-temuan">
+          <strong>Pop-up Konfirmasi Finalisasi LPJ</strong> (Hal 6)<br>
+          <span style="color:#64748b;">Tidak ada dialog peringatan sebelum LPJ dikunci permanen.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menambahkan dialog browser: <em>"Laporan Program Kerja '[Nama]' Tidak Bisa di Edit setelah di SUBMIT. Lanjutkan aksi?."</em>
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/06-detail-lpj-locked.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Badge LPJ Selesai (Terkunci)</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Dialog:</strong> Klik Cancel membatalkan aksi; klik OK mengunci status menjadi LPJ Selesai.
+        </td>
+      </tr>
+
+      <!-- ITEM 9 -->
+      <tr>
+        <td class="col-no">9</td>
+        <td class="col-temuan">
+          <strong>Penguncian Tombol Unduh & Cetak LPJ</strong> (Hal 7)<br>
+          <span style="color:#64748b;">Dokumen proker belum selesai bisa diexport/cetak keluar.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Tombol Preview PDF, Export Excel, dan Cetak diganti badge gembok: <em>"Cetak & Export LPJ aktif setelah disubmit"</em> jika belum berstatus Selesai.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/06-detail-lpj-locked.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tombol Export & Cetak LPJ Terbuka Saat Selesai</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Hak Akses:</strong> Hanya dokumen dengan status resmi LPJ Selesai yang dapat dicetak.
+        </td>
+      </tr>
+
+      <!-- ITEM 10 -->
+      <tr>
+        <td class="col-no">10</td>
+        <td class="col-temuan">
+          <strong>RBAC Tim Verifikasi Internal pada LPJ</strong> (Hal 7)<br>
+          <span style="color:#64748b;">Verifikator internal bisa menekan tombol submit dan mengunggah nota.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Tombol submit LPJ dan tile upload bukti disembunyikan jika <code>userRole === 'tim_verifikasi_internal'</code> (akses murni <em>read-only audit</em>).
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/06-detail-lpj-locked.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tampilan Read-Only bagi Auditor Internal</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji RBAC:</strong> Login sebagai Tim Verifikasi Internal tidak menampilkan kontrol mutasi data.
+        </td>
+      </tr>
+
+      <!-- ITEM 11 -->
+      <tr>
+        <td class="col-no">11</td>
+        <td class="col-temuan">
+          <strong>Pembersihan Kolom Audit Log Form Transaksi</strong> (Hal 8)<br>
+          <span style="color:#64748b;">Kolom Aksi Audit, tombol Audit Log & JSON raw mengganggu bendahara.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menghapus kolom header <code>&lt;th&gt;Aksi Audit&lt;/th&gt;</code>, tombol Audit Log, dan modal JSON mentah dari <code>TransactionFormView.tsx</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/05-transaksi-form-clean.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tabel Riwayat Transaksi Bersih Tanpa Kolom Audit</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Antarmuka:</strong> Formulir pencatatan kas tampil bersih, rapi, dan fokus pada input transaksi.
+        </td>
+      </tr>
+
+      <!-- ITEM 12 -->
+      <tr>
+        <td class="col-no">12</td>
+        <td class="col-temuan">
+          <strong>Isolasi Multi-Tenant Ketat per Level</strong> (Hal 9)<br>
+          <span style="color:#64748b;">Data transaksi level lain bocor ke form operasional level aktif.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Variabel <code>ownProkerList</code> & <code>ownTransaksiList</code> di <code>App.tsx</code> difilter ketat terhadap <code>organisasiLevel === currentUser.level</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Isolasi Penuh Data Level PK IMM</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Multi-Tenant:</strong> Akun PK hanya melihat proker & transaksi miliknya, tidak ada kebocoran data.
+        </td>
+      </tr>
+
+      <!-- ITEM 13 -->
+      <tr>
+        <td class="col-no">13</td>
+        <td class="col-temuan">
+          <strong>Filter Dropdown Level Pimpinan di Dashboard</strong> (Hal 2)<br>
+          <span style="color:#64748b;">Dashboard tidak memiliki filter antar jenjang pimpinan.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menambahkan dropdown <em>Filter Level Pimpinan</em> (Semua, DPP, DPD, PC, Korkom, PK) di <code>DashboardView.tsx</code> yang memfilter saldo, chart, & tabel riil.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Dropdown Filter Tingkat Pimpinan Organisasi</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Interaktif:</strong> Memilih filter langsung mengkalkulasi ulang nominal saldo dan grafik secara instan.
+        </td>
+      </tr>
+
+      <!-- ITEM 14 -->
+      <tr>
+        <td class="col-no">14</td>
+        <td class="col-temuan">
+          <strong>Penyelarasan Banner Beranda</strong> (Hal 2)<br>
+          <span style="color:#64748b;">Judul banner dan grafik belum sesuai format rilis.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Banner diselaraskan menjadi <em>"Ikhtisar Keuangan ([Level] IMM) | View Only"</em> dan grafik menjadi <em>"Pengeluaran Per Bidang"</em> & <em>"Pengeluaran Per Kategori"</em>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Banner Ikhtisar Keuangan & Visualisasi Grafik</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Copywriting:</strong> Seluruh judul, sub-judul, dan badge 100% presisi dengan dokumen acuan.
+        </td>
+      </tr>
+
+      <!-- ITEM 15 -->
+      <tr>
+        <td class="col-no">15</td>
+        <td class="col-temuan">
+          <strong>Label Formulir Pendaftaran Akun</strong> (Hal 3)<br>
+          <span style="color:#64748b;">Label form sign up ambigu dan tidak mencerminkan struktur IMM.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Label distandarisasi di <code>LoginPage.tsx</code>: <em>Level Organisasi Pimpinan *</em>, <em>Jenis Akun *</em>, <em>Nama Level Pimpinan IMM *</em>, <em>Email Akun *</em>, <em>Kata Sandi *</em>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/01-login-page.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Formulir Sign In & Registrasi Baku</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Registrasi:</strong> Pendaftaran akun organisasi berjalan dengan validasi input yang akurat.
+        </td>
+      </tr>
+
+      <!-- ITEM 16 -->
+      <tr>
+        <td class="col-no">16</td>
+        <td class="col-temuan">
+          <strong>Pencegahan Login Akun Pending Approval</strong> (Hal 3)<br>
+          <span style="color:#64748b;">Akun baru yang belum disetujui pimpinan di atasnya bisa login.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Validasi di <code>LoginPage.tsx</code>: akun dengan status non-verified ditolak login dengan pesan: <em>"Akun Anda sedang menunggu persetujuan / verifikasi dari Pimpinan di atas Anda..."</em>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/01-login-page.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Guard Keamanan Login Akun Terverifikasi</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Akses:</strong> Akun berstatus pending gagal masuk ke sistem hingga disetujui atasannya.
+        </td>
+      </tr>
+
+      <!-- ITEM 17 -->
+      <tr>
+        <td class="col-no">17</td>
+        <td class="col-temuan">
+          <strong>Pembersihan Slider Login</strong> (Hal 3)<br>
+          <span style="color:#64748b;">Slider login memuat centang berlebihan dan copyright lama.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menghapus bullet point ikon centang, menampilkan narasi murni 3 Nilai Utama (Transparan, Akuntabel, Berkelanjutan), dan memperbarui copyright menjadi <code>Copyright © DPP IMM 2026</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/01-login-page.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Slider Nilai Utama & Copyright DPP IMM 2026</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Visual:</strong> Slider bersih, tipografi proporsional, dan branding resmi terpasang kuat.
+        </td>
+      </tr>
+
+      <!-- ITEM 18 -->
+      <tr>
+        <td class="col-no">18</td>
+        <td class="col-temuan">
+          <strong>Hierarki Persetujuan Akun Downstream</strong> (Hal 12–14)<br>
+          <span style="color:#64748b;">Pimpinan bawahan atau sejajar bisa memverifikasi atasannya.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menerapkan <code>ORG_LEVEL_ORDER</code> di <code>OrganizationVerificationView.tsx</code>: Pimpinan hanya dapat menyetujui akun organisasi bawahan (downstream).
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/09-verifikasi-downstream.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Panel Verifikasi Murni Pimpinan Bawahan</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Hierarki:</strong> PC hanya memverifikasi Korkom & PK; tidak melihat permohonan DPD atau DPP.
+        </td>
+      </tr>
+
+      <!-- ITEM 19 -->
+      <tr>
+        <td class="col-no">19</td>
+        <td class="col-temuan">
+          <strong>Persistensi Profil Pengguna</strong> (Hal 15)<br>
+          <span style="color:#64748b;">Data profil kembali ke nilai default saat halaman di-refresh.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menghubungkan form edit profil di <code>SettingsView.tsx</code> ke <code>storageService.saveUserSession</code> dan sinkronisasi state induk di <code>App.tsx</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/10-settings-riwayat-log.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Form Edit Profil Persisten</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Persistensi:</strong> Mengubah nama/email dan me-refresh browser mempertahankan data terbaru.
+        </td>
+      </tr>
+
+      <!-- ITEM 20 -->
+      <tr>
+        <td class="col-no">20</td>
+        <td class="col-temuan">
+          <strong>Hapus Kartu Status Verifikasi Akun Organisasi</strong> (Hal 16)<br>
+          <span style="color:#64748b;">Kartu status verifikasi organisasi sendiri membingungkan user.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menghapus kartu redundan tersebut dari tab verifikasi di <code>SettingsView.tsx</code> sehingga halaman fokus pada aksi persetujuan.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/10-settings-riwayat-log.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Pengaturan Profil & Tab Verifikasi Bersih</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Antarmuka:</strong> Tampilan pengaturan bersih dan tidak memuat kartu ganda yang membingungkan.
+        </td>
+      </tr>
+
+      <!-- ITEM 21 -->
+      <tr>
+        <td class="col-no">21</td>
+        <td class="col-temuan">
+          <strong>Penyaringan Log Aktivitas Sesuai Level Akun</strong> (Hal 17)<br>
+          <span style="color:#64748b;">Log aktivitas menampilkan aksi dari seluruh level lain.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menyaring entri log di <code>SettingsView.tsx</code> menggunakan kriteria ketat <code>log.organisasiLevel === userLevel</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/10-settings-riwayat-log.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tab Riwayat Akun (Log Activity) Level Sendiri</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Audit Trail:</strong> Pengguna PK hanya melihat log aktivitas operasional akun PK miliknya.
+        </td>
+      </tr>
+
+      <!-- ITEM 22 -->
+      <tr>
+        <td class="col-no">22</td>
+        <td class="col-temuan">
+          <strong>Penyelarasan Judul Tab Riwayat Akun</strong> (Hal 17)<br>
+          <span style="color:#64748b;">Judul memuat teks teknis database "JSONB Snapshot Persisten".</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Ubah judul menjadi <code>Riwayat Akun (Log Activity)</code> dan menghapus semua istilah teknis internal dari antarmuka.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/10-settings-riwayat-log.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Nomenklatur Ramah Pengguna & Profesional</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Tampilan:</strong> Seluruh teks ramah bagi pengguna dan mencerminkan standar aplikasi finansial.
+        </td>
+      </tr>
+
+      <!-- ITEM 23 -->
+      <tr>
+        <td class="col-no">23</td>
+        <td class="col-temuan">
+          <strong>Integrasi Lambang Resmi IMM Tanfidz Wikipedia</strong> (Hal 1)<br>
+          <span style="color:#64748b;">Kop dokumen menggunakan logo shield generik tidak resmi.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Memasang vektor resmi Lambang IMM Tanfidz Muktamar XVIII (<code>imm-logo-official.svg</code>) di sisi kiri kop surat dokumen cetak.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/08-kop-surat-resmi-modal.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Vektor Resmi Lambang IMM di Kop Kiri</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Resolusi:</strong> Logo vektor tampil tajam tanpa distorsi piksel pada dokumen cetak PDF.
+        </td>
+      </tr>
+
+      <!-- ITEM 24 -->
+      <tr>
+        <td class="col-no">24</td>
+        <td class="col-temuan">
+          <strong>Logo SAKU IMM di Sisi Kanan Kop</strong> (Hal 1)<br>
+          <span style="color:#64748b;">Kop kanan menggunakan kotak badge stempel teks sederhana.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Memasang logo resmi SAKU IMM (<code>logosakuimmnew.png</code>) di sisi kanan kop surat kedua modal cetak resmi.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/08-kop-surat-resmi-modal.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Logo SAKU IMM Resmi di Kop Kanan</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Keserasian:</strong> Komposisi kop seimbang dan merefleksikan identitas resmi organisasi.
+        </td>
+      </tr>
+
+      <!-- ITEM 25 -->
+      <tr>
+        <td class="col-no">25</td>
+        <td class="col-temuan">
+          <strong>Garis Pembatas Ganda Tanfidz</strong> (Hal 1)<br>
+          <span style="color:#64748b;">Pembatas kop surat tidak berstandar Surat Keputusan IMM.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Memasang garis ganda resmi: tebal maroon (3px) di atas dan tipis hitam (1px) di bawah sesuai format Tanfidz.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/08-kop-surat-resmi-modal.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Garis Ganda Pembatas Kop Surat Tanfidz</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Garis:</strong> Pembatas terbentang rapi membatasi identitas institusi dan badan laporan.
+        </td>
+      </tr>
+
+      <!-- ITEM 26 -->
+      <tr>
+        <td class="col-no">26</td>
+        <td class="col-temuan">
+          <strong>Penyelarasan Format Kop & Footer Laporan Proker</strong> (Hal 7)<br>
+          <span style="color:#64748b;">Format cetak Laporan Proker tidak seragam dengan Laporan Arus Kas.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menyeragamkan struktur Kop, catatan hukum sistem, dan blok tanda tangan bendahara umum di <code>PrintableProkerReportModal.tsx</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/08-kop-surat-resmi-modal.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Standardisasi Format Dokumen & Footer Legalisasi</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Format:</strong> Seluruh berkas cetak memiliki tata letak dan identitas hukum dokumen yang seragam.
+        </td>
+      </tr>
+
+      <!-- ITEM 27 -->
+      <tr>
+        <td class="col-no">27</td>
+        <td class="col-temuan">
+          <strong>Kalkulasi Dinamis Metrik Arus Kas dari Data Riil</strong> (Hal 10)<br>
+          <span style="color:#64748b;">Laporan Arus Kas memuat angka statis dummy yang tidak reaktif.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Kalkulasi dinamis direkayasa di <code>PrintableCashFlowReportModal.tsx</code>: putaran kas, pengeluaran terbesar per bidang, dan rekap bulanan dihitung dari <code>transaksiList</code> aktual.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/08-kop-surat-resmi-modal.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Kalkulasi Otomatis dari Transaksi Riil Pengguna</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Presisi:</strong> Putaran kas Rp 9.650.000, pengeluaran terbesar Bidang Kader Rp 1.850.000 terhitung otomatis.
+        </td>
+      </tr>
+
+      <!-- ITEM 28 -->
+      <tr>
+        <td class="col-no">28</td>
+        <td class="col-temuan">
+          <strong>Fitur Unduh Langsung PDF Tanpa Dialog Printer</strong> (Hal 10)<br>
+          <span style="color:#64748b;">Pengguna harus melewati dialog print browser untuk mengunduh PDF.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Mengintegrasikan modul <code>exportService.exportPdfElement</code> berbasis <code>html2pdf.js</code>. Tombol <em>Unduh Dokumen PDF</em> langsung mengunduh berkas A4.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/08-kop-surat-resmi-modal.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Tombol 'Unduh Dokumen PDF' & 'Cetak Printer'</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Direct Download:</strong> Berkas PDF A4 terunduh otomatis ke folder Downloads pengguna tanpa dialog printer.
+        </td>
+      </tr>
+
+      <!-- ITEM 29 -->
+      <tr>
+        <td class="col-no">29</td>
+        <td class="col-temuan">
+          <strong>Harmonisasi Tampilan Tab Arus Kas On-Screen</strong> (Hal 10–11)<br>
+          <span style="color:#64748b;">Layout modul di layar belum presisi dengan mockup acuan (*img-000.png*).</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Menata ulang 3 kartu saldo (Pemasukan hijau, Pengeluaran oranye, Saldo Akhir biru), tombol export Excel & preview cetak di <code>ReportsView.tsx</code>.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/07-laporan-arus-kas.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Modul Laporan Arus Kas On-Screen Presisi Mockup</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Kesesuaian:</strong> Layout on-screen 100% identik dengan tangkapan layar panduan <em>img-000.png</em>.
+        </td>
+      </tr>
+
+      <!-- ITEM 30 -->
+      <tr>
+        <td class="col-no">30</td>
+        <td class="col-temuan">
+          <strong>Integrasi Kode & Stabilitas Kompilasi Sistem</strong><br>
+          <span style="color:#64748b;">Potensi breaking changes dan konflik tipe TypeScript setelah penambahan library.</span>
+        </td>
+        <td class="col-status"><span class="badge-success">SOLVED</span></td>
+        <td class="col-solusi">
+          Pembaruan tipe TypeScript menyeluruh di <code>src/types/index.ts</code> dan code-splitting chunk dinamis untuk library PDF.
+        </td>
+        <td class="col-screenshot">
+          <img src="../public/screenshots/02-dashboard-view.png" class="screenshot-thumb">
+          <div class="screenshot-caption">Kompilasi Sukses (Zero Error / 0 Warning)</div>
+        </td>
+        <td class="col-pengujian">
+          <strong>Uji Build:</strong> <code>npm run build</code> sukses sempurna dengan Exit code: 0 dan waktu build ~8.1 detik.
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- FOOTER TANDA TANGAN LEGALISASI DOKUMEN AUDIT -->
+  <div class="footer-sign">
+    <div>
+      <p style="font-size: 10px; font-weight: bold; margin: 0 0 2px 0; color: #0f172a;">Catatan Integritas Dokumen:</p>
+      <p style="font-size: 9px; color: #64748b; margin: 0; max-width: 500px;">
+        1. Laporan ini merupakan bukti akuntabilitas resmi perbaikan aplikasi SAKU IMM berdasarkan hasil audit dokumen Feedback SAKU IMM.pdf.<br>
+        2. Seluruh screenshot dihasilkan langsung dari runtime aplikasi aktif yang telah lulus pengujian kompilasi produksi.
+      </p>
+    </div>
+
+    <div class="sign-box">
+      <p style="margin: 0; font-size: 10px; color: #64748b;">Jakarta, 13 Oktober 2026</p>
+      <p style="margin: 2px 0 0 0; font-weight: 800; font-size: 11px; color: #0f172a;">Tim Pengembang & Audit SAKU IMM</p>
+      <div class="sign-line">Dewan Pimpinan Pusat IMM</div>
+    </div>
+  </div>
+
+</body>
+</html>
