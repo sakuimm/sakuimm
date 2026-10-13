@@ -27,6 +27,8 @@ export interface Organisasi {
   parentId?: string;
   parentNama?: string;
   indukNama?: string;
+  email?: string;
+  namaBendahara?: string;
   status: 'verified' | 'pending' | 'rejected';
   tanggalPendaftaran?: string;
   alasanPenolakan?: string;

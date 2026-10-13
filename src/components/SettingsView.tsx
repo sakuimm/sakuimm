@@ -7,17 +7,21 @@ interface SettingsViewProps {
   userName: string;
   userRole: UserRole;
   userLevel: OrgLevel;
+  userEmail?: string;
+  currentOrgName?: string;
   isAggregateMode?: boolean;
   organisasiList?: Organisasi[];
   onVerifyOrg?: (id: string) => void;
   onRejectOrg?: (id: string) => void;
-  onUpdateUser?: (name: string) => void;
+  onUpdateUser?: (name: string, email?: string, orgName?: string) => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   userName,
   userRole,
   userLevel,
+  userEmail = 'bendahara@imm.or.id',
+  currentOrgName,
   isAggregateMode = false,
   organisasiList = [],
   onVerifyOrg,
@@ -26,8 +30,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'profil' | 'verifikasi' | 'log-activity' | 'keamanan'>('profil');
   const [nameInput, setNameInput] = useState(userName);
-  const [emailInput, setEmailInput] = useState('bendahara@imm.or.id');
-  const [orgInput, setOrgInput] = useState('PK IMM Teknik Mesin UI');
+  const [emailInput, setEmailInput] = useState(() => {
+    const session = storageService.getUserSession();
+    return session?.userEmail || userEmail;
+  });
+  const [orgInput, setOrgInput] = useState(() => {
+    const session = storageService.getUserSession();
+    return session?.userOrgName || currentOrgName || 'PK IMM Teknik Mesin UI';
+  });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
 
@@ -35,15 +45,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [gdriveSync, setGdriveSync] = useState(true);
   const [emailNotif, setEmailNotif] = useState(true);
 
-  const ORG_ORDER: Record<OrgLevel, number> = {
-    DPP: 1, DPD: 2, PC: 3, KORKOM: 4, PK: 5
-  };
-
+  // Pure own level audit logs only (Item 5.3)
   const filteredAuditLogs = auditLogs.filter((log) => {
-    if (!log.organisasiLevel) return true;
-    if (isAggregateMode) {
-      return ORG_ORDER[log.organisasiLevel] >= ORG_ORDER[userLevel];
-    }
+    if (!log.organisasiLevel) return false;
     return log.organisasiLevel === userLevel;
   });
 
@@ -53,10 +57,18 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    storageService.saveUserSession({
+      isLoggedIn: true,
+      userRole,
+      currentLevel: userLevel,
+      userName: nameInput,
+      userEmail: emailInput,
+      userOrgName: orgInput,
+    });
     if (onUpdateUser) {
-      onUpdateUser(nameInput);
+      onUpdateUser(nameInput, emailInput, orgInput);
     }
-    setToastMessage('Profil berhasil diperbarui!');
+    setToastMessage('Profil berhasil diperbarui dan disimpan!');
     setTimeout(() => setToastMessage(null), 3000);
   };
 
@@ -109,7 +121,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 : 'text-slate-600 hover:text-[#7A0C1E]'
             }`}
           >
-            <History className="w-3.5 h-3.5" /> Log Activity
+            <History className="w-3.5 h-3.5" /> Riwayat Akun (Log Activity)
           </button>
           <button
             onClick={() => setActiveTab('keamanan')}
@@ -242,49 +254,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {/* TAB 2: VERIFIKASI AKUN & ORGANISASI */}
       {activeTab === 'verifikasi' && (
         <div className="space-y-6">
-          {/* Sub-Card 1: Status Verifikasi Akun Pengguna Saat Ini */}
-          <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base text-[#2D3748] flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#81B29A]" />
-                <span>Status Verifikasi Akun Organisasi Anda</span>
-              </h3>
-              <span className="px-3 py-1 bg-[#81B29A]/20 text-[#2D5A44] font-extrabold text-xs rounded-full">
-                STATUS: TERVERIFIKASI RESMI
-              </span>
-            </div>
-
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-[#81B29A]/20 rounded-full text-[#2D5A44]">
-                  <CheckCircle2 className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-[#2D3748]">Akun Pengelola Keuangan Terdaftar</h4>
-                  <p className="text-xs text-slate-500">
-                    Akun ini telah mendapatkan pengesahan wewenang dari Pimpinan Induk (<span className="font-bold">KORKOM IMM Universitas Indonesia</span>).
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-slate-200 text-xs">
-                <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                  <span className="text-[10px] text-slate-400 block uppercase">No. SK Pengesahan</span>
-                  <span className="font-extrabold text-[#2D3748]">SK-IMM/PK-TMUI/2026/042</span>
-                </div>
-                <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                  <span className="text-[10px] text-slate-400 block uppercase">Tanggal Pengesahan</span>
-                  <span className="font-extrabold text-[#2D3748]">15 Januari 2026</span>
-                </div>
-                <div className="p-2.5 bg-white border border-slate-200 rounded-lg">
-                  <span className="text-[10px] text-slate-400 block uppercase">Pemeriksa Wewenang</span>
-                  <span className="font-extrabold text-[#2D3748]">Ketua Umum KORKOM UI</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Sub-Card 2: Antrean Verifikasi Organisasi Bawahan */}
+          {/* Antrean Verifikasi Organisasi Bawahan */}
           <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
@@ -357,15 +327,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       )}
 
-      {/* TAB 3: LOG ACTIVITY (AUDIT TRAIL LOGS) */}
+      {/* TAB 3: RIWAYAT AKUN (LOG ACTIVITY) */}
       {activeTab === 'log-activity' && (
         <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-base text-[#2D3748] flex items-center gap-2">
               <History className="w-5 h-5 text-[#F4A261]" />
-              <span>Jejak Riwayat Aktivitas & Audit Log (Audit Trail Persisten)</span>
+              <span>Riwayat Akun (Log Activity)</span>
             </h3>
-            <span className="text-xs font-semibold text-slate-500">JSONB Snapshot Persisten</span>
           </div>
 
           <div className="overflow-x-auto">

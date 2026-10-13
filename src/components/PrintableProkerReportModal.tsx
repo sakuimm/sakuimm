@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ProgramKerja, Transaksi, OrgLevel } from '../types';
-import { Printer, X, Download, FileText } from 'lucide-react';
+import { Printer, X, Download, FileText, Loader2 } from 'lucide-react';
+import { exportService } from '../services/exportService';
 
 interface PrintableProkerReportModalProps {
   proker: ProgramKerja;
@@ -17,13 +18,15 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
   currentOrgName,
   onClose,
 }) => {
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
   // Filter transactions for this proker
   const prokerTrx = transaksiList.filter((t) => t.programKerjaId === proker.id);
 
   const pemasukanList = prokerTrx.filter((t) => t.jenisNominal === 'pemasukan');
   const pengeluaranList = prokerTrx.filter((t) => t.jenisNominal === 'pengeluaran');
 
-  // Real proker transaction data (no fake demo fallbacks)
+  // Real proker transaction data
   const displayPemasukan = pemasukanList;
   const displayPengeluaran = pengeluaranList;
 
@@ -36,16 +39,29 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
 
   const getLevelHeaderTitle = (lvl: OrgLevel) => {
     switch (lvl) {
-      case 'PK': return 'PIMPINAN KOMISARIAT';
-      case 'KORKOM': return 'KOORDINATOR KOMISARIAT';
-      case 'PC': return 'PIMPINAN CABANG';
-      case 'DPD': return 'DEWAN PIMPINAN DAERAH';
-      case 'DPP': return 'DEWAN PIMPINAN PUSAT';
+      case 'PK': return 'PIMPINAN KOMISARIAT IMM';
+      case 'KORKOM': return 'KOORDINATOR KOMISARIAT IMM';
+      case 'PC': return 'PIMPINAN CABANG IMM';
+      case 'DPD': return 'DEWAN PIMPINAN DAERAH IMM';
+      case 'DPP': return 'DEWAN PIMPINAN PUSAT IMM';
     }
   };
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDirectDownloadPdf = async () => {
+    setIsDownloadingPdf(true);
+    try {
+      const cleanName = (proker.namaProker || 'Proker').replace(/[^a-zA-Z0-9]/g, '_');
+      const fileName = `LPJ_${cleanName}_${currentLevel}_${new Date().toISOString().split('T')[0]}`;
+      await exportService.exportPdfElement('printable-report-area', fileName);
+    } catch (err) {
+      console.error('Failed to export PDF:', err);
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   return (
@@ -56,14 +72,34 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
         <div className="bg-slate-800 text-white px-6 py-4 flex items-center justify-between print:hidden">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-[#81B29A]" />
-            <h3 className="font-extrabold text-sm">Preview Dokumen Siap Cetak (Laporan Per Program Kerja)</h3>
+            <h3 className="font-extrabold text-sm">Preview Dokumen Siap Cetak (Laporan LPJ Proker)</h3>
           </div>
           <div className="flex items-center gap-3">
             <button
+              onClick={handleDirectDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="px-4 py-2 bg-[#81B29A] hover:bg-emerald-600 text-[#1A202C] hover:text-white font-extrabold text-xs rounded-xl transition-all flex items-center gap-2 shadow-md active:scale-95 disabled:opacity-50"
+              title="Unduh langsung berkas PDF A4 tanpa membuka dialog print"
+            >
+              {isDownloadingPdf ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Memproses PDF...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>Unduh Dokumen PDF</span>
+                </>
+              )}
+            </button>
+            <button
               onClick={handlePrint}
               className="px-4 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-2 shadow-md active:scale-95"
+              title="Cetak melalui printer atau dialog browser"
             >
-              <Printer className="w-4 h-4 text-[#81B29A]" /> Cetak Dokumen / Simpan PDF
+              <Printer className="w-4 h-4 text-[#81B29A]" />
+              <span>Cetak Printer</span>
             </button>
             <button
               onClick={onClose}
@@ -78,11 +114,11 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
         {/* PRINTABLE A4 DOCUMENT CONTENT SHEET */}
         <div className="p-8 md:p-12 text-[#1A202C] font-sans leading-relaxed bg-white print:p-6" id="printable-report-area">
           
-          {/* 1. KOP SURAT RESMI ORGANISASI IMM */}
+          {/* 1. KOP SURAT RESMI ORGANISASI IMM (Sesuai Tanfidz Muktamar XVIII) */}
           <div className="flex items-center justify-between pb-3 mb-1">
-            {/* Logo Left */}
+            {/* Logo Kiri: Vektor Resmi Wikipedia IMM */}
             <div className="w-20 flex-shrink-0 flex items-center justify-center">
-              <img src="/imm-shield-logo.svg" alt="IMM Shield Logo" className="h-20 object-contain" />
+              <img src="/imm-logo-official.svg" alt="Lambang Resmi IMM" className="h-20 w-20 object-contain" />
             </div>
 
             {/* Header Text Center */}
@@ -101,21 +137,15 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
               </p>
             </div>
 
-            {/* Badge Right (SAKU IMM Record Verification Stamp) */}
-            <div className="w-48 text-right space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#7A0C1E] text-white rounded text-[10px] font-bold">
-                <span className="bg-white text-[#7A0C1E] px-1 rounded font-black text-[9px]">IMM</span>
-                <span>Dicatat melalui SAKU IMM</span>
-              </div>
-              <p className="text-[11px] text-slate-600 font-semibold">
-                {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </p>
+            {/* Logo Kanan: Logo SAKU IMM Resmi */}
+            <div className="w-28 flex-shrink-0 flex items-center justify-end">
+              <img src="/logosakuimmnew.png" alt="Logo SAKU IMM" className="h-14 w-auto object-contain" />
             </div>
           </div>
 
-          {/* Double Horizontal Divider Bar (Top Maroon Thick, Bottom Black Thin) */}
+          {/* Garis Pembatas Ganda Resmi (Atas Maroon Tebal 3px, Bawah Hitam Tipis 1px) */}
           <div className="space-y-0.5 mb-6">
-            <div className="h-[3.5px] bg-[#7A0C1E] w-full" />
+            <div className="h-[3px] bg-[#7A0C1E] w-full" />
             <div className="h-[1px] bg-slate-900 w-full" />
           </div>
 
@@ -150,7 +180,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
             </h3>
             <table className="w-full text-xs border border-slate-400 border-collapse">
               <thead>
-                <tr className="text-[#1A202C] font-bold border-b border-slate-400">
+                <tr className="text-[#1A202C] font-bold border-b border-slate-400 bg-slate-50">
                   <th className="py-2 px-3 text-center border-r border-slate-400 w-2/3">Keterangan</th>
                   <th className="py-2 px-3 text-center">Jumlah</th>
                 </tr>
@@ -171,7 +201,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
                 <tr className="bg-[#EBF7EE] font-bold">
                   <td className="py-2 px-3 border-r border-slate-400">Surplus / Defisit</td>
                   <td className="py-2 px-3 text-right text-[#1A202C]">
-                    Rp{surplusDefisitNum.toLocaleString('id-ID')}
+                    {(surplusDefisitNum < 0 ? '-' : '')}Rp{Math.abs(surplusDefisitNum).toLocaleString('id-ID')}
                   </td>
                 </tr>
               </tbody>
@@ -185,7 +215,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
             </h3>
             <table className="w-full text-xs border border-slate-400 border-collapse">
               <thead>
-                <tr className="text-[#1A202C] font-bold border-b border-slate-400">
+                <tr className="text-[#1A202C] font-bold border-b border-slate-400 bg-slate-50">
                   <th className="py-2 px-3 text-center border-r border-slate-400 w-1/5">Tanggal</th>
                   <th className="py-2 px-3 text-center border-r border-slate-400 w-3/5">Sumber / Keterangan</th>
                   <th className="py-2 px-3 text-center w-1/5">Jumlah</th>
@@ -210,7 +240,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
                   </tr>
                 )}
                 <tr className="bg-[#EBF7EE] font-bold border-t border-slate-400">
-                  <td colSpan={2} className="py-2 px-3 text-center border-r border-slate-400">Total</td>
+                  <td colSpan={2} className="py-2 px-3 text-center border-r border-slate-400 uppercase">Total Pemasukan</td>
                   <td className="py-2 px-3 text-right text-[#1A202C]">
                     Rp{totalPemasukanNum.toLocaleString('id-ID')}
                   </td>
@@ -226,7 +256,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
             </h3>
             <table className="w-full text-xs border border-slate-400 border-collapse">
               <thead>
-                <tr className="text-[#1A202C] font-bold border-b border-slate-400">
+                <tr className="text-[#1A202C] font-bold border-b border-slate-400 bg-slate-50">
                   <th className="py-2 px-3 text-center border-r border-slate-400 w-1/6">Tanggal</th>
                   <th className="py-2 px-3 text-center border-r border-slate-400 w-2/5">Keterangan</th>
                   <th className="py-2 px-3 text-center border-r border-slate-400 w-1/5">Jenis</th>
@@ -255,7 +285,7 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
                   </tr>
                 )}
                 <tr className="bg-[#FDEAEA] font-bold border-t border-slate-400">
-                  <td colSpan={3} className="py-2 px-3 text-center border-r border-slate-400">Total</td>
+                  <td colSpan={3} className="py-2 px-3 text-center border-r border-slate-400 uppercase">Total Pengeluaran</td>
                   <td className="py-2 px-3 text-right text-[#1A202C]">
                     Rp{totalPengeluaranNum.toLocaleString('id-ID')}
                   </td>
@@ -293,20 +323,32 @@ export const PrintableProkerReportModal: React.FC<PrintableProkerReportModalProp
             )}
           </div>
 
-          {/* 7. BLOK TANDA TANGAN LEGALISASI */}
-          <div className="pt-6 flex justify-end font-sans page-break-inside-avoid">
-            <div className="text-center w-72 space-y-16">
+          {/* 7. CATATAN & BLOK TANDA TANGAN LEGALISASI */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-6 font-sans page-break-inside-avoid">
+            {/* Notes Left */}
+            <div className="text-xs text-slate-700 space-y-1 max-w-sm">
+              <p className="font-bold text-[#1A202C]">Catatan:</p>
+              <p className="text-[11px] leading-relaxed text-slate-600">
+                1. Laporan ini disusun secara otomatis berdasarkan data transaksi sah dalam sistem SAKU IMM.
+              </p>
+              <p className="text-[11px] leading-relaxed text-slate-600">
+                2. Bukti nota fisik/digital tersimpan dan terverifikasi dalam sistem inventaris digital.
+              </p>
+            </div>
+
+            {/* Signature Right */}
+            <div className="text-center w-64 space-y-16">
               <div>
                 <p className="text-xs text-slate-800">
                   {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
-                <p className="text-xs font-bold text-slate-900 mt-0.5">
+                <p className="text-xs font-bold text-[#1A202C] mt-0.5">
                   Bendahara Umum {currentOrgName}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-bold text-slate-900">
+                <p className="text-xs font-bold text-[#1A202C] tracking-wider">
                   (_______________________)
                 </p>
               </div>

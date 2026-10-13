@@ -102,6 +102,8 @@ export const apiService = {
       id: `ORG-${Math.floor(1000 + Math.random() * 9000)}`,
       nama: payload.namaOrganisasi,
       level: payload.level,
+      email: payload.email,
+      namaBendahara: payload.namaBendahara,
       status: 'pending',
       tanggalPendaftaran: new Date().toISOString().split('T')[0],
       parentId: payload.parentOrgId,

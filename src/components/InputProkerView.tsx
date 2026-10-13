@@ -118,14 +118,14 @@ export const InputProkerView: React.FC<InputProkerViewProps> = ({
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
             <span>Input</span>
             <span>&gt;</span>
-            <span className="text-[#7A0C1E] font-bold">Input Program Kerja</span>
+            <span className="text-[#7A0C1E] font-bold">Input Program Kerja Baru</span>
           </div>
           <h2 className="text-xl font-black text-[#2D3748] tracking-tight flex items-center gap-2">
             <FolderPlus className="w-6 h-6 text-[#7A0C1E]" />
-            <span>Pendaftaran Program Kerja Baru</span>
+            <span>Input Program Kerja Baru</span>
           </h2>
           <p className="text-xs text-slate-500">
-            Formulir pendaftaran agenda program kerja per bidang naungan baku IMM beserta sasaran anggaran dan jadwal pelaksanaan.
+            Input program kerja sesuai hasil rapat pimpinan.
           </p>
         </div>
 
@@ -181,7 +181,7 @@ export const InputProkerView: React.FC<InputProkerViewProps> = ({
               <h3 className="font-black text-[#2D3748] text-sm">Formulir Pendaftaran Proker</h3>
             </div>
             <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#7A0C1E]/10 text-[#7A0C1E]">
-              Wajib Isi Tanda *
+              *Required
             </span>
           </div>
 

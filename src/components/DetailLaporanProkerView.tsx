@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ProgramKerja, Transaksi, OrgLevel } from '../types';
+import { ProgramKerja, Transaksi, OrgLevel, UserRole } from '../types';
 import { apiService } from '../services/apiService';
 import {
   ArrowLeft,
@@ -32,11 +32,11 @@ interface DetailLaporanProkerViewProps {
   transaksiList: Transaksi[];
   currentLevel: OrgLevel;
   currentOrgName: string;
+  userRole?: UserRole;
   onBack: () => void;
   onOpenPrintModal: (proker: ProgramKerja) => void;
   onExportExcel: () => void;
   onSubmitLPJ?: (prokerId: string) => void;
-  onReopenLPJ?: (prokerId: string) => void;
   onUpdateTransaksi?: (trx: Transaksi) => void;
   onDeleteTransaksi?: (id: string) => void;
 }
@@ -46,11 +46,11 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
   transaksiList,
   currentLevel,
   currentOrgName,
+  userRole,
   onBack,
   onOpenPrintModal,
   onExportExcel,
   onSubmitLPJ,
-  onReopenLPJ,
   onUpdateTransaksi,
   onDeleteTransaksi,
 }) => {
@@ -61,20 +61,16 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
 
   const handleSubmitLPJAction = () => {
     if (currentStatus === 'Selesai') return;
+    const confirmed = window.confirm(
+      `Laporan Program Kerja "${proker.namaProker}" Tidak Bisa di Edit setelah di SUBMIT. Lanjutkan aksi?.`
+    );
+    if (!confirmed) return;
+
     if (onSubmitLPJ) {
       onSubmitLPJ(proker.id);
     }
     setCurrentStatus('Selesai');
-    setUploadToast(`Laporan LPJ "${proker.namaProker}" berhasil disubmit! Status otomatis berubah menjadi LPJ Selesai.`);
-    setTimeout(() => setUploadToast(null), 4000);
-  };
-
-  const handleReopenLPJAction = () => {
-    if (onReopenLPJ) {
-      onReopenLPJ(proker.id);
-    }
-    setCurrentStatus('Belum');
-    setUploadToast(`LPJ "${proker.namaProker}" ditarik kembali ke status Belum LPJ (Draft). Anda dapat mengedit transaksi dan submit ulang.`);
+    setUploadToast(`Laporan LPJ "${proker.namaProker}" berhasil disubmit! Status terkunci menjadi LPJ Selesai.`);
     setTimeout(() => setUploadToast(null), 4000);
   };
 
@@ -131,55 +127,58 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
         </div>
 
         {/* Action Buttons Top Right */}
+        {/* Action Buttons Top Right */}
         <div className="flex items-center gap-2 flex-wrap">
           {currentStatus === 'Selesai' ? (
-            <div className="flex items-center gap-2">
-              <div className="px-3.5 py-2 bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-2xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>LPJ Selesai (Disubmit)</span>
-              </div>
-              <button
-                onClick={handleReopenLPJAction}
-                className="px-3 py-2 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 font-bold text-xs rounded-xl shadow-2xs transition-all"
-                title="Tarik kembali LPJ ke status Belum LPJ untuk revisi"
-              >
-                Tarik Kembali LPJ
-              </button>
+            <div className="px-3.5 py-2 bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs rounded-xl flex items-center gap-1.5 shadow-2xs">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>LPJ Selesai (Terkunci)</span>
             </div>
           ) : (
-            <button
-              onClick={handleSubmitLPJAction}
-              className="px-4 py-2 bg-[#81B29A] hover:bg-emerald-600 text-[#2D3748] hover:text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 active:scale-95 border border-emerald-600"
-              title="Submit Laporan ini agar status otomatis berubah menjadi LPJ Selesai"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>SUBMIT LAPORAN</span>
-            </button>
+            userRole !== 'tim_verifikasi_internal' && (
+              <button
+                onClick={handleSubmitLPJAction}
+                className="px-4 py-2 bg-[#81B29A] hover:bg-emerald-600 text-[#2D3748] hover:text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 active:scale-95 border border-emerald-600"
+                title="Submit Laporan ini agar status otomatis berubah menjadi LPJ Selesai"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>SUBMIT LAPORAN</span>
+              </button>
+            )
           )}
 
-          <button
-            onClick={() => onOpenPrintModal(proker)}
-            className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl shadow-2xs transition-all flex items-center gap-2"
-          >
-            <FileText className="w-4 h-4 text-slate-500" />
-            <span>Preview PDF</span>
-          </button>
+          {currentStatus === 'Selesai' ? (
+            <>
+              <button
+                onClick={() => onOpenPrintModal(proker)}
+                className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl shadow-2xs transition-all flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4 text-slate-500" />
+                <span>Preview PDF</span>
+              </button>
 
-          <button
-            onClick={onExportExcel}
-            className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-emerald-700 font-bold text-xs rounded-xl shadow-2xs transition-all flex items-center gap-2"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>Export Excel</span>
-          </button>
+              <button
+                onClick={onExportExcel}
+                className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-emerald-700 font-bold text-xs rounded-xl shadow-2xs transition-all flex items-center gap-2"
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                <span>Export Excel</span>
+              </button>
 
-          <button
-            onClick={() => onOpenPrintModal(proker)}
-            className="px-4 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 active:scale-95"
-          >
-            <Printer className="w-4 h-4 text-[#81B29A]" />
-            <span>Cetak</span>
-          </button>
+              <button
+                onClick={() => onOpenPrintModal(proker)}
+                className="px-4 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 active:scale-95"
+              >
+                <Printer className="w-4 h-4 text-[#81B29A]" />
+                <span>Cetak</span>
+              </button>
+            </>
+          ) : (
+            <div className="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-2 rounded-xl flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <span>Cetak & Export LPJ aktif setelah disubmit</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -525,19 +524,21 @@ export const DetailLaporanProkerView: React.FC<DetailLaporanProkerViewProps> = (
               ))}
 
               {/* Upload Tile: Tambah Bukti Lain */}
-              <label className="border-2 border-dashed border-slate-300 hover:border-[#7A0C1E] bg-slate-50/60 hover:bg-slate-50 rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all min-h-[160px] space-y-1.5">
-                <div className="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center">
-                  <Upload className="w-5 h-5" />
-                </div>
-                <p className="text-xs font-bold text-slate-800">Tambah Bukti Lain</p>
-                <p className="text-[10px] text-slate-400">Upload file (jpg, png, pdf) maks. 5MB</p>
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
+              {userRole !== 'tim_verifikasi_internal' && currentStatus !== 'Selesai' && (
+                <label className="border-2 border-dashed border-slate-300 hover:border-[#7A0C1E] bg-slate-50/60 hover:bg-slate-50 rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all min-h-[160px] space-y-1.5">
+                  <div className="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs font-bold text-slate-800">Tambah Bukti Lain</p>
+                  <p className="text-[10px] text-slate-400">Upload file (jpg, png, pdf) maks. 5MB</p>
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+              )}
             </div>
           </div>
 

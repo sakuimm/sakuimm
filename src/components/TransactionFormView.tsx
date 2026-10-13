@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Transaksi, ProgramKerja, Bidang, JenisNominal, JenisTransaksi, UserRole } from '../types';
 import { apiService } from '../services/apiService';
-import { Camera, Upload, CheckCircle2, History, PlusCircle, AlertCircle, Image as ImageIcon, ShieldCheck, Lock, Edit3, Trash2, X, RotateCcw, Search } from 'lucide-react';
+import { Camera, Upload, CheckCircle2, PlusCircle, AlertCircle, Image as ImageIcon, ShieldCheck, Lock, Edit3, Trash2, X, RotateCcw, Search } from 'lucide-react';
 
 interface TransactionFormViewProps {
   transaksiList: Transaksi[];
@@ -33,7 +33,6 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
   const [jenisTransaksi, setJenisTransaksi] = useState<JenisTransaksi>('operasional');
   const [photoSelected, setPhotoSelected] = useState<string | null>(null);
   const [rawFile, setRawFile] = useState<File | null>(null);
-  const [selectedAuditLog, setSelectedAuditLog] = useState<Transaksi | null>(null);
   const [editingTransaksi, setEditingTransaksi] = useState<Transaksi | null>(null);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -180,7 +179,7 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
                 </span>
                 <h4 className="font-bold text-[#2D3748] text-sm mt-2">Wewenang Tim Verifikasi Internal</h4>
                 <p className="text-xs text-slate-500 mt-1">
-                  Sebagai Ketua Umum / Sekretaris Umum / Tim Verifikasi, Anda memiliki akses <span className="font-bold">Pantau & Audit Log</span> seluruh pencatatan transaksi nota tanpa hak mengubah data.
+                  Sebagai Ketua Umum / Sekretaris Umum / Tim Verifikasi, Anda memiliki wewenang untuk meninjau dan memantau seluruh pencatatan transaksi kas tanpa hak mengubah data operasional.
                 </p>
               </div>
               <div className="pt-2 border-t border-slate-200 text-[11px] text-slate-400 font-medium">
@@ -445,7 +444,7 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
                     <th className="py-2.5 px-3">Bidang / Proker</th>
                     <th className="py-2.5 px-3">Nominal</th>
                     <th className="py-2.5 px-3">Status Drive</th>
-                    <th className="py-2.5 px-3">Aksi Audit</th>
+                    <th className="py-2.5 px-3 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -480,16 +479,8 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-3">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <button
-                            onClick={() => setSelectedAuditLog(trx)}
-                            className="px-2 py-1 bg-slate-100 hover:bg-[#2D3748] hover:text-white text-[#2D3748] font-bold text-[10px] rounded-md transition-all flex items-center gap-1"
-                            title="Lihat Audit Log"
-                          >
-                            <History className="w-3 h-3" /> Audit Log
-                          </button>
-
+                      <td className="py-3 px-3 text-right">
+                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
                           {prokerList.find((p) => p.id === trx.programKerjaId)?.statusLaporan === 'Selesai' ? (
                             <span
                               className="px-2 py-0.5 text-[9px] font-bold text-slate-400 bg-slate-100 rounded inline-flex items-center gap-1 border border-slate-200"
@@ -534,43 +525,6 @@ export const TransactionFormView: React.FC<TransactionFormViewProps> = ({
               </table>
             </div>
           </div>
-
-          {/* Audit Log Modal Preview */}
-          {selectedAuditLog && (
-            <div className="bg-white border border border-slate-200 rounded-card p-4 shadow-sm bg-slate-50/50 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <h4 className="font-bold text-xs text-[#2D3748] flex items-center gap-2">
-                  <History className="w-4 h-4 text-[#F4A261]" />
-                  <span>Jejak Audit Log: {selectedAuditLog.id} ({selectedAuditLog.keterangan})</span>
-                </h4>
-                <button
-                  onClick={() => setSelectedAuditLog(null)}
-                  className="text-xs text-slate-400 font-bold hover:text-[#2D3748]"
-                >
-                  Tutup ✕
-                </button>
-              </div>
-              <div className="text-xs space-y-2 font-mono bg-[#2D3748] text-slate-200 p-3 rounded-lg">
-                <p><span className="text-[#81B29A]">Actor User:</span> Immawan Ahmad (Bendahara Umum)</p>
-                <p><span className="text-[#81B29A]">Action Timestamp:</span> 2026-08-28 09:30:12 WIB</p>
-                <p><span className="text-[#F4A261]">JSON Payload Data:</span></p>
-                <pre className="text-[10px] text-slate-300 bg-slate-900/60 p-2 rounded overflow-x-auto">
-{JSON.stringify(
-  {
-    transaksi_id: selectedAuditLog.id,
-    nominal: selectedAuditLog.nominal,
-    jenis_nominal: selectedAuditLog.jenisNominal,
-    soft_deleted: false,
-    google_drive_status: selectedAuditLog.uploadStatus,
-    watermark_stamp: "PROPERTI IMM - PK MESIN UI - 28/08/2026"
-  },
-  null,
-  2
-)}
-                </pre>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

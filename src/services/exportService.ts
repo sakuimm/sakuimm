@@ -172,6 +172,38 @@ export const exportService = {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  },
+
+  /**
+   * Export DOM element directly to PDF file without print dialog
+   */
+  async exportPdfElement(elementId: string, fileName: string): Promise<void> {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      console.error(`Element with id ${elementId} not found`);
+      return;
+    }
+
+    try {
+      // Dynamic import html2pdf to ensure client-side execution
+      // @ts-ignore
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default || html2pdfModule;
+
+      const opt = {
+        margin: [8, 8, 8, 8] as [number, number, number, number],
+        filename: fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`,
+        image: { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
+      };
+
+      await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+      console.error('Failed to export PDF directly:', err);
+      // Fallback to window.print if html2pdf fails
+      window.print();
+    }
   }
 };
 

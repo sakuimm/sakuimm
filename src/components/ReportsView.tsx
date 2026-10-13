@@ -180,6 +180,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
         <PrintableCashFlowReportModal
           currentLevel={currentLevel}
           currentOrgName={getOrgName(currentLevel)}
+          transaksiList={transaksiList}
           onClose={() => setShowPrintCashFlowModal(false)}
         />
       )}

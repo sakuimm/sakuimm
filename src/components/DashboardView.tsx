@@ -42,12 +42,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // Filter Subordinate Level Selector state for Pimpinan yang punya bawahan
   const [selectedSubordinateLevel, setSelectedSubordinateLevel] = useState<string>('ALL');
 
-  // Real Aggregate Calculations (No Artificial Multiplier)
-  const totalPemasukan = transaksiList
+  // Filter active transactions and proker by selected level
+  const activeTrx = selectedSubordinateLevel === 'ALL'
+    ? transaksiList
+    : transaksiList.filter((t) => (t.organisasiLevel || 'PK') === selectedSubordinateLevel);
+
+  const activeProker = selectedSubordinateLevel === 'ALL'
+    ? prokerList
+    : prokerList.filter((p) => (p.organisasiLevel || 'PK') === selectedSubordinateLevel);
+
+  // Real Aggregate Calculations
+  const totalPemasukan = activeTrx
     .filter((t) => t.jenisNominal === 'pemasukan')
     .reduce((sum, t) => sum + t.nominal, 0);
 
-  const totalPengeluaran = transaksiList
+  const totalPengeluaran = activeTrx
     .filter((t) => t.jenisNominal === 'pengeluaran')
     .reduce((sum, t) => sum + t.nominal, 0);
 
@@ -55,16 +64,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const displayPengeluaran = totalPengeluaran;
   const displaySaldo = displayPemasukan - displayPengeluaran;
 
-  // Dynamic Chart 1 Data: Pie Chart Pengeluaran Per Kategori Proker
-  const kemahasiswaanVal = transaksiList
+  // Dynamic Chart 1 Data: Pengeluaran Per Kategori Proker
+  const kemahasiswaanVal = activeTrx
     .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Kemahasiswaan')
     .reduce((sum, t) => sum + t.nominal, 0);
 
-  const keagamaanVal = transaksiList
+  const keagamaanVal = activeTrx
     .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Keagamaan')
     .reduce((sum, t) => sum + t.nominal, 0);
 
-  const kemasyarakatanVal = transaksiList
+  const kemasyarakatanVal = activeTrx
     .filter((t) => t.jenisNominal === 'pengeluaran' && t.kategoriProker === 'Kemasyarakatan')
     .reduce((sum, t) => sum + t.nominal, 0);
 
@@ -76,9 +85,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     { name: 'Kemasyarakatan', value: kemasyarakatanVal, color: '#1D4ED8' },
   ];
 
-  // Dynamic Chart 2 Data: Pie Chart Pengeluaran Per Bidang
+  // Dynamic Chart 2 Data: Pengeluaran Per Bidang
   const bidangExpensesMap: Record<string, number> = {};
-  transaksiList
+  activeTrx
     .filter((t) => t.jenisNominal === 'pengeluaran')
     .forEach((t) => {
       const bNama = t.bidangNama || 'Umum';
@@ -115,17 +124,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 {currentLevel === 'DPP'
                   ? 'Ikhtisar Keuangan (DPP IMM) | View Only'
                   : currentLevel === 'KORKOM'
-                  ? 'Transparansi SAKU IMM | View Only'
-                  : `Dashboard Ringkasan Beranda (${currentLevel})`}
+                  ? 'Ikhtisar Keuangan (KORKOM IMM) | View Only'
+                  : `Ikhtisar Keuangan (${currentLevel} IMM)`}
               </h4>
               <span className="px-2 py-0.5 bg-[#0097A7] text-white font-bold text-[10px] rounded-full">
                 Privasi Terjaga
               </span>
             </div>
             <p className="text-xs text-slate-200 mt-0.5">
-              {currentLevel === 'DPP' || currentLevel === 'KORKOM'
-                ? `Lihat agregat Total Pemasukan, Total Pengeluaran dan Total Pengeluaran Per Bidang semua level pimpinan IMM di bawah.`
-                : 'Pimpinan tingkat atas dapat memantau Total Pemasukan & Pengeluaran serta Pie Chart Pengeluaran Per Kategori/Bidang secara agregat tanpa mengekspos nota detail individu.'}
+              Pimpinan dapat memantau Total Pemasukan & Pengeluaran serta Grafik Pengeluaran Per Bidang dan Per Kategori secara agregat tanpa mengekspos nota detail individu.
             </p>
           </div>
         </div>
@@ -134,13 +141,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {hasSubordinates && (
           <div className="bg-white/10 border border-white/20 p-2.5 rounded-xl flex items-center gap-2">
             <Filter className="w-4 h-4 text-[#81B29A]" />
-            <span className="text-xs font-bold whitespace-nowrap">Filter Level Bawahan:</span>
+            <span className="text-xs font-bold whitespace-nowrap">Filter Level Pimpinan:</span>
             <select
               value={selectedSubordinateLevel}
               onChange={(e) => setSelectedSubordinateLevel(e.target.value)}
-              className="px-2.5 py-1 bg-[#600917] border border-white/30 rounded-lg text-xs font-bold text-white focus:outline-none"
+              className="px-2.5 py-1 bg-[#600917] border border-white/30 rounded-lg text-xs font-bold text-white focus:outline-none cursor-pointer"
             >
-              <option value="ALL">Keseluruhan Bawahan (Aggregated)</option>
+              <option value="ALL">Semua Pimpinan</option>
               {currentLevel === 'DPP' && <option value="DPD">Level DPD (Daerah)</option>}
               {(currentLevel === 'DPP' || currentLevel === 'DPD') && <option value="PC">Level PC (Cabang)</option>}
               {(currentLevel === 'DPP' || currentLevel === 'DPD' || currentLevel === 'PC') && <option value="KORKOM">Level KORKOM</option>}
@@ -223,7 +230,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
               <PieIcon className="w-5 h-5 text-[#7A0C1E]" />
-              <span>Pie Chart Pengeluaran Per Bidang</span>
+              <span>Pengeluaran Per Bidang</span>
             </h3>
             <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
               22 Bidang IMM
@@ -264,12 +271,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
 
-        {/* Chart 2: PIE CHART PENGELUARAN PER KATEGORI (Keagamaan, Kemahasiswaan, Kemasyarakatan) */}
+        {/* Chart 2: PENGELUARAN PER KATEGORI (Keagamaan, Kemahasiswaan, Kemasyarakatan) */}
         <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
               <PieIcon className="w-5 h-5 text-[#0097A7]" />
-              <span>Pie Chart Pengeluaran Per Kategori</span>
+              <span>Pengeluaran Per Kategori</span>
             </h3>
             <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#0097A7]/15 text-[#0097A7]">
               Agregat Privasi
@@ -339,8 +346,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {prokerList.map((pr) => {
-                const pTrx = transaksiList.filter((t) => t.programKerjaId === pr.id);
+              {activeProker.map((pr) => {
+                const pTrx = activeTrx.filter((t) => t.programKerjaId === pr.id);
                 const pem = pTrx
                   .filter((t) => t.jenisNominal === 'pemasukan')
                   .reduce((sum, t) => sum + t.nominal, 0);

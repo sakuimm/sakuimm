@@ -31,6 +31,7 @@ export interface UserSession {
   currentLevel: OrgLevel;
   userName: string;
   userEmail: string;
+  userOrgName?: string;
 }
 
 // Storage Service Wrapper for Local Persistence
@@ -193,8 +194,19 @@ export const storageService = {
   deleteProker(id: string, actorNama?: string): ProgramKerja[] {
     const current = this.getProkerList();
     const target = current.find((p) => p.id === id);
+    
+    // Proker yang sudah disubmit (Selesai) tidak bisa dihapus
+    if (target?.statusLaporan === 'Selesai') {
+      return current;
+    }
+
     const updated = current.filter((p) => p.id !== id);
     this.saveProkerList(updated);
+
+    // Cascade delete: Hapus seluruh transaksi yang terkait proker tersebut
+    const currentTrx = this.getTransaksiList();
+    const updatedTrx = currentTrx.filter((t) => t.programKerjaId !== id);
+    this.saveTransaksiList(updatedTrx);
 
     if (target) {
       this.addAuditLog({
@@ -203,7 +215,7 @@ export const storageService = {
         actorNama: actorNama || 'Pengurus IMM',
         aksi: 'DELETE',
         waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
-        keterangan: `Penghapusan Program Kerja "${target.namaProker}"`
+        keterangan: `Penghapusan Program Kerja "${target.namaProker}" beserta seluruh transaksi terkait`
       });
     }
 

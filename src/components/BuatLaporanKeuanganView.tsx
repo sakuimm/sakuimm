@@ -121,6 +121,7 @@ export const BuatLaporanKeuanganView: React.FC<BuatLaporanKeuanganViewProps> = (
           transaksiList={transaksiList}
           currentLevel="PK"
           currentOrgName="PK IMM Teknik Mesin UI"
+          userRole={userRole}
           onBack={() => setSelectedProkerForDetail(null)}
           onOpenPrintModal={(p) => setSelectedProkerForPrint(p)}
           onExportExcel={() => {}}

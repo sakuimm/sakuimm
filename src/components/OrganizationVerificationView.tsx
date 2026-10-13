@@ -26,9 +26,9 @@ export const OrganizationVerificationView: React.FC<OrganizationVerificationView
   const pendingOrgs = organisasiList.filter(
     (o) => o.status === 'pending' && (!targetChildLevel || o.level === targetChildLevel || (ORG_LEVEL_ORDER[o.level] > currentLevelOrder))
   );
-  // Filter verified orgs to show only organizations at or below current user level (exclude higher level orgs)
+  // Filter verified orgs to show only organizations strictly below current user level (downstream subordinates)
   const verifiedOrgs = organisasiList.filter(
-    (o) => o.status === 'verified' && ORG_LEVEL_ORDER[o.level] >= currentLevelOrder
+    (o) => o.status === 'verified' && ORG_LEVEL_ORDER[o.level] > currentLevelOrder
   );
 
   const confirmReject = () => {

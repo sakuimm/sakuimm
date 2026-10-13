@@ -11,12 +11,13 @@ interface MasterDataViewProps {
   transaksiList?: Transaksi[];
   currentLevel?: OrgLevel;
   userRole: UserRole;
-  onAddProker: (proker: ProgramKerja) => void;
+  onAddProker?: (proker: ProgramKerja) => void;
   onUpdateProker?: (proker: ProgramKerja) => void;
   onDeleteProker?: (prokerId: string) => void;
   onSubmitProkerLPJ?: (prokerId: string) => void;
   onReopenProkerLPJ?: (prokerId: string) => void;
   onToggleStatusProker?: (prokerId: string) => void;
+  onNavigateToInputProker?: () => void;
 }
 
 export const MasterDataView: React.FC<MasterDataViewProps> = ({
@@ -31,13 +32,9 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
   onSubmitProkerLPJ,
   onReopenProkerLPJ,
   onToggleStatusProker,
+  onNavigateToInputProker,
 }) => {
   const [activeTab, setActiveTab] = useState<'proker' | 'bidang'>('proker');
-  const [newProkerNama, setNewProkerNama] = useState('');
-  const [selectedBidangId, setSelectedBidangId] = useState(bidangList[0]?.id || 'b1');
-  const [kategori, setKategori] = useState<KategoriProker>('Kemahasiswaan');
-  const [tanggalPelaksanaan, setTanggalPelaksanaan] = useState('02 - 04 September 2026');
-
   // Edit Proker Modal State
   const [editingProker, setEditingProker] = useState<ProgramKerja | null>(null);
 
@@ -55,26 +52,6 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
     }
   };
 
-  const handleCreateProker = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProkerNama.trim()) return;
-
-    const b = bidangList.find((item) => item.id === selectedBidangId);
-
-    const newP: ProgramKerja = {
-      id: `pr-${Math.floor(100 + Math.random() * 900)}`,
-      bidangId: selectedBidangId,
-      bidangNama: b?.nama || 'Bidang Organisasi',
-      namaProker: newProkerNama,
-      kategori,
-      tanggalPelaksanaan: tanggalPelaksanaan || '02 - 04 September 2026',
-      statusLaporan: 'Belum',
-    };
-
-    onAddProker(newP);
-    setNewProkerNama('');
-  };
-
   const handleUpdateProkerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProker || !onUpdateProker) return;
@@ -84,7 +61,14 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
 
   const handleDeleteProkerClick = (id: string, nama: string) => {
     if (!onDeleteProker) return;
-    const confirmDelete = window.confirm(`Apakah Anda yakin ingin menghapus Program Kerja "${nama}"? Data transaksi terkait juga perlu diperiksa.`);
+    const target = prokerList.find(p => p.id === id);
+    if (target?.statusLaporan === 'Selesai') {
+      alert(`Program Kerja "${nama}" sudah di-SUBMIT (LPJ Selesai) dan tidak dapat dihapus.`);
+      return;
+    }
+    const confirmDelete = window.confirm(
+      `Apakah Anda yakin ingin menghapus Program Kerja "${nama}"?\n\nPERINGATAN: Seluruh transaksi kas yang terkait dengan program kerja ini akan ikut terhapus.`
+    );
     if (confirmDelete) {
       onDeleteProker(id);
     }
@@ -106,11 +90,11 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
           transaksiList={transaksiList}
           currentLevel={currentLevel}
           currentOrgName={getOrgName(currentLevel)}
+          userRole={userRole}
           onBack={() => setSelectedProkerForDetail(null)}
           onOpenPrintModal={(p) => setSelectedProkerForPrint(p)}
           onExportExcel={handleExportExcel}
           onSubmitLPJ={onSubmitProkerLPJ}
-          onReopenLPJ={onReopenProkerLPJ}
         />
 
         {selectedProkerForPrint && (
@@ -163,126 +147,26 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
       </div>
 
       {activeTab === 'proker' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Form Tambah Program Kerja (Hidden for Read-Only Tim Verifikasi) */}
-          {userRole !== 'tim_verifikasi_internal' ? (
-            <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="font-bold text-[#2D3748] text-base flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-[#81B29A]" />
-                  <span>Formulir Pendaftaran Proker</span>
-                </h3>
-                <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#7A0C1E]/10 text-[#7A0C1E]">
-                  Wajib Isi Tanda *
-                </span>
-              </div>
-
-              <form onSubmit={handleCreateProker} className="space-y-3.5">
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
-                    PILIH BIDANG IMM *
-                  </label>
-                  <select
-                    value={selectedBidangId}
-                    onChange={(e) => setSelectedBidangId(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
-                  >
-                    {bidangList.map((b) => (
-                      <option key={b.id} value={b.id}>
-                        {b.kode} - {b.nama}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[10px] text-slate-400 mt-1">Sesuai standar struktur baku 22 Bidang Tanfidz IMM</p>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
-                    NAMA PROGRAM KERJA *
-                  </label>
-                  <input
-                    type="text"
-                    value={newProkerNama}
-                    onChange={(e) => setNewProkerNama(e.target.value)}
-                    placeholder="Contoh: Darul Arqam Dasar (DAD) XXVI"
-                    required
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
-                  />
-                </div>
-
-                {/* Tanggal Pelaksanaan Input */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
-                    TANGGAL PELAKSANAAN *
-                  </label>
-                  <div className="relative">
-                    <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                    <input
-                      type="text"
-                      value={tanggalPelaksanaan}
-                      onChange={(e) => setTanggalPelaksanaan(e.target.value)}
-                      placeholder="02 - 04 September 2026"
-                      required
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
-                    />
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-1">Format: DD - DD Bulan YYYY</p>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
-                    KATEGORI KEGIATAN *
-                  </label>
-                  <select
-                    value={kategori}
-                    onChange={(e) => setKategori(e.target.value as KategoriProker)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E]"
-                  >
-                    <option value="Kemahasiswaan">Kemahasiswaan</option>
-                    <option value="Keagamaan">Keagamaan</option>
-                    <option value="Kemasyarakatan">Kemasyarakatan</option>
-                  </select>
-                  <p className="text-[10px] text-slate-400 mt-1">Trikompetensi Dasar IMM</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="submit"
-                    className="flex-1 py-2.5 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                  >
-                    + Daftarkan Program Kerja
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNewProkerNama('');
-                      setTanggalPelaksanaan('02 - 04 September 2026');
-                    }}
-                    className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition-all"
-                  >
-                    Reset
-                  </button>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs flex flex-col items-center justify-center text-center space-y-2">
-              <Lock className="w-8 h-8 text-slate-400" />
-              <h4 className="font-bold text-xs text-[#2D3748]">Read-Only Mode</h4>
-              <p className="text-[11px] text-slate-500">Tim Verifikasi tidak memiliki akses menambah proker baru.</p>
-            </div>
-          )}
-
-          {/* List Program Kerja Table */}
-          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div>
               <h3 className="font-bold text-[#2D3748] text-base">Daftar Program Kerja & Status LPJ</h3>
-              <span className="text-xs text-slate-500 font-medium">Total ({prokerList.length} Proker)</span>
+              <span className="text-xs text-slate-500 font-medium">Total ({prokerList.length} Proker Terdaftar)</span>
             </div>
+            {userRole !== 'tim_verifikasi_internal' && onNavigateToInputProker && (
+              <button
+                onClick={onNavigateToInputProker}
+                className="px-3.5 py-2 bg-[#7A0C1E] hover:bg-[#600917] text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4 text-[#81B29A]" />
+                <span>+ Input Program Kerja Baru</span>
+              </button>
+            )}
+          </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
                   <tr className="bg-[#F8F9FA] text-slate-600 font-semibold border-b border-slate-200">
                     <th className="py-2.5 px-3">Nama Program Kerja</th>
                     <th className="py-2.5 px-3">Bidang Naungan</th>
@@ -328,7 +212,7 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
                             <span>Lihat Detail</span>
                           </button>
 
-                          {userRole !== 'tim_verifikasi_internal' && (
+                          {userRole !== 'tim_verifikasi_internal' && p.statusLaporan !== 'Selesai' && (
                             <>
                               <button
                                 onClick={() => setEditingProker(p)}
@@ -355,8 +239,7 @@ export const MasterDataView: React.FC<MasterDataViewProps> = ({
               </table>
             </div>
           </div>
-        </div>
-      ) : (
+        ) : (
         /* Tab 2: 22 Bidang Resmi IMM */
         <div className="bg-white border border-slate-200 rounded-card p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">

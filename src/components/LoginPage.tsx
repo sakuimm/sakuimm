@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserRole, OrgLevel } from '../types';
 import { RegisterOrganizationModal } from './RegisterOrganizationModal';
-import { isDemoRoute } from '../services/storageService';
+import { isDemoRoute, storageService } from '../services/storageService';
 import { ShieldCheck, Lock, Mail, ArrowRight, Camera, CheckCircle2, FileCheck, Eye, EyeOff, User, Layers, RefreshCw, Building2, FlaskConical } from 'lucide-react';
 
 interface LoginPageProps {
@@ -142,6 +142,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
     }
 
     const inputEmail = email.trim().toLowerCase();
+
+    // Check if this email belongs to a pending or rejected organization/account
+    const orgs = storageService.getOrganisasiList();
+    const matchedOrg = orgs.find((o) => o.email?.toLowerCase() === inputEmail);
+    if (matchedOrg && matchedOrg.status !== 'verified') {
+      setErrorMessage(
+        'Akun Anda sedang menunggu persetujuan / verifikasi dari Pimpinan di atas Anda. Silakan hubungi admin pimpinan terkait.'
+      );
+      return;
+    }
 
     // Check matching 5 level credentials
     if (inputEmail === dppEmail.toLowerCase() || inputEmail === adminEmail.toLowerCase()) {
@@ -366,25 +376,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                         </div>
                       </div>
 
-                      {/* Peran Pengguna (Role Dropdown) */}
+                      {/* Jenis Akun (Role Dropdown) */}
                       <div>
                         <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                          Peran Pengguna (Role) *
+                          Jenis Akun *
                         </label>
                         <select
                           value={role}
                           onChange={(e) => setRole(e.target.value as UserRole)}
                           className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
                         >
-                          <option value="bendahara_umum">Bendahara Umum (Full Access Input & Edit)</option>
-                          <option value="tim_verifikasi_internal">Tim Verifikasi Internal (Read-Only Mode)</option>
+                          <option value="bendahara_umum">Bendahara Umum</option>
+                          <option value="tim_verifikasi_internal">Tim Verifikasi Internal</option>
                         </select>
                       </div>
 
-                      {/* Nama Lengkap */}
+                      {/* Nama Level Pimpinan IMM */}
                       <div>
                         <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                          Nama Lengkap Pengguna *
+                          Nama Level Pimpinan IMM *
                         </label>
                         <div className="relative">
                           <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -394,7 +404,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                             onChange={(e) => setNama(e.target.value)}
                             required
                             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-[#2D3748] focus:outline-none focus:border-[#7A0C1E] transition-all"
-                            placeholder="Contoh: Immawan Ahmad"
+                            placeholder="Contoh: PK IMM Teknik UI, DPD IMM DKI Jakarta"
                           />
                         </div>
                       </div>
@@ -404,7 +414,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                   {/* Both Sign In & Sign Up: Email Address */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                      Email Pengguna *
+                      {authMode === 'signup' ? 'Email Akun *' : 'Email Pengguna *'}
                     </label>
                     <div className="relative">
                       <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -530,7 +540,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
 
           {/* Footer Copyright */}
           <div className="pt-4 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between text-[11px] text-slate-400 gap-2">
-            <span>Copyright © 2026 IMM Finance • Rights Reserved</span>
+            <span>Copyright © DPP IMM 2026</span>
             <div className="flex gap-3">
               <a href="#terms" className="hover:text-slate-600">Syarat & Ketentuan</a>
               <span>•</span>
@@ -570,46 +580,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onRegisterOrgSucc
                   <p className="text-xs md:text-sm text-slate-200 leading-relaxed max-w-lg">
                     {slide.desc}
                   </p>
-
-                  {/* Bullet Highlights */}
-                  <div className="space-y-2 pt-2 border-t border-white/15">
-                    {idx === 0 && (
-                      <>
-                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
-                          <span>Visibilitas keuangan berjenjang (PK, KORKOM, PC, DPD, DPP)</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
-                          <span>Privasi terjaga dengan pemisahan akses data agregat & detail</span>
-                        </div>
-                      </>
-                    )}
-                    {idx === 1 && (
-                      <>
-                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
-                          <span>Verifikasi kuitansi dan nota digital tersertifikasi</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
-                          <span>Audit Trail log sistem untuk setiap perubahan transaksi</span>
-                        </div>
-                      </>
-                    )}
-                    {idx === 2 && (
-                      <>
-                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
-                          <span>Standarisasi 22 Bidang Resmi IMM seluruh Indonesia</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#81B29A] flex-shrink-0" />
-                          <span>Pewarisan arsip keuangan rapi antar-generasi kepengurusan</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
                 </div>
               );
             })}
