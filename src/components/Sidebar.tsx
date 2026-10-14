@@ -206,10 +206,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center justify-between p-2 rounded-xl bg-white/10 border border-white/20">
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div className="w-8 h-8 rounded-full bg-white text-[#7A0C1E] font-black text-xs flex items-center justify-center flex-shrink-0 shadow-xs">
-                {userName.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                {(userName || 'Immawan Ahmad')
+                  .trim()
+                  .split(/\s+/)
+                  .filter(Boolean)
+                  .map((n) => n[0])
+                  .join('')
+                  .slice(0, 2)
+                  .toUpperCase() || 'IA'}
               </div>
               <div className="truncate">
-                <p className="text-xs font-bold text-white truncate">{userName}</p>
+                <p className="text-xs font-bold text-white truncate">{userName || 'Immawan Ahmad'}</p>
                 <p className="text-[10px] text-white/70 capitalize truncate">
                   {userRole === 'bendahara_umum'
                     ? 'Bendahara Umum'

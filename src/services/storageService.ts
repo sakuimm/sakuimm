@@ -342,7 +342,19 @@ export const storageService = {
     const keys = getKeys();
     try {
       const data = localStorage.getItem(keys.USER_SESSION);
-      return data ? JSON.parse(data) : null;
+      if (!data) return null;
+      const parsed = JSON.parse(data);
+      if (!parsed || typeof parsed !== 'object' || !parsed.isLoggedIn) {
+        return null;
+      }
+      return {
+        isLoggedIn: true,
+        userRole: parsed.userRole || 'bendahara_umum',
+        currentLevel: parsed.currentLevel || 'PK',
+        userName: (typeof parsed.userName === 'string' && parsed.userName.trim()) ? parsed.userName.trim() : 'Immawan Ahmad',
+        userEmail: (typeof parsed.userEmail === 'string' && parsed.userEmail.trim()) ? parsed.userEmail.trim() : 'bendahara@imm.or.id',
+        userOrgName: parsed.userOrgName || undefined
+      };
     } catch {
       return null;
     }

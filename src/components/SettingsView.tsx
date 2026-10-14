@@ -148,10 +148,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* User Card Showcase */}
           <div className="bg-white border border-slate-200 rounded-card p-6 shadow-xs flex flex-col items-center text-center space-y-4">
             <div className="w-20 h-20 rounded-full bg-[#7A0C1E] text-white font-black text-2xl flex items-center justify-center shadow-lg border-4 border-white">
-              {userName.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+              {(userName || 'Pengurus IMM')
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .map((n) => n[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase() || 'PI'}
             </div>
             <div>
-              <h3 className="font-extrabold text-base text-[#2D3748]">{userName}</h3>
+              <h3 className="font-extrabold text-base text-[#2D3748]">{userName || 'Pengurus IMM'}</h3>
               <p className="text-xs text-slate-500 font-medium">{emailInput}</p>
               <span className="inline-block mt-2 px-3 py-0.5 rounded-full text-[10px] font-extrabold bg-[#7A0C1E]/10 text-[#7A0C1E]">
                 {getRoleBadge(userRole)}

@@ -18,27 +18,28 @@ import { InputProkerView } from './components/InputProkerView';
 import { TransactionFormView } from './components/TransactionFormView';
 
 export function App() {
+  const initialSession = typeof window !== 'undefined' ? storageService.getUserSession() : null;
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
       if (p.get('tab')) return true;
       if (window.location.pathname.startsWith('/demo')) return true;
-      const s = storageService.getUserSession();
-      if (s && s.isLoggedIn) return true;
+      if (initialSession && initialSession.isLoggedIn) return true;
     }
     return false;
   });
-  const [userRole, setUserRole] = useState<UserRole>('bendahara_umum');
+  const [userRole, setUserRole] = useState<UserRole>(initialSession?.userRole || 'bendahara_umum');
   const [currentLevel, setCurrentLevel] = useState<OrgLevel>(() => {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
       const lvl = p.get('level') as OrgLevel | null;
       if (lvl) return lvl;
     }
-    return 'PK';
+    return initialSession?.currentLevel || 'PK';
   });
-  const [userName, setUserName] = useState('Immawan Ahmad');
-  const [userEmail, setUserEmail] = useState('bendahara@imm.or.id');
+  const [userName, setUserName] = useState<string>(initialSession?.userName || 'Immawan Ahmad');
+  const [userEmail, setUserEmail] = useState<string>(initialSession?.userEmail || 'bendahara@imm.or.id');
   const [activeTab, setActiveTab] = useState(() => {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
@@ -68,10 +69,10 @@ export function App() {
     const session = storageService.getUserSession();
     if (session && session.isLoggedIn) {
       setIsLoggedIn(true);
-      setUserRole(session.userRole);
-      setCurrentLevel(session.currentLevel);
-      setUserName(session.userName);
-      setUserEmail(session.userEmail);
+      setUserRole(session.userRole || 'bendahara_umum');
+      setCurrentLevel(session.currentLevel || 'PK');
+      setUserName(session.userName || 'Immawan Ahmad');
+      setUserEmail(session.userEmail || 'bendahara@imm.or.id');
       setActiveTab('dashboard');
     }
 
@@ -93,6 +94,7 @@ export function App() {
       case 'PC': return 'PC IMM Jakarta Selatan';
       case 'DPD': return 'DPD IMM DKI Jakarta';
       case 'DPP': return 'DPP IMM (Pusat)';
+      default: return 'Pimpinan IMM';
     }
   };
 
