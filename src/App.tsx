@@ -23,6 +23,7 @@ export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
+      if (p.get('tab') === 'login') return false;
       if (p.get('tab')) return true;
       if (window.location.pathname.startsWith('/demo')) return true;
       if (initialSession && initialSession.isLoggedIn) return true;
@@ -65,25 +66,31 @@ export function App() {
     setProkerList(storageService.getProkerList());
     setOrganisasiList(storageService.getOrganisasiList());
 
+    // Support query params for direct rendering / testing
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    const levelParam = params.get('level') as OrgLevel | null;
+
+    if (tabParam === 'login') {
+      setIsLoggedIn(false);
+      return;
+    }
+
     // Load saved user session
     const session = storageService.getUserSession();
     if (session && session.isLoggedIn) {
       setIsLoggedIn(true);
       setUserRole(session.userRole || 'bendahara_umum');
-      setCurrentLevel(session.currentLevel || 'PK');
+      setCurrentLevel(levelParam || session.currentLevel || 'PK');
       setUserName(session.userName || 'Immawan Ahmad');
       setUserEmail(session.userEmail || 'bendahara@imm.or.id');
-      setActiveTab('dashboard');
-    }
-
-    // Support query params for direct rendering / testing
-    const params = new URLSearchParams(window.location.search);
-    const tabParam = params.get('tab');
-    const levelParam = params.get('level') as OrgLevel | null;
-    if (tabParam) {
+      setActiveTab(tabParam || 'dashboard');
+    } else if (tabParam) {
       setIsLoggedIn(true);
       setActiveTab(tabParam);
       if (levelParam) setCurrentLevel(levelParam);
+    } else if (levelParam) {
+      setCurrentLevel(levelParam);
     }
   }, []);
 
