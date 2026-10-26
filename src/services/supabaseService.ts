@@ -38,6 +38,7 @@ export const supabaseService = {
         buktiDriveUrl: t.bukti_drive_url,
         uploadStatus: t.upload_status || 'COMPLETED',
         organisasiNama: t.organisasi_nama || 'IMM',
+        organisasiLevel: t.organisasi_level,
         isDeleted: t.is_deleted || false,
         statusRevisi: t.status_revisi || 'normal',
         catatanRevisi: t.catatan_revisi
@@ -59,13 +60,18 @@ export const supabaseService = {
           id: trx.id,
           tanggal: trx.tanggal,
           bidang_id: trx.bidangId,
+          bidang_nama: trx.bidangNama,
           program_kerja_id: trx.programKerjaId,
+          program_kerja_nama: trx.programKerjaNama,
+          kategori_proker: trx.kategoriProker,
           keterangan: trx.keterangan,
           jenis_nominal: trx.jenisNominal,
           nominal: trx.nominal,
           jenis_transaksi: trx.jenisTransaksi,
           upload_status: trx.uploadStatus,
-          organisasi_nama: trx.organisasiNama
+          organisasi_nama: trx.organisasiNama,
+          organisasi_level: trx.organisasiLevel,
+          status_revisi: trx.statusRevisi || 'normal'
         });
       } catch (e) {
         console.warn('Supabase DB sync skipped (offline or schema mismatch):', e);
@@ -150,7 +156,9 @@ export const supabaseService = {
         statusLaporan: p.status_laporan || 'Belum',
         penanggungJawab: p.penanggung_jawab,
         targetAnggaran: Number(p.target_anggaran) || undefined,
-        deskripsi: p.deskripsi
+        deskripsi: p.deskripsi,
+        organisasiNama: p.organisasi_nama,
+        organisasiLevel: p.organisasi_level
       }));
     } catch {
       return storageService.getProkerList();
@@ -168,13 +176,16 @@ export const supabaseService = {
         await supabase.from('program_kerja').insert({
           id: proker.id,
           bidang_id: proker.bidangId,
+          bidang_nama: proker.bidangNama,
           nama_proker: proker.namaProker,
           kategori: proker.kategori,
           tanggal_pelaksanaan: proker.tanggalPelaksanaan,
           status_laporan: proker.statusLaporan,
           penanggung_jawab: proker.penanggungJawab,
           target_anggaran: proker.targetAnggaran,
-          deskripsi: proker.deskripsi
+          deskripsi: proker.deskripsi,
+          organisasi_nama: proker.organisasiNama,
+          organisasi_level: proker.organisasiLevel
         });
       } catch (e) {
         console.warn('Supabase DB proker sync skipped:', e);

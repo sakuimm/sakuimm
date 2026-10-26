@@ -179,8 +179,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="truncate">Pengaturan</span>
             </button>
 
-            {/* Verification (Non-PK) */}
-            {userLevel !== 'PK' && (
+            {/* Verification (Hanya DPP Pusat Saja yang Berhak Melakukan Approval Akun Se-Indonesia) */}
+            {userLevel === 'DPP' && (
               <button
                 onClick={() => handleNavClick('verifikasi')}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${

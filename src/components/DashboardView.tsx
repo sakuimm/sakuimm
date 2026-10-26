@@ -22,22 +22,30 @@ import {
   Legend
 } from 'recharts';
 
+import { INDONESIAN_MONTH_NAMES, parseDateParts } from '../utils/dateUtils';
+
 interface DashboardViewProps {
   transaksiList: Transaksi[];
+  allTransaksiList?: Transaksi[];
   prokerList: ProgramKerja[];
   currentLevel: OrgLevel;
   userRole: UserRole;
   isAggregateMode: boolean;
   onNavigateToTransaksi: () => void;
+  selectedBulan?: string;
+  selectedTahun?: string;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   transaksiList,
+  allTransaksiList,
   prokerList,
   currentLevel,
   userRole,
   isAggregateMode,
   onNavigateToTransaksi,
+  selectedBulan = 'ALL',
+  selectedTahun = '2026',
 }) => {
   // Filter Subordinate Level Selector state for Pimpinan yang punya bawahan
   const [selectedSubordinateLevel, setSelectedSubordinateLevel] = useState<string>('ALL');
@@ -63,6 +71,76 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const displayPemasukan = totalPemasukan;
   const displayPengeluaran = totalPengeluaran;
   const displaySaldo = displayPemasukan - displayPengeluaran;
+
+  // Dynamic Metric 1: vs Bulan Lalu (Pemasukan)
+  const sourceList = allTransaksiList || transaksiList;
+  const filteredSourceBySubLevel = selectedSubordinateLevel === 'ALL'
+    ? sourceList
+    : sourceList.filter((t) => (t.organisasiLevel || 'PK') === selectedSubordinateLevel);
+
+  let prevMonth: number | null = null;
+  let prevYear: number | null = null;
+
+  if (selectedBulan !== 'ALL') {
+    const currM = parseInt(selectedBulan, 10);
+    const currY = selectedTahun !== 'ALL' ? parseInt(selectedTahun, 10) : 2026;
+    prevMonth = currM === 1 ? 12 : currM - 1;
+    prevYear = currM === 1 ? currY - 1 : currY;
+  } else {
+    // If 'ALL' months selected, compare against previous month based on current calendar month
+    const now = new Date();
+    const currM = now.getMonth() + 1;
+    prevMonth = currM === 1 ? 12 : currM - 1;
+    prevYear = selectedTahun !== 'ALL' ? parseInt(selectedTahun, 10) : now.getFullYear();
+  }
+
+  const prevMonthTrx = filteredSourceBySubLevel.filter((t) => {
+    if (t.jenisNominal !== 'pemasukan') return false;
+    const { month, year } = parseDateParts(t.tanggal);
+    return month === prevMonth && (prevYear === null || year === null || year === prevYear);
+  });
+
+  const pemasukanBulanLalu = prevMonthTrx.reduce((sum, t) => sum + t.nominal, 0);
+
+  let pemasukanBadgeText = '0%';
+  let pemasukanBadgeClass = 'bg-slate-100 text-slate-500';
+
+  if (pemasukanBulanLalu > 0) {
+    const diffPct = Math.round(((displayPemasukan - pemasukanBulanLalu) / pemasukanBulanLalu) * 100);
+    if (diffPct >= 0) {
+      pemasukanBadgeText = `↑ +${diffPct}%`;
+      pemasukanBadgeClass = 'bg-[#2E7D32]/10 text-[#2E7D32]';
+    } else {
+      pemasukanBadgeText = `↓ ${diffPct}%`;
+      pemasukanBadgeClass = 'bg-[#C05621]/10 text-[#C05621]';
+    }
+  } else if (displayPemasukan > 0) {
+    pemasukanBadgeText = '↑ +100%';
+    pemasukanBadgeClass = 'bg-[#2E7D32]/10 text-[#2E7D32]';
+  } else {
+    pemasukanBadgeText = '0%';
+    pemasukanBadgeClass = 'bg-slate-100 text-slate-500';
+  }
+
+  // Dynamic Metric 2: vs Target Anggaran (Pengeluaran)
+  const totalTargetAnggaran = activeProker.reduce((sum, p) => sum + (p.targetAnggaran || 0), 0);
+
+  let pengeluaranBadgeText = 'Fleksibel';
+  let pengeluaranBadgeClass = 'bg-blue-50 text-[#1D4ED8]';
+
+  if (totalTargetAnggaran > 0) {
+    const variancePct = Math.round(((displayPengeluaran - totalTargetAnggaran) / totalTargetAnggaran) * 100);
+    if (displayPengeluaran > totalTargetAnggaran) {
+      pengeluaranBadgeText = `+${variancePct}%`;
+      pengeluaranBadgeClass = 'bg-[#C05621]/10 text-[#C05621]'; // Melebihi target anggaran
+    } else {
+      pengeluaranBadgeText = `${variancePct}%`; // e.g. -25% vs target anggaran
+      pengeluaranBadgeClass = 'bg-[#2E7D32]/10 text-[#2E7D32]'; // Aman dalam pagu anggaran
+    }
+  } else {
+    pengeluaranBadgeText = 'Fleksibel';
+    pengeluaranBadgeClass = 'bg-blue-50 text-[#1D4ED8]';
+  }
 
   // Dynamic Chart 1 Data: Pengeluaran Per Kategori Proker
   const kemahasiswaanVal = activeTrx
@@ -130,6 +208,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <span className="px-2 py-0.5 bg-[#0097A7] text-white font-bold text-[10px] rounded-full">
                 Privasi Terjaga
               </span>
+              <span className="px-2 py-0.5 bg-white/20 text-white font-bold text-[10px] rounded-full">
+                Periode: {selectedBulan !== 'ALL' ? `${INDONESIAN_MONTH_NAMES[parseInt(selectedBulan, 10) - 1]} ` : ''}{selectedTahun !== 'ALL' ? selectedTahun : 'Semua'}
+              </span>
             </div>
             <p className="text-xs text-slate-200 mt-0.5">
               Pimpinan dapat memantau Total Pemasukan & Pengeluaran serta Grafik Pengeluaran Per Bidang dan Per Kategori secara agregat tanpa mengekspos nota detail individu.
@@ -156,6 +237,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Empty State Banner jika periode tidak memiliki transaksi */}
+      {activeTrx.length === 0 && (
+        <div className="p-3.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse flex-shrink-0" />
+            <span>
+              Belum ada transaksi pada periode <strong>{selectedBulan !== 'ALL' ? INDONESIAN_MONTH_NAMES[parseInt(selectedBulan, 10) - 1] : 'Semua Bulan'} {selectedTahun}</strong>.
+            </span>
+          </div>
+          <span className="text-[11px] text-amber-700">
+            Pilih opsi <em>"Semua Bulan"</em> di header untuk melihat data kumulatif.
+          </span>
+        </div>
+      )}
 
       {/* Top Stat Cards (3 Clean Cards: Total Saldo, Total Pemasukan, Total Pengeluaran) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -194,8 +290,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             Rp {displayPemasukan.toLocaleString('id-ID')}
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#2E7D32]/10 text-[#2E7D32]">
-              ↑ 15%
+            <span className={`px-2 py-0.5 rounded-full font-bold ${pemasukanBadgeClass}`}>
+              {pemasukanBadgeText}
             </span>
             <span className="text-slate-500">vs bulan lalu</span>
           </div>
@@ -215,8 +311,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             Rp {displayPengeluaran.toLocaleString('id-ID')}
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#C05621]/10 text-[#C05621]">
-              +5%
+            <span className={`px-2 py-0.5 rounded-full font-bold ${pengeluaranBadgeClass}`}>
+              {pengeluaranBadgeText}
             </span>
             <span className="text-slate-500">vs target anggaran</span>
           </div>

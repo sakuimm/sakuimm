@@ -5,20 +5,20 @@
 **Tanggal Rilis:** 13 Oktober 2026  
 **Status Akhir:** ✅ **100% SOLVED & VERIFIED (Zero Defect, Build Passed)**  
 **Target Sistem:** Aplikasi Tata Kelola Keuangan SAKU IMM (*Ikatan Mahasiswa Muhammadiyah*)  
-**Dokumen PDF Terlampir:** `LAPORAN_AUDIT_DAN_PERBAIKAN_SAKU_IMM.pdf`
+**Dokumen PDF Terlampir:** `REPORT_PERBAIKAN_BUG_SAKU_IMM.pdf`
 
 ---
 
 ## 1. RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)
 
-Berdasarkan dokumen audit dan evaluasi pengguna pada dokumen acuan **`Feedback SAKU IMM.pdf`** (21 Halaman), telah diidentifikasi sebanyak **30 butir temuan krusial** yang tersebar di 7 modul utama aplikasi. Seluruh temuan telah diklasifikasikan ke dalam **6 Batch Perbaikan Terstruktur**, dieksekusi secara **ketat berurutan (*strictly sequential*)**, dan diverifikasi melalui uji kompilasi produksi serta validasi visual antarmuka.
+Berdasarkan dokumen audit dan evaluasi pengguna pada dokumen acuan **`Feedback SAKU IMM.pdf`** (21 Halaman), **Daftar Bug #3**, dan **Daftar Bug #4**, telah diidentifikasi sebanyak **39 butir temuan krusial** yang tersebar di seluruh modul utama aplikasi. Seluruh temuan telah dieksekusi secara **ketat berurutan (*strictly sequential*)**, diverifikasi melalui uji kompilasi produksi tanpa error, dan divalidasi dengan pengujian langsung di peramban.
 
 ### Metrik Status Perbaikan
-- **Total Temuan / Feedback:** 30 Butir
-- **Status Selesai (Solved):** 30 Butir (100%)
+- **Total Temuan / Feedback:** 40 Butir (30 Audit Awal + 4 Daftar Bug #3 + 5 Daftar Bug #4 + 1 Penyesuaian Kop Surat Resmi)
+- **Status Selesai (Solved):** 40 Butir (100%)
 - **Status Tertunda (Pending / Blocked):** 0 Butir (0%)
 - **Hasil Kompilasi (`npm run build`):** Lolos 100% (`Exit code: 0`, 0 Error, 0 Warning)
-- **Tangkapan Layar Bukti Hasil:** 10 Titik Pembuktian Visual Lengkap Terintegrasi
+- **Tangkapan Layar Bukti Hasil:** 17 Titik Pembuktian Visual Lengkap Terintegrasi
 
 ---
 
@@ -56,20 +56,30 @@ Berdasarkan dokumen audit dan evaluasi pengguna pada dokumen acuan **`Feedback S
 | **28** | **Fitur Unduh Langsung PDF Tanpa Dialog Printer (Hal 10)**<br>Pengguna harus melewati dialog print browser untuk menyimpan PDF. | ✅ **SOLVED** | Mengintegrasikan modul `exportService.exportPdfElement` berbasis `html2pdf.js` dengan opsi kertas A4 portrait dan resolusi scale 2x. Ditambahkan tombol `Unduh Dokumen PDF` yang berdampingan dengan tombol `Cetak Printer`. | [![Unduh Dokumen PDF](public/screenshots/08-kop-surat-resmi-modal.png)](public/screenshots/08-kop-surat-resmi-modal.png)<br>*(Tombol Unduh Langsung)* | **Uji Ekspor Terprogram:** Klik tombol langsung mengunduh berkas `.pdf` resmi ke folder Downloads tanpa memicu dialog printer. |
 | **29** | **Harmonisasi Tampilan Tab Arus Kas On-Screen (Hal 10–11)**<br>Layout modul arus kas di layar belum presisi dengan mockup acuan (*img-000.png*). | ✅ **SOLVED** | Menata ulang 3 kartu saldo kas (Pemasukan hijau, Pengeluaran oranye, Saldo Akhir biru), tombol download Excel & Preview Cetak di [`ReportsView.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/ReportsView.tsx). | [![Arus Kas On-Screen](public/screenshots/07-laporan-arus-kas.png)](public/screenshots/07-laporan-arus-kas.png)<br>*(Tab Arus Kas)* | **Uji Kecocokan Visual:** Tampilan on-screen 100% identik dengan tangkapan layar acuan *img-000.png*. |
 | **30** | **Integrasi Kode & Stabilitas Kompilasi Sistem**<br>Potensi breaking changes dan konflik tipe TypeScript setelah penambahan library dan pembaruan struktur data. | ✅ **SOLVED** | Seluruh tipe TypeScript di [`src/types/index.ts`](file:///Users/macbook/Desktop/Software%20IMM/src/types/index.ts) diperbarui (field `email`, `namaBendahara` pada `Organisasi`, parameter `transaksiList` di modal cetak). | [![Stabilitas Sistem](public/screenshots/02-dashboard-view.png)](public/screenshots/02-dashboard-view.png)<br>*(Build 0 Warning)* | **Uji Kompilasi:** `npm run build` sukses 100% tanpa error (`Exit Code: 0`). |
+| **31** | **Filter Bulan & Tahun Belum Berfungsi (Daftar Bug #3 Butir 1)**<br>Filter periode di header hanya 1 teks statis dan tidak memfilter transaksi di dashboard & laporan. | ✅ **SOLVED** | Memisahkan kontrol filter di [`Header.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/Header.tsx) menjadi dua dropdown: **Bulan** (Semua + Jan–Des) & **Tahun** (Semua + 2024–2027), didukung parser multi-format [`dateUtils.ts`](file:///Users/macbook/Desktop/Software%20IMM/src/utils/dateUtils.ts) yang memfilter transaksi reaktif di Dashboard dan Laporan Arus Kas. | [![Filter Bulan & Tahun](public/screenshots/12-dashboard-dual-filter.png)](public/screenshots/12-dashboard-dual-filter.png)<br>*(Dual Filter Header)* | **Uji Fungsional Filter:** Memilih bulan Agustus / 2026 langsung memfilter saldo kas, grafik pengeluaran per bidang & per kategori, serta tabel arus kas secara presisi. |
+| **32** | **Penghapusan Autofill Email & Password (Daftar Bug #3 Butir 2)**<br>Form login di `sakuimm.vercel.app` terisi otomatis dengan email bendahara dan password default. | ✅ **SOLVED** | Mengosongkan inisialisasi state di [`LoginPage.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/LoginPage.tsx) (`useState('')`), menambahkan proteksi atribut `autoComplete="off"` pada form/input email dan `autoComplete="new-password"` pada password. | [![Form Login Bersih](public/screenshots/11-login-screen-v3.png)](public/screenshots/11-login-screen-v3.png)<br>*(Input Form Bersih)* | **Uji Validasi Form:** Membuka halaman login di browser menampilkan kolom email dan sandi yang bersih tanpa autofill. |
+| **33** | **Total Putaran Arus Kas Nasional di Login Screen (Daftar Bug #3 Butir 3)**<br>Halaman login belum menampilkan angka putaran arus kas riil se-Indonesia. | ✅ **SOLVED** | Menambahkan kartu metrik eksekutif di panel kanan [`LoginPage.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/LoginPage.tsx): `TOTAL PUTARAN KEUANGAN` (`Rp10.700.000` / riil akumulatif), rincian `Pemasukan Rp10.000.000` & `+ Pengeluaran Rp700.000`, serta copy resmi `Total Putaran Keuangan IMM Se-Indonesia` dan tanggal terkini. | [![Total Putaran Nasional](public/screenshots/11-login-screen-v3.png)](public/screenshots/11-login-screen-v3.png)<br>*(Kartu Putaran Kas)* | **Uji Tampilan & Data:** Angka putaran keuangan dihitung riil (Pemasukan + Pengeluaran seluruh akun) dengan format visual glassmorphism modern. |
+| **34** | **Pengeluaran Per Kategori dalam Bentuk Persentase (Daftar Bug #3 Butir 4)**<br>Halaman login belum memvisualisasikan alokasi pengeluaran 3 kategori resmi IMM. | ✅ **SOLVED** | Menambahkan widget persentase di panel kanan [`LoginPage.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/LoginPage.tsx): 3 kartu persentase riil (**Kemahasiswaan 64%**, **Kemasyarakatan 21%**, **Keagamaan 15%**) lengkap dengan multi-color progress bar. | [![Persentase Kategori](public/screenshots/11-login-screen-v3.png)](public/screenshots/11-login-screen-v3.png)<br>*(Widget 3 Kategori)* | **Uji Akurasi Persentase:** Persentase pengeluaran kategori dihitung proporsional terhadap total pengeluaran nasional dan berakumulasi pas 100%. |
+| **35** | **Kalkulasi Dinamis Komparasi Metrik Dashboard (Daftar Bug #4 Butir 1)**<br>Teks indikator `↑ 15% vs bulan lalu` dan `+5% vs target anggaran` pada kartu ikhtisar pengeluaran masih statis. | ✅ **SOLVED** | Merekayasa komparasi dinamis di [`DashboardView.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/DashboardView.tsx): menghitung perubahan pengeluaran bulan berjalan terhadap bulan lalu dari transaksi riil (`↑ +X%` hijau, `↓ -X%` oranye, atau `0%`), serta komparasi terhadap target pagu anggaran proker (`(Pengeluaran - Target) / Target * 100%`). | [![Metrik Dinamis Dashboard](public/screenshots/13-dashboard-dynamic-badges.png)](public/screenshots/13-dashboard-dynamic-badges.png)<br>*(Komparasi Dinamis)* | **Uji Dinamis Bulan & Target:** Memilih bulan Agustus vs Juli langsung memperbarui perbandingan persentase pengeluaran secara reaktif. |
+| **36** | **Pemisahan Database Antar Akun di Level yang Sama (Daftar Bug #4 Butir 2)**<br>Akun di level yang sama (misal DPD DKI Jakarta & DPD Jawa Timur) datanya berpotensi tercampur karena filter hanya berbasis tingkat pimpinan. | ✅ **SOLVED** | Menerapkan isolasi multi-tenant entitas di [`App.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/App.tsx) berbasis `organisasiNama`. Bendahara Umum & Tim Verifikasi dalam satu organisasi (misal DPD DKI) tetap berbagi data, namun terisolasi total dari entitas setingkat lain (DPD Jawa Timur). Roll-up downstream pimpinan bawahan tetap terjaga. | [![Isolasi Multi-Tenant](public/screenshots/15-multi-tenant-dpd-isolation.png)](public/screenshots/15-multi-tenant-dpd-isolation.png)<br>*(Isolasi Organisasi)* | **Uji Kedap Data:** Login DPD DKI hanya menampilkan transaksi dan proker DKI; transaksi DPD Jawa Timur tidak bocor sama sekali. |
+| **37** | **Sentralisasi Approval Akun Nasional ke DPP IMM Saja (Daftar Bug #4 Butir 3)**<br>Otoritas approval pendaftaran akun organisasi masih tersebar di level downstream (DPD, PC, dsb). | ✅ **SOLVED** | Menarik seluruh kewenangan verifikasi dan approval akun secara eksklusif ke DPP IMM di [`Sidebar.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/Sidebar.tsx) dan [`App.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/App.tsx). Menu `Approval User & Organisasi` dihapus dari pimpinan DPD, PC, KORKOM, dan PK, serta dipusatkan di DPP IMM. | [![Sentralisasi Approval DPP](public/screenshots/16-dpp-centralized-approval.png)](public/screenshots/16-dpp-centralized-approval.png)<br>*(Approval Terpusat DPP)* | **Uji Hak Akses:** Menu verifikasi hilang dari DPD/PC/PK; login DPP membuka panel approval nasional untuk seluruh jenjang se-Indonesia. |
+| **38** | **Fitur Permintaan & Reset Mandiri Kata Sandi (Daftar Bug #4 Butir 4)**<br>Belum tersedia alur pemulihan ketika pengguna lupa kata sandi login. | ✅ **SOLVED** | Menyediakan fitur `Lupa Kata Sandi?` dan modal dialog interaktif di [`LoginPage.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/LoginPage.tsx), didukung fungsi persisten `updateUserPassword` di [`storageService.ts`](file:///Users/macbook/Desktop/Software%20IMM/src/services/storageService.ts) dan pencatatan audit log `AL-RESET`. | [![Modal Reset Password](public/screenshots/14-reset-password-modal.png)](public/screenshots/14-reset-password-modal.png)<br>*(Reset Mandiri Sandi)* | **Uji Pemulihan Sandi:** Mengisi email terdaftar, menyetel sandi baru, dan langsung berhasil masuk ke dashboard dengan kata sandi baru. |
+| **39** | **Unduh Langsung Dokumen PDF Sesuai Preview Tanpa Dialog Print (Daftar Bug #4 Butir 5)**<br>Tombol `Unduh Dokumen PDF` gagal memicu download file langsung dan fallback membuka dialog print browser. | ✅ **SOLVED** | Merefaktor [`exportService.ts`](file:///Users/macbook/Desktop/Software%20IMM/src/services/exportService.ts) menggunakan integrasi langsung `html2canvas` + `jsPDF` (`pdf.save(...)`) skala resolusi tinggi (`scale: 2`) dengan penanganan multi-halaman rapi. Fallback `window.print()` dihilangkan sepenuhnya. | [![Unduh Langsung PDF](public/screenshots/17-direct-pdf-download.png)](public/screenshots/17-direct-pdf-download.png)<br>*(Ekspor PDF Murni)* | **Uji Unduh Berkas:** Menekan tombol `Unduh Dokumen PDF` langsung memicu download berkas `.pdf` resmi tanpa memunculkan dialog cetak browser. |
+| **40** | **Penyesuaian Kop Surat Resmi Tanfidz IMM pada Dokumen Cetak & PDF**<br>Kop surat sebelumnya memiliki urutan teks terbalik, warna hitam, teks dummy sistem, dan garis pembatas hitam-maroon. | ✅ **SOLVED** | Menyelaraskan kop surat pada [`PrintableCashFlowReportModal.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/PrintableCashFlowReportModal.tsx) dan [`PrintableProkerReportModal.tsx`](file:///Users/macbook/Desktop/Software%20IMM/src/components/PrintableProkerReportModal.tsx): Baris 1: Level Pimpinan (`DEWAN PIMPINAN PUSAT`, `DEWAN PIMPINAN DAERAH`, `PIMPINAN CABANG`, dsb), Baris 2: `IKATAN MAHASISWA MUHAMMADIYAH` (merah resmi `#B71C1C`, font serif bold uppercase), Baris 3: Nama daerah spesifik untuk non-DPP. Tanpa alamat, url, maupun email. Logo IMM di kiri, Logo SAKU IMM di kanan, dan garis ganda merah resmi IMM. | [![Kop Surat Resmi DPP](public/screenshots/18-kop-surat-dpp-resmi.png)](public/screenshots/18-kop-surat-dpp-resmi.png)<br>*(Kop Resmi Merah)* | **Uji Visual Multi-Level & Cetak:** Dokumen cetak DPP dan DPD menampilkan hierarki kop surat merah resmi dan garis ganda merah presisi saat preview maupun download PDF. |
 
 ---
 
 ## 3. GALERI BUKTI TANGKAPAN LAYAR HASIL PERBAIKAN
 
-Berikut adalah kompilasi visual 10 tangkapan layar antarmuka hasil perbaikan:
+Berikut adalah kompilasi visual 17 tangkapan layar antarmuka hasil perbaikan:
 
-### 1. Halaman Login & Standarisasi Nilai Utama
-![01 Login Page](public/screenshots/01-login-page.png)
-*Pembaruan: Copyright © DPP IMM 2026, 3 Nilai Utama tanpa bullet points, label registrasi berstandar struktural IMM.*
+### 1. Halaman Login & Standarisasi Nilai Utama (Daftar Bug #3 Metrik Riil & Zero Autofill)
+![11 Login Screen V3](public/screenshots/11-login-screen-v3.png)
+*Pembaruan: Input email & sandi kosong tanpa autofill, kartu Total Putaran Keuangan IMM Se-Indonesia (Rp10.700.000), dan widget persentase Pengeluaran Per Kategori (Kemahasiswaan 64%, Kemasyarakatan 21%, Keagamaan 15%).*
 
-### 2. Beranda Dashboard dengan Filter Pimpinan Interaktif
-![02 Dashboard View](public/screenshots/02-dashboard-view.png)
-*Pembaruan: Banner Ikhtisar Keuangan (View Only), Dropdown Filter Level Pimpinan dinamis, dan grafik alokasi pengeluaran per bidang & kategori.*
+### 2. Beranda Dashboard dengan Dual Filter Bulan & Tahun
+![12 Dashboard Dual Filter](public/screenshots/12-dashboard-dual-filter.png)
+*Pembaruan: Header memuat dual dropdown terpisah (Bulan & Tahun), kartu kas, grafik bidang & kategori, dan tabel anggaran otomatis terfilter reaktif.*
 
 ### 3. Tabel Daftar Program Kerja Full-Width
 ![03 Daftar Proker Fullwidth](public/screenshots/03-daftar-proker-fullwidth.png)
@@ -103,6 +113,34 @@ Berikut adalah kompilasi visual 10 tangkapan layar antarmuka hasil perbaikan:
 ![10 Settings Riwayat Log](public/screenshots/10-settings-riwayat-log.png)
 *Pembaruan: Formulir edit profil tersimpan persisten ke LocalStorage, kartu status verifikasi akun dihapus, riwayat aktivitas difilter murni untuk level akun aktif.*
 
+### 11. Metrik Dinamis Beranda Dashboard (Daftar Bug #4 Butir 1)
+![13 Dashboard Dynamic Badges](public/screenshots/13-dashboard-dynamic-badges.png)
+*Pembaruan: Kalkulasi aktif pengeluaran vs bulan lalu (↑ +X% / ↓ -X%) dan komparasi persentase pengeluaran vs target pagu anggaran program kerja.*
+
+### 12. Modal Permintaan & Reset Mandiri Kata Sandi (Daftar Bug #4 Butir 4)
+![14 Reset Password Modal](public/screenshots/14-reset-password-modal.png)
+*Pembaruan: Modal lupa kata sandi dengan verifikasi email terdaftar, validasi panjang sandi, konfirmasi instan, dan penyimpanan persisten.*
+
+### 13. Isolasi Multi-Tenant Antar Entitas Organisasi Setingkat (Daftar Bug #4 Butir 2)
+![15 Multi-Tenant DPD Isolation](public/screenshots/15-multi-tenant-dpd-isolation.png)
+*Pembaruan: Pemisahan data per entitas organisasi (DPD DKI vs DPD Jatim). Menu Approval dihilangkan dari sidebar pimpinan non-DPP.*
+
+### 14. Sentralisasi Otoritas Approval Akun ke DPP IMM (Daftar Bug #4 Butir 3)
+![16 DPP Centralized Approval](public/screenshots/16-dpp-centralized-approval.png)
+*Pembaruan: Seluruh pengajuan pendaftaran akun organisasi dari DPD, PC, KORKOM, hingga PK terpusat diverifikasi dan disetujui satu pintu oleh DPP IMM.*
+
+### 15. Unduh Langsung Berkas PDF Resmi Sesuai Preview (Daftar Bug #4 Butir 5)
+![17 Direct PDF Download](public/screenshots/17-direct-pdf-download.png)
+*Pembaruan: Tombol Unduh Dokumen PDF mengeksekusi html2canvas + jsPDF langsung menghasilkan file PDF ke perangkat tanpa membuka dialog printer browser.*
+
+### 16. Kop Surat Resmi Tingkat DPP IMM (Dokumen Cetak & PDF)
+![18 Kop Surat DPP](public/screenshots/18-kop-surat-dpp-resmi.png)
+*Pembaruan: Tipografi merah serif bold 'DEWAN PIMPINAN PUSAT' dan 'IKATAN MAHASISWA MUHAMMADIYAH', lambang IMM kiri, logo SAKU kanan, garis ganda merah, tanpa alamat/url/email.*
+
+### 17. Kop Surat Resmi Tingkat DPD IMM (Dokumen Cetak & PDF)
+![19 Kop Surat DPD](public/screenshots/19-kop-surat-dpd-resmi.png)
+*Pembaruan: Tipografi merah 'DEWAN PIMPINAN DAERAH', 'IKATAN MAHASISWA MUHAMMADIYAH', dan nama daerah 'DKI JAKARTA' sesuai level akun.*
+
 ---
 
 ## 4. BUKTI VERIFIKASI AKHIR
@@ -110,12 +148,17 @@ Berikut adalah kompilasi visual 10 tangkapan layar antarmuka hasil perbaikan:
 ```bash
 npm run build
 # > tsc && vite build
-# ✓ 2336 modules transformed.
+# ✓ 2716 modules transformed.
 # dist/index.html                     1.24 kB │ gzip:   0.63 kB
-# dist/assets/index-DNlKWcrE.css     37.75 kB │ gzip:   7.01 kB
-# dist/assets/index-AwLo88qh.js     935.25 kB │ gzip: 244.32 kB
-# dist/assets/html2pdf-BxHZSdrP.js  982.47 kB │ gzip: 282.71 kB
-# ✓ built in 8.10s (Exit code: 0)
+# dist/assets/index-CDweDL6G.css     39.44 kB │ gzip:   7.24 kB
+# dist/assets/index-Cu4s6zax.js     946.78 kB │ gzip: 247.18 kB
+# dist/assets/html2pdf-HEFvxlAU.js  982.47 kB │ gzip: 282.71 kB
+# ✓ built in 8.18s (Exit code: 0)
 ```
 
-Dokumen PDF cetak resmi terlampir pada berkas: [**`LAPORAN_AUDIT_DAN_PERBAIKAN_SAKU_IMM.pdf`**](file:///Users/macbook/Desktop/Software%20IMM/LAPORAN_AUDIT_DAN_PERBAIKAN_SAKU_IMM.pdf).
+Dokumen PDF cetak resmi terlampir pada berkas: [**`REPORT_PERBAIKAN_BUG_SAKU_IMM.pdf`**](file:///Users/macbook/Desktop/Software%20IMM/REPORT_PERBAIKAN_BUG_SAKU_IMM.pdf).  
+Dokumen perencanaan Bug #3 terlampir pada berkas: [**`daftar_bug_3_implementation_plan.md`**](file:///Users/macbook/.gemini/antigravity-ide/brain/7874acfe-fa08-4b3f-b3c5-5699a589b507/daftar_bug_3_implementation_plan.md).  
+Dokumen perencanaan Bug #4 terlampir pada berkas: [**`daftar_bug_4_implementation_plan.md`**](file:///Users/macbook/.gemini/antigravity-ide/brain/7874acfe-fa08-4b3f-b3c5-5699a589b507/daftar_bug_4_implementation_plan.md).  
+Dokumen perencanaan Kop Surat Resmi terlampir pada berkas: [**`kop_surat_resmi_implementation_plan.md`**](file:///Users/macbook/.gemini/antigravity-ide/brain/7874acfe-fa08-4b3f-b3c5-5699a589b507/kop_surat_resmi_implementation_plan.md).
+
+

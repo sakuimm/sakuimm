@@ -16,6 +16,7 @@ import { FlaskConical } from 'lucide-react';
 
 import { InputProkerView } from './components/InputProkerView';
 import { TransactionFormView } from './components/TransactionFormView';
+import { filterTransaksiByPeriod } from './utils/dateUtils';
 
 export function App() {
   const initialSession = typeof window !== 'undefined' ? storageService.getUserSession() : null;
@@ -41,6 +42,7 @@ export function App() {
   });
   const [userName, setUserName] = useState<string>(initialSession?.userName || 'Immawan Ahmad');
   const [userEmail, setUserEmail] = useState<string>(initialSession?.userEmail || 'bendahara@imm.or.id');
+  const [userOrgName, setUserOrgName] = useState<string>(initialSession?.userOrgName || '');
   const [activeTab, setActiveTab] = useState(() => {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
@@ -50,7 +52,8 @@ export function App() {
   });
   const [isAggregateMode, setIsAggregateMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState('Agustus 2026');
+  const [selectedBulan, setSelectedBulan] = useState<string>('ALL');
+  const [selectedTahun, setSelectedTahun] = useState<string>('2026');
 
   // Dynamic Data States (Loaded & Saved via StorageService & ApiService)
   const [transaksiList, setTransaksiList] = useState<Transaksi[]>([]);
@@ -81,16 +84,22 @@ export function App() {
     if (session && session.isLoggedIn) {
       setIsLoggedIn(true);
       setUserRole(session.userRole || 'bendahara_umum');
-      setCurrentLevel(levelParam || session.currentLevel || 'PK');
+      const finalLevel = levelParam || session.currentLevel || 'PK';
+      setCurrentLevel(finalLevel);
       setUserName(session.userName || 'Immawan Ahmad');
       setUserEmail(session.userEmail || 'bendahara@imm.or.id');
+      setUserOrgName(session.userOrgName || getOrgName(finalLevel));
       setActiveTab(tabParam || 'dashboard');
     } else if (tabParam) {
       setIsLoggedIn(true);
       setActiveTab(tabParam);
-      if (levelParam) setCurrentLevel(levelParam);
+      if (levelParam) {
+        setCurrentLevel(levelParam);
+        setUserOrgName(getOrgName(levelParam));
+      }
     } else if (levelParam) {
       setCurrentLevel(levelParam);
+      setUserOrgName(getOrgName(levelParam));
     }
   }, []);
 
@@ -105,14 +114,16 @@ export function App() {
     }
   };
 
-  const handleLogin = (role: UserRole, level: OrgLevel, email: string, name: string) => {
+  const handleLogin = (role: UserRole, level: OrgLevel, email: string, name: string, orgName?: string) => {
     const finalName = name || 'Immawan Ahmad';
     const finalEmail = email || 'bendahara@imm.or.id';
+    const finalOrg = orgName || getOrgName(level);
     
     setUserRole(role);
     setCurrentLevel(level);
     setUserName(finalName);
     setUserEmail(finalEmail);
+    setUserOrgName(finalOrg);
     setIsLoggedIn(true);
     setActiveTab('dashboard');
 
@@ -122,7 +133,8 @@ export function App() {
       userRole: role,
       currentLevel: level,
       userName: finalName,
-      userEmail: finalEmail
+      userEmail: finalEmail,
+      userOrgName: finalOrg
     });
   };
 
@@ -132,10 +144,11 @@ export function App() {
   };
 
   const handleAddTransaksi = (trx: Transaksi) => {
+    const effectiveOrg = userOrgName || getOrgName(currentLevel);
     const trxWithLevel: Transaksi = {
       ...trx,
       organisasiLevel: trx.organisasiLevel || currentLevel,
-      organisasiNama: trx.organisasiNama || getOrgName(currentLevel)
+      organisasiNama: trx.organisasiNama || effectiveOrg
     };
     const updated = storageService.addTransaksi(trxWithLevel, userName);
     setTransaksiList(updated);
@@ -157,10 +170,11 @@ export function App() {
   };
 
   const handleAddProker = (proker: ProgramKerja) => {
+    const effectiveOrg = userOrgName || getOrgName(currentLevel);
     const prokerWithLevel: ProgramKerja = {
       ...proker,
       organisasiLevel: proker.organisasiLevel || currentLevel,
-      organisasiNama: proker.organisasiNama || getOrgName(currentLevel)
+      organisasiNama: proker.organisasiNama || effectiveOrg
     };
     const updated = storageService.addProker(prokerWithLevel);
     setProkerList(updated);
@@ -236,26 +250,58 @@ export function App() {
     PK: 5,
   };
 
-  // Strict Own Level Isolation for Operational Views (Input Transaksi kas & Daftar Proker)
-  const ownProkerList = prokerList.filter((p) => (p.organisasiLevel || 'PK') === currentLevel);
-  const ownTransaksiList = transaksiList.filter((t) => (t.organisasiLevel || 'PK') === currentLevel);
+  // Strict Own Organization Entity Isolation for Operational Views (Input Transaksi kas & Daftar Proker)
+  const currentOrg = (userOrgName || getOrgName(currentLevel)).trim().toLowerCase();
+
+  const ownProkerList = prokerList.filter((p) => {
+    const pOrg = (p.organisasiNama || '').trim().toLowerCase();
+    const pLevel = p.organisasiLevel || 'PK';
+    return pOrg ? pOrg === currentOrg : pLevel === currentLevel;
+  });
+
+  const ownTransaksiList = transaksiList.filter((t) => {
+    const tOrg = (t.organisasiNama || '').trim().toLowerCase();
+    const tLevel = t.organisasiLevel || 'PK';
+    return tOrg ? tOrg === currentOrg : tLevel === currentLevel;
+  });
 
   // Aggregate / Roll-up Data for Dashboard & Reports
   const aggregateProkerList = prokerList.filter((p) => {
     const pLevel = p.organisasiLevel || 'PK';
-    if (isAggregateMode) {
+    const pOrg = (p.organisasiNama || '').trim().toLowerCase();
+    if (!isAggregateMode) {
+      return pOrg ? pOrg === currentOrg : pLevel === currentLevel;
+    }
+    if (currentLevel === 'DPP') {
       return ORG_ORDER[pLevel] >= ORG_ORDER[currentLevel];
     }
-    return pLevel === currentLevel;
+    if (ORG_ORDER[pLevel] === ORG_ORDER[currentLevel]) {
+      return pOrg ? pOrg === currentOrg : true;
+    }
+    return ORG_ORDER[pLevel] > ORG_ORDER[currentLevel];
   });
 
   const aggregateTransaksiList = transaksiList.filter((t) => {
     const tLevel = t.organisasiLevel || 'PK';
-    if (isAggregateMode) {
+    const tOrg = (t.organisasiNama || '').trim().toLowerCase();
+    if (!isAggregateMode) {
+      return tOrg ? tOrg === currentOrg : tLevel === currentLevel;
+    }
+    if (currentLevel === 'DPP') {
       return ORG_ORDER[tLevel] >= ORG_ORDER[currentLevel];
     }
-    return tLevel === currentLevel;
+    if (ORG_ORDER[tLevel] === ORG_ORDER[currentLevel]) {
+      return tOrg ? tOrg === currentOrg : true;
+    }
+    return ORG_ORDER[tLevel] > ORG_ORDER[currentLevel];
   });
+
+  // Filter aggregate transactions by selected Month and Year
+  const periodFilteredAggregateTransaksiList = filterTransaksiByPeriod(
+    aggregateTransaksiList,
+    selectedBulan,
+    selectedTahun
+  );
 
   if (!isLoggedIn) {
     return (
@@ -300,8 +346,10 @@ export function App() {
           isAggregateMode={isAggregateMode}
           setIsAggregateMode={setIsAggregateMode}
           currentOrgName={getOrgName(currentLevel)}
-          selectedPeriod={selectedPeriod}
-          onPeriodChange={setSelectedPeriod}
+          selectedBulan={selectedBulan}
+          selectedTahun={selectedTahun}
+          onBulanChange={setSelectedBulan}
+          onTahunChange={setSelectedTahun}
           onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
 
@@ -331,11 +379,14 @@ export function App() {
 
           {activeTab === 'dashboard' && (
             <DashboardView
-              transaksiList={aggregateTransaksiList}
+              transaksiList={periodFilteredAggregateTransaksiList}
+              allTransaksiList={aggregateTransaksiList}
               prokerList={aggregateProkerList}
               currentLevel={currentLevel}
               userRole={userRole}
               isAggregateMode={isAggregateMode}
+              selectedBulan={selectedBulan}
+              selectedTahun={selectedTahun}
               onNavigateToTransaksi={() => setActiveTab('buat-laporan')}
             />
           )}
@@ -359,9 +410,11 @@ export function App() {
 
           {activeTab === 'laporan' && (
             <ReportsView
-              transaksiList={aggregateTransaksiList}
+              transaksiList={periodFilteredAggregateTransaksiList}
               currentLevel={currentLevel}
               isAggregateMode={isAggregateMode}
+              selectedBulan={selectedBulan}
+              selectedTahun={selectedTahun}
             />
           )}
 
@@ -377,7 +430,7 @@ export function App() {
             />
           )}
 
-          {activeTab === 'verifikasi' && currentLevel !== 'PK' && (
+          {activeTab === 'verifikasi' && currentLevel === 'DPP' && (
             <OrganizationVerificationView
               organisasiList={organisasiList}
               userLevel={currentLevel}

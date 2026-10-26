@@ -4,16 +4,22 @@ import { PrintableCashFlowReportModal } from './PrintableCashFlowReportModal';
 import { exportService } from '../services/exportService';
 import { FileSpreadsheet, CheckCircle2, Printer } from 'lucide-react';
 
+import { INDONESIAN_MONTH_NAMES } from '../utils/dateUtils';
+
 interface ReportsViewProps {
   transaksiList: Transaksi[];
   currentLevel: OrgLevel;
   isAggregateMode: boolean;
+  selectedBulan?: string;
+  selectedTahun?: string;
 }
 
 export const ReportsView: React.FC<ReportsViewProps> = ({
   transaksiList,
   currentLevel,
   isAggregateMode,
+  selectedBulan = 'ALL',
+  selectedTahun = '2026',
 }) => {
   const [showPrintCashFlowModal, setShowPrintCashFlowModal] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -99,7 +105,13 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             LAPORAN ARUS KAS (CASH FLOW STATEMENT)
           </h3>
           <p className="text-xs font-semibold text-slate-600">
-            SAKU IMM • IKATAN MAHASISWA MUHAMMADIYAH • PERIODE AGUSTUS 2026
+            SAKU IMM • IKATAN MAHASISWA MUHAMMADIYAH • {
+              selectedBulan !== 'ALL'
+                ? `PERIODE ${INDONESIAN_MONTH_NAMES[parseInt(selectedBulan, 10) - 1].toUpperCase()} ${selectedTahun !== 'ALL' ? selectedTahun : ''}`.trim()
+                : selectedTahun !== 'ALL'
+                ? `PERIODE TAHUN ${selectedTahun}`
+                : 'SEMUA PERIODE (KUMULATIF)'
+            }
           </p>
         </div>
 

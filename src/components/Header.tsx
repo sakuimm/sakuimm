@@ -7,6 +7,11 @@ interface HeaderProps {
   isAggregateMode: boolean;
   setIsAggregateMode: (mode: boolean) => void;
   currentOrgName: string;
+  selectedBulan?: string;
+  selectedTahun?: string;
+  onBulanChange?: (bulan: string) => void;
+  onTahunChange?: (tahun: string) => void;
+  // Backward compatibility
   selectedPeriod?: string;
   onPeriodChange?: (period: string) => void;
   onToggleMobileMenu?: () => void;
@@ -17,8 +22,10 @@ export const Header: React.FC<HeaderProps> = ({
   isAggregateMode,
   setIsAggregateMode,
   currentOrgName,
-  selectedPeriod = 'Agustus 2026',
-  onPeriodChange,
+  selectedBulan = 'ALL',
+  selectedTahun = '2026',
+  onBulanChange,
+  onTahunChange,
   onToggleMobileMenu,
 }) => {
   return (
@@ -78,24 +85,46 @@ export const Header: React.FC<HeaderProps> = ({
           <img src="/bca-syariah-cobranding.png" alt="BCA Syariah x SAKU IMM" className="h-7 md:h-8 object-contain" />
         </div>
 
-        {/* Interactive Calendar Filter */}
-        <div className="flex items-center gap-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-xl text-slate-700 hover:border-[#7A0C1E]/40 transition-colors">
+        {/* Dual Filter: Bulan dan Tahun */}
+        <div className="flex items-center gap-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-xl text-slate-700 hover:border-[#7A0C1E]/40 transition-colors shadow-2xs">
           <Calendar className="w-3.5 h-3.5 text-[#7A0C1E] flex-shrink-0" />
+          
+          {/* Filter Bulan */}
           <select
-            value={selectedPeriod}
-            onChange={(e) => onPeriodChange && onPeriodChange(e.target.value)}
+            value={selectedBulan}
+            onChange={(e) => onBulanChange && onBulanChange(e.target.value)}
             className="bg-transparent text-xs font-bold text-[#2D3748] focus:outline-none cursor-pointer"
-            title="Pilih Filter Periode Kalender"
+            title="Pilih Filter Bulan"
           >
-            <option value="Agustus 2026">Agustus 2026</option>
-            <option value="Juli 2026">Juli 2026</option>
-            <option value="Juni 2026">Juni 2026</option>
-            <option value="Mei 2026">Mei 2026</option>
-            <option value="April 2026">April 2026</option>
-            <option value="Maret 2026">Maret 2026</option>
-            <option value="Februari 2026">Februari 2026</option>
-            <option value="Januari 2026">Januari 2026</option>
-            <option value="Semua Periode">Semua Periode</option>
+            <option value="ALL">Semua Bulan</option>
+            <option value="1">Januari</option>
+            <option value="2">Februari</option>
+            <option value="3">Maret</option>
+            <option value="4">April</option>
+            <option value="5">Mei</option>
+            <option value="6">Juni</option>
+            <option value="7">Juli</option>
+            <option value="8">Agustus</option>
+            <option value="9">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Desember</option>
+          </select>
+
+          <span className="text-slate-300 font-normal">/</span>
+
+          {/* Filter Tahun */}
+          <select
+            value={selectedTahun}
+            onChange={(e) => onTahunChange && onTahunChange(e.target.value)}
+            className="bg-transparent text-xs font-bold text-[#2D3748] focus:outline-none cursor-pointer"
+            title="Pilih Filter Tahun"
+          >
+            <option value="ALL">Semua Tahun</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
           </select>
         </div>
       </div>

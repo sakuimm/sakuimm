@@ -4,7 +4,7 @@
 -- ====================================================================
 
 -- 1. TIPE ENUM UTAMA
-CREATE TYPE level_organisasi AS ENUM ('DPP', 'DPD', 'PC', 'PK');
+CREATE TYPE level_organisasi AS ENUM ('DPP', 'DPD', 'PC', 'KORKOM', 'PK');
 CREATE TYPE status_organisasi AS ENUM ('pending', 'verified', 'rejected');
 CREATE TYPE role_user AS ENUM ('bendahara_umum', 'tim_verifikasi_internal', 'super_admin');
 CREATE TYPE kategori_proker AS ENUM ('Keagamaan', 'Kemahasiswaan', 'Kemasyarakatan');
@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS organisasi (
     nama VARCHAR(255) NOT NULL,
     level level_organisasi NOT NULL,
     status status_organisasi NOT NULL DEFAULT 'pending',
+    email VARCHAR(255),
+    nama_bendahara VARCHAR(255),
+    password_hash VARCHAR(255),
+    parent_id UUID REFERENCES organisasi(id) ON DELETE SET NULL,
+    parent_nama VARCHAR(255),
+    tanggal_pendaftaran TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     alasan_penolakan TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -57,10 +63,17 @@ CREATE TABLE IF NOT EXISTS program_kerja (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organisasi_id UUID NOT NULL REFERENCES organisasi(id) ON DELETE CASCADE,
     bidang_id UUID NOT NULL REFERENCES bidang(id) ON DELETE CASCADE,
+    bidang_nama VARCHAR(255),
     nama_proker VARCHAR(255) NOT NULL,
     kategori kategori_proker NOT NULL,
     tanggal_pelaksanaan VARCHAR(100),
     status_laporan VARCHAR(50) DEFAULT 'Belum',
+    target_anggaran NUMERIC(15, 2) DEFAULT 0,
+    penanggung_jawab VARCHAR(255),
+    deskripsi TEXT,
+    catatan_revisi TEXT,
+    organisasi_nama VARCHAR(255),
+    organisasi_level level_organisasi,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -69,13 +82,23 @@ CREATE TABLE IF NOT EXISTS program_kerja (
 CREATE TABLE IF NOT EXISTS transaksi (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organisasi_id UUID NOT NULL REFERENCES organisasi(id) ON DELETE CASCADE,
+    organisasi_nama VARCHAR(255) NOT NULL,
+    organisasi_level level_organisasi,
     bidang_id UUID NOT NULL REFERENCES bidang(id) ON DELETE CASCADE,
+    bidang_nama VARCHAR(255),
     program_kerja_id UUID NOT NULL REFERENCES program_kerja(id) ON DELETE CASCADE,
+    program_kerja_nama VARCHAR(255),
+    kategori_proker kategori_proker,
     tanggal DATE NOT NULL,
     keterangan TEXT NOT NULL,
     jenis_nominal jenis_nominal NOT NULL,
     nominal NUMERIC(15, 2) NOT NULL CHECK (nominal > 0),
     jenis_transaksi jenis_transaksi NOT NULL,
+    bukti_drive_file_id VARCHAR(255),
+    bukti_drive_url TEXT,
+    upload_status VARCHAR(50) DEFAULT 'COMPLETED',
+    status_revisi VARCHAR(50) DEFAULT 'normal',
+    catatan_revisi TEXT,
     is_deleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -147,3 +170,49 @@ BEGIN
     END IF;
 END;
 $$;
+
+-- ====================================================================
+-- STORAGE BUCKET & RLS POLICIES (SUPABASE MANAGED CLOUD)
+-- ====================================================================
+
+-- 1. Buat bucket 'receipts' untuk bukti nota kas (Public bucket)
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('receipts', 'receipts', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- 2. Storage Policies
+CREATE POLICY "Public Read Receipts" 
+ON storage.objects FOR SELECT 
+USING (bucket_id = 'receipts');
+
+CREATE POLICY "Public Insert Receipts" 
+ON storage.objects FOR INSERT 
+WITH CHECK (bucket_id = 'receipts');
+
+CREATE POLICY "Public Update Receipts" 
+ON storage.objects FOR UPDATE 
+USING (bucket_id = 'receipts');
+
+-- 3. Row Level Security (RLS) Permissive Policies untuk Public/Anon Client
+ALTER TABLE organisasi ENABLE ROW LEVEL SECURITY;
+ALTER TABLE program_kerja ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transaksi ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anon read all organisasi" ON organisasi FOR SELECT USING (true);
+CREATE POLICY "Allow anon insert organisasi" ON organisasi FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anon update organisasi" ON organisasi FOR UPDATE USING (true);
+
+CREATE POLICY "Allow anon read all program_kerja" ON program_kerja FOR SELECT USING (true);
+CREATE POLICY "Allow anon insert program_kerja" ON program_kerja FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anon update program_kerja" ON program_kerja FOR UPDATE USING (true);
+CREATE POLICY "Allow anon delete program_kerja" ON program_kerja FOR DELETE USING (true);
+
+CREATE POLICY "Allow anon read all transaksi" ON transaksi FOR SELECT USING (true);
+CREATE POLICY "Allow anon insert transaksi" ON transaksi FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anon update transaksi" ON transaksi FOR UPDATE USING (true);
+CREATE POLICY "Allow anon delete transaksi" ON transaksi FOR DELETE USING (true);
+
+CREATE POLICY "Allow anon read all audit_log" ON audit_log FOR SELECT USING (true);
+CREATE POLICY "Allow anon insert audit_log" ON audit_log FOR INSERT WITH CHECK (true);
+

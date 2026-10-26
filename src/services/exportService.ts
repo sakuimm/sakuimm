@@ -185,24 +185,54 @@ export const exportService = {
     }
 
     try {
-      // Dynamic import html2pdf to ensure client-side execution
-      // @ts-ignore
-      const html2pdfModule = await import('html2pdf.js');
-      const html2pdf = html2pdfModule.default || html2pdfModule;
+      // Dynamic import to maintain lightweight initial bundle
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
 
-      const opt = {
-        margin: [8, 8, 8, 8] as [number, number, number, number],
-        filename: fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`,
-        image: { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
-      };
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
+      });
 
-      await html2pdf().set(opt).from(element).save();
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfPageWidth = pdf.internal.pageSize.getWidth();
+      const pdfPageHeight = pdf.internal.pageSize.getHeight();
+      
+      const imgWidth = pdfPageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfPageHeight;
+
+      // Add remaining pages if content is taller than single A4 page
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfPageHeight;
+      }
+
+      const finalFileName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
+      pdf.save(finalFileName);
     } catch (err) {
       console.error('Failed to export PDF directly:', err);
-      // Fallback to window.print if html2pdf fails
-      window.print();
+      // Clean fallback: do NOT call window.print() so print dialog is never triggered
+      alert('Terjadi kendala saat memproses berkas PDF langsung. Silakan gunakan tombol Cetak Printer.');
     }
   }
 };

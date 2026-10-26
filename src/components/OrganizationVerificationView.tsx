@@ -46,21 +46,19 @@ export const OrganizationVerificationView: React.FC<OrganizationVerificationView
         <div>
           <h2 className="text-xl font-bold text-[#2D3748] flex items-center gap-2">
             <ShieldCheck className="w-6 h-6 text-[#7A0C1E]" />
-            <span>Approval & Verifikasi User / Organisasi</span>
+            <span>Approval & Verifikasi User / Organisasi (Pusat)</span>
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Panel persetujuan berjenjang akun & pimpinan turunan (Level {currentLevelOrder}: {userLevel})
+            Otoritas Tunggal: Dewan Pimpinan Pusat (DPP IMM) — Persetujuan Akun & Pimpinan Se-Indonesia
           </p>
         </div>
 
-        {targetChildLevel && (
-          <div className="px-3.5 py-2 bg-[#7A0C1E]/10 border border-[#7A0C1E]/20 rounded-xl text-xs flex items-center gap-2">
-            <span className="font-semibold text-[#7A0C1E]">Otoritas Approval:</span>
-            <span className="font-extrabold text-[#7A0C1E] bg-[#7A0C1E] text-white px-2 py-0.5 rounded text-[11px]">
-              No.{currentLevelOrder} ({userLevel}) &rarr; Menyetujui No.{targetLevelOrder} ({targetChildLevel})
-            </span>
-          </div>
-        )}
+        <div className="px-3.5 py-2 bg-[#7A0C1E]/10 border border-[#7A0C1E]/20 rounded-xl text-xs flex items-center gap-2">
+          <span className="font-semibold text-[#7A0C1E]">Otoritas Approval Terpusat:</span>
+          <span className="font-extrabold bg-[#7A0C1E] text-white px-2 py-0.5 rounded text-[11px]">
+            DPP IMM &rarr; Seluruh Level (DPD, PC, KORKOM, PK)
+          </span>
+        </div>
       </div>
 
       {/* Pending Verifications Card */}

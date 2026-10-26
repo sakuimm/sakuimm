@@ -27,17 +27,18 @@ export const OFFICIAL_IMM_BIDANG: Bidang[] = [
 ];
 
 export const MOCK_ORGANISASI: Organisasi[] = [
-  { id: 'org-dpp', nama: 'DPP IMM (Dewan Pimpinan Pusat)', level: 'DPP', status: 'verified' },
-  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified' },
-  { id: 'org-pc', nama: 'PC IMM Jakarta Selatan', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'verified' },
-  { id: 'org-korkom', nama: 'KORKOM IMM Universitas Indonesia', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'verified' },
-  { id: 'org-pk', nama: 'PK IMM Teknik Mesin Universitas Indonesia', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'verified' },
+  { id: 'org-dpp', nama: 'DPP IMM (Dewan Pimpinan Pusat)', level: 'DPP', status: 'verified', email: 'dpp@imm.or.id', namaBendahara: 'Ahmad Fauzan' },
+  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified', email: 'dpd@imm.or.id', namaBendahara: 'Immawan DKI' },
+  { id: 'org-dpd-jatim', nama: 'DPD IMM Jawa Timur', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified', email: 'dpd.jatim@imm.or.id', namaBendahara: 'Immawan Hadi Jatim' },
+  { id: 'org-pc', nama: 'PC IMM Jakarta Selatan', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'verified', email: 'pc@imm.or.id', namaBendahara: 'Immawati Fatimah' },
+  { id: 'org-korkom', nama: 'KORKOM IMM Universitas Indonesia', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'verified', email: 'korkom@imm.or.id', namaBendahara: 'Immawan Farhan' },
+  { id: 'org-pk', nama: 'PK IMM Teknik Mesin Universitas Indonesia', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'verified', email: 'pk@imm.or.id', namaBendahara: 'Immawan Ahmad' },
   
-  // Pending Approval Chain Samples for each Tier
-  { id: 'org-pending-pk', nama: 'PK IMM Fakultas Hukum Universitas Pancasila', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'pending' },
-  { id: 'org-pending-korkom', nama: 'KORKOM IMM Universitas Pancasila', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'pending' },
-  { id: 'org-pending-pc', nama: 'PC IMM Kota Depok', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'pending' },
-  { id: 'org-pending-dpd', nama: 'DPD IMM Jawa Barat', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'pending' },
+  // Pending Approval Chain Samples for each Tier (Semua diapprove terpusat oleh DPP IMM)
+  { id: 'org-pending-pk', nama: 'PK IMM Fakultas Hukum Universitas Pancasila', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'pending', email: 'pk.hukum@imm.or.id', namaBendahara: 'Fikri' },
+  { id: 'org-pending-korkom', nama: 'KORKOM IMM Universitas Pancasila', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'pending', email: 'korkom.up@imm.or.id', namaBendahara: 'Zaky' },
+  { id: 'org-pending-pc', nama: 'PC IMM Kota Depok', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'pending', email: 'pc.depok@imm.or.id', namaBendahara: 'Farhan' },
+  { id: 'org-pending-dpd', nama: 'DPD IMM Jawa Barat', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'pending', email: 'dpd.jabar@imm.or.id', namaBendahara: 'Ridwan' },
 ];
 
 export const MOCK_PROKER: ProgramKerja[] = [
@@ -52,14 +53,45 @@ export const MOCK_PROKER: ProgramKerja[] = [
     penanggungJawab: 'Ahmad Fauzan',
     tanggalDibuat: '1 Juli 2026',
     deskripsi: 'Rapat koordinasi nasional untuk membahas program kerja IMM tahun 2026.',
+    targetAnggaran: 25000000,
     organisasiLevel: 'DPP',
     organisasiNama: 'DPP IMM (Pusat)'
   },
-  { id: 'pr-1', bidangId: 'b2', bidangNama: 'Kader', namaProker: 'Darul Arqam Dasar (DAD) XXVI', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '02 - 04 September 2026', statusLaporan: 'Selesai', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
-  { id: 'pr-2', bidangId: 'b11', bidangNama: 'Tabligh dan Kajian Keislaman', namaProker: 'Kajian Rutin Selasa Subuh', kategori: 'Keagamaan', tanggalPelaksanaan: '12 - 26 Agustus 2026', statusLaporan: 'Selesai', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
-  { id: 'pr-3', bidangId: 'b8', bidangNama: 'Sosial dan Pemberdayaan Masyarakat', namaProker: 'Bakti Sosial & Pengobatan Gratis', kategori: 'Kemasyarakatan', tanggalPelaksanaan: '15 - 17 September 2026', statusLaporan: 'Belum', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
-  { id: 'pr-4', bidangId: 'b9', bidangNama: 'Ekonomi dan Kewirausahaan', namaProker: 'Penjualan Merchandising IMM', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '01 - 30 Agustus 2026', statusLaporan: 'Selesai', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
-  { id: 'pr-5', bidangId: 'b12', bidangNama: 'Media dan Komunikasi', namaProker: 'Pelatihan Desain & Website', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '10 - 12 Oktober 2026', statusLaporan: 'Belum', organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  {
+    id: 'pr-rakorda-dki',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    namaProker: 'Rapat Kerja Daerah DPD IMM DKI Jakarta',
+    kategori: 'Kemahasiswaan',
+    tanggalPelaksanaan: '20 - 22 Agustus 2026',
+    statusLaporan: 'Selesai',
+    penanggungJawab: 'Immawan DKI',
+    tanggalDibuat: '1 Agustus 2026',
+    deskripsi: 'Rakerda koordinasi cabang dan komisariat se-DKI Jakarta',
+    targetAnggaran: 15000000,
+    organisasiLevel: 'DPD',
+    organisasiNama: 'DPD IMM DKI Jakarta'
+  },
+  {
+    id: 'pr-musyda-jatim',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    namaProker: 'Musyawarah Daerah IMM Jawa Timur',
+    kategori: 'Kemahasiswaan',
+    tanggalPelaksanaan: '15 - 18 Agustus 2026',
+    statusLaporan: 'Selesai',
+    penanggungJawab: 'Immawan Hadi Jatim',
+    tanggalDibuat: '1 Agustus 2026',
+    deskripsi: 'Musyawarah Daerah DPD IMM Jawa Timur',
+    targetAnggaran: 20000000,
+    organisasiLevel: 'DPD',
+    organisasiNama: 'DPD IMM Jawa Timur'
+  },
+  { id: 'pr-1', bidangId: 'b2', bidangNama: 'Kader', namaProker: 'Darul Arqam Dasar (DAD) XXVI', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '02 - 04 September 2026', statusLaporan: 'Selesai', targetAnggaran: 12000000, organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-2', bidangId: 'b11', bidangNama: 'Tabligh dan Kajian Keislaman', namaProker: 'Kajian Rutin Selasa Subuh', kategori: 'Keagamaan', tanggalPelaksanaan: '12 - 26 Agustus 2026', statusLaporan: 'Selesai', targetAnggaran: 3000000, organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-3', bidangId: 'b8', bidangNama: 'Sosial dan Pemberdayaan Masyarakat', namaProker: 'Bakti Sosial & Pengobatan Gratis', kategori: 'Kemasyarakatan', tanggalPelaksanaan: '15 - 17 September 2026', statusLaporan: 'Belum', targetAnggaran: 5000000, organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-4', bidangId: 'b9', bidangNama: 'Ekonomi dan Kewirausahaan', namaProker: 'Penjualan Merchandising IMM', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '01 - 30 Agustus 2026', statusLaporan: 'Selesai', targetAnggaran: 4000000, organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
+  { id: 'pr-5', bidangId: 'b12', bidangNama: 'Media dan Komunikasi', namaProker: 'Pelatihan Desain & Website', kategori: 'Kemahasiswaan', tanggalPelaksanaan: '10 - 12 Oktober 2026', statusLaporan: 'Belum', targetAnggaran: 3500000, organisasiLevel: 'PK', organisasiNama: 'PK IMM Teknik Mesin UI' },
 ];
 
 export const MOCK_TRANSAKSI: Transaksi[] = [
@@ -270,6 +302,94 @@ export const MOCK_TRANSAKSI: Transaksi[] = [
     uploadStatus: 'PENDING',
     organisasiNama: 'PK IMM Teknik Mesin UI',
     organisasiLevel: 'PK'
+  },
+  // Transaksi Juli 2026 DPP (Untuk pembanding dinamis vs bulan lalu)
+  {
+    id: 'TRX-JULI-01',
+    tanggal: '15 Jul 2026',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    programKerjaId: 'pr-rakornas',
+    programKerjaNama: 'Rapat Koordinasi Nasional IMM',
+    kategoriProker: 'Kemahasiswaan',
+    keterangan: 'Dana Awal Pra-Rakornas Juli',
+    jenisNominal: 'pemasukan',
+    nominal: 8000000,
+    jenisTransaksi: 'operasional',
+    buktiDriveFileId: 'DRV-JULI-01',
+    uploadStatus: 'COMPLETED',
+    organisasiNama: 'DPP IMM (Pusat)',
+    organisasiLevel: 'DPP'
+  },
+  // Transaksi DPD IMM DKI Jakarta (Isolasi Tenant DPD DKI)
+  {
+    id: 'TRX-DKI-01',
+    tanggal: '20 Agu 2026',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    programKerjaId: 'pr-rakorda-dki',
+    programKerjaNama: 'Rapat Kerja Daerah DPD IMM DKI Jakarta',
+    kategoriProker: 'Kemahasiswaan',
+    keterangan: 'Bantuan Operasional Pimpinan Daerah DKI',
+    jenisNominal: 'pemasukan',
+    nominal: 12000000,
+    jenisTransaksi: 'operasional',
+    buktiDriveFileId: 'DRV-DKI-01',
+    uploadStatus: 'COMPLETED',
+    organisasiNama: 'DPD IMM DKI Jakarta',
+    organisasiLevel: 'DPD'
+  },
+  {
+    id: 'TRX-DKI-02',
+    tanggal: '22 Agu 2026',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    programKerjaId: 'pr-rakorda-dki',
+    programKerjaNama: 'Rapat Kerja Daerah DPD IMM DKI Jakarta',
+    kategoriProker: 'Kemahasiswaan',
+    keterangan: 'Konsumsi dan Perlengkapan Rakerda DKI',
+    jenisNominal: 'pengeluaran',
+    nominal: 7200000,
+    jenisTransaksi: 'operasional',
+    buktiDriveFileId: 'DRV-DKI-02',
+    uploadStatus: 'COMPLETED',
+    organisasiNama: 'DPD IMM DKI Jakarta',
+    organisasiLevel: 'DPD'
+  },
+  // Transaksi DPD IMM Jawa Timur (Isolasi Tenant DPD Jatim - Terpisah dari DKI)
+  {
+    id: 'TRX-JATIM-01',
+    tanggal: '15 Agu 2026',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    programKerjaId: 'pr-musyda-jatim',
+    programKerjaNama: 'Musyawarah Daerah IMM Jawa Timur',
+    kategoriProker: 'Kemahasiswaan',
+    keterangan: 'Dana Hibah Pemprov Jawa Timur',
+    jenisNominal: 'pemasukan',
+    nominal: 15000000,
+    jenisTransaksi: 'operasional',
+    buktiDriveFileId: 'DRV-JATIM-01',
+    uploadStatus: 'COMPLETED',
+    organisasiNama: 'DPD IMM Jawa Timur',
+    organisasiLevel: 'DPD'
+  },
+  {
+    id: 'TRX-JATIM-02',
+    tanggal: '18 Agu 2026',
+    bidangId: 'b1',
+    bidangNama: 'Organisasi',
+    programKerjaId: 'pr-musyda-jatim',
+    programKerjaNama: 'Musyawarah Daerah IMM Jawa Timur',
+    kategoriProker: 'Kemahasiswaan',
+    keterangan: 'Sewa Gedung & Konsumsi Musyda Jatim',
+    jenisNominal: 'pengeluaran',
+    nominal: 8500000,
+    jenisTransaksi: 'operasional',
+    buktiDriveFileId: 'DRV-JATIM-02',
+    uploadStatus: 'COMPLETED',
+    organisasiNama: 'DPD IMM Jawa Timur',
+    organisasiLevel: 'DPD'
   }
 ];
 

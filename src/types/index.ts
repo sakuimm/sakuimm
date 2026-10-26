@@ -30,6 +30,7 @@ export interface Organisasi {
   email?: string;
   namaBendahara?: string;
   status: 'verified' | 'pending' | 'rejected';
+  password?: string;
   tanggalPendaftaran?: string;
   alasanPenolakan?: string;
 }

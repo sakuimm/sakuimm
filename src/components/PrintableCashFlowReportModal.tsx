@@ -121,13 +121,14 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
     };
   });
 
-  const getLevelHeaderTitle = (lvl: OrgLevel) => {
+  const getOfficialLeadershipTitle = (lvl: OrgLevel) => {
     switch (lvl) {
-      case 'PK': return 'PIMPINAN KOMISARIAT IMM';
-      case 'KORKOM': return 'KOORDINATOR KOMISARIAT IMM';
-      case 'PC': return 'PIMPINAN CABANG IMM';
-      case 'DPD': return 'DEWAN PIMPINAN DAERAH IMM';
-      case 'DPP': return 'DEWAN PIMPINAN PUSAT IMM';
+      case 'PK': return 'PIMPINAN KOMISARIAT';
+      case 'KORKOM': return 'KOORDINATOR KOMISARIAT';
+      case 'PC': return 'PIMPINAN CABANG';
+      case 'DPD': return 'DEWAN PIMPINAN DAERAH';
+      case 'DPP': return 'DEWAN PIMPINAN PUSAT';
+      default: return 'PIMPINAN';
     }
   };
 
@@ -198,38 +199,37 @@ export const PrintableCashFlowReportModal: React.FC<PrintableCashFlowReportModal
         <div className="p-8 md:p-12 text-[#1A202C] font-sans leading-relaxed bg-white print:p-6" id="printable-cashflow-area">
           
           {/* 1. KOP SURAT RESMI ORGANISASI IMM (Sesuai Tanfidz Muktamar XVIII) */}
-          <div className="flex items-center justify-between pb-3 mb-1">
-            {/* Logo Kiri: Vektor Resmi Wikipedia IMM */}
-            <div className="w-20 flex-shrink-0 flex items-center justify-center">
-              <img src="/imm-logo-official.svg" alt="Lambang Resmi IMM" className="h-20 w-20 object-contain" />
+          <div className="flex items-center justify-between pb-2 mb-1">
+            {/* Logo Kiri: Lambang Resmi Wikipedia IMM */}
+            <div className="w-20 flex-shrink-0 flex items-center justify-start">
+              <img src="/imm-logo-official.svg" alt="Lambang Resmi IMM" className="h-20 w-auto object-contain" />
             </div>
 
-            {/* Header Text Center */}
+            {/* Header Text Center: Tipografi Merah Resmi IMM */}
             <div className="text-center flex-1 px-4">
-              <h1 className="text-lg md:text-xl font-black tracking-wide uppercase text-[#1A202C]">
-                IKATAN MAHASISWA MUHAMMADIYAH
+              <h1 className="text-lg md:text-xl font-black tracking-wider uppercase text-[#B71C1C] font-serif">
+                {getOfficialLeadershipTitle(currentLevel)}
               </h1>
-              <h2 className="text-base md:text-lg font-black uppercase text-[#7A0C1E] tracking-wide mt-0.5">
-                {getLevelHeaderTitle(currentLevel)}
+              <h2 className="text-base md:text-lg font-black uppercase text-[#B71C1C] tracking-wide font-serif mt-0.5">
+                IKATAN MAHASISWA MUHAMMADIYAH
               </h2>
-              <p className="text-xs text-[#1A202C] font-extrabold mt-1 uppercase tracking-wider">
-                {currentOrgName}
-              </p>
-              <p className="text-[11px] text-slate-500 font-medium">
-                Sistem Tata Kelola Keuangan SAKU IMM • Terverifikasi Digital
-              </p>
+              {currentLevel !== 'DPP' && currentOrgName && (
+                <p className="text-xs md:text-sm font-bold text-[#B71C1C] uppercase tracking-wider font-serif mt-0.5">
+                  {currentOrgName.replace(/^(DPD|PC|PK|KORKOM)\s+IMM\s+/i, '').trim()}
+                </p>
+              )}
             </div>
 
             {/* Logo Kanan: Logo SAKU IMM Resmi */}
-            <div className="w-28 flex-shrink-0 flex items-center justify-end">
+            <div className="w-24 flex-shrink-0 flex items-center justify-end">
               <img src="/logosakuimmnew.png" alt="Logo SAKU IMM" className="h-14 w-auto object-contain" />
             </div>
           </div>
 
-          {/* Garis Pembatas Ganda Resmi (Atas Maroon Tebal 3px, Bawah Hitam Tipis 1px) */}
-          <div className="space-y-0.5 mb-6">
-            <div className="h-[3px] bg-[#7A0C1E] w-full" />
-            <div className="h-[1px] bg-slate-900 w-full" />
+          {/* Garis Pembatas Ganda Merah Resmi IMM */}
+          <div className="space-y-[2px] mb-6">
+            <div className="h-[2.5px] bg-[#B71C1C] w-full" />
+            <div className="h-[1px] bg-[#B71C1C] w-full" />
           </div>
 
           {/* 2. TITLE SECTION */}

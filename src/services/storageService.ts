@@ -13,16 +13,18 @@ const getKeys = () => {
     PROKER: `${prefix}proker_v1`,
     ORGANISASI: `${prefix}organisasi_v1`,
     AUDIT_LOG: `${prefix}audit_log_v1`,
-    USER_SESSION: `${prefix}user_session_v1`
+    USER_SESSION: `${prefix}user_session_v1`,
+    USER_PASSWORDS: `${prefix}user_passwords_v1`
   };
 };
 
 export const PROD_INITIAL_ORGANISASI: Organisasi[] = [
-  { id: 'org-dpp', nama: 'DPP IMM (Dewan Pimpinan Pusat)', level: 'DPP', status: 'verified' },
-  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified' },
-  { id: 'org-pc', nama: 'PC IMM Jakarta Selatan', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'verified' },
-  { id: 'org-korkom', nama: 'KORKOM IMM Universitas Indonesia', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'verified' },
-  { id: 'org-pk', nama: 'PK IMM Teknik Mesin Universitas Indonesia', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'verified' }
+  { id: 'org-dpp', nama: 'DPP IMM (Dewan Pimpinan Pusat)', level: 'DPP', status: 'verified', email: 'dpp@imm.or.id' },
+  { id: 'org-dpd', nama: 'DPD IMM DKI Jakarta', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified', email: 'dpd@imm.or.id' },
+  { id: 'org-dpd-jatim', nama: 'DPD IMM Jawa Timur', level: 'DPD', parentId: 'org-dpp', parentNama: 'DPP IMM (Dewan Pimpinan Pusat)', status: 'verified', email: 'dpd.jatim@imm.or.id' },
+  { id: 'org-pc', nama: 'PC IMM Jakarta Selatan', level: 'PC', parentId: 'org-dpd', parentNama: 'DPD IMM DKI Jakarta', status: 'verified', email: 'pc@imm.or.id' },
+  { id: 'org-korkom', nama: 'KORKOM IMM Universitas Indonesia', level: 'KORKOM', parentId: 'org-pc', parentNama: 'PC IMM Jakarta Selatan', status: 'verified', email: 'korkom@imm.or.id' },
+  { id: 'org-pk', nama: 'PK IMM Teknik Mesin Universitas Indonesia', level: 'PK', parentId: 'org-korkom', parentNama: 'KORKOM IMM Universitas Indonesia', status: 'verified', email: 'pk@imm.or.id' }
 ];
 
 export interface UserSession {
@@ -368,5 +370,54 @@ export const storageService = {
   clearUserSession(): void {
     const keys = getKeys();
     localStorage.removeItem(keys.USER_SESSION);
+  },
+
+  // Password Recovery & Management
+  getUserPassword(email: string): string | null {
+    const keys = getKeys();
+    try {
+      const raw = localStorage.getItem(keys.USER_PASSWORDS);
+      if (!raw) return null;
+      const map = JSON.parse(raw);
+      return map[email.trim().toLowerCase()] || null;
+    } catch {
+      return null;
+    }
+  },
+
+  updateUserPassword(email: string, newPassword: string): boolean {
+    const keys = getKeys();
+    const normalizedEmail = email.trim().toLowerCase();
+    try {
+      const raw = localStorage.getItem(keys.USER_PASSWORDS);
+      const map = raw ? JSON.parse(raw) : {};
+      map[normalizedEmail] = newPassword;
+      localStorage.setItem(keys.USER_PASSWORDS, JSON.stringify(map));
+
+      // Also update matching organization in list if present
+      const orgs = this.getOrganisasiList();
+      const updatedOrgs = orgs.map((o) => {
+        if (o.email?.toLowerCase() === normalizedEmail) {
+          return { ...o, password: newPassword };
+        }
+        return o;
+      });
+      this.saveOrganisasiList(updatedOrgs);
+
+      // Audit log entry for security traceability
+      this.addAuditLog({
+        id: `AL-RESET-${Math.floor(100 + Math.random() * 900)}`,
+        actorNama: normalizedEmail,
+        organisasiLevel: 'PK',
+        aksi: 'UPDATE',
+        waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+        keterangan: `Pengaturan ulang kata sandi (Reset Password) berhasil untuk akun: ${normalizedEmail}`
+      });
+
+      return true;
+    } catch (err) {
+      console.error('Failed to update password:', err);
+      return false;
+    }
   }
 };
